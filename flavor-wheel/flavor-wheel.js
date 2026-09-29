@@ -45,7 +45,23 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion2";
+const DATA_CACHE_BUST = "motion3";
+const LIFT_REST = {
+  transform: "scale(1)",
+  filter: "brightness(1) drop-shadow(0px 0px 0px rgba(0,0,0,0))",
+};
+const LIFT_LOW = {
+  transform: "scale(1.02)",
+  filter: "brightness(1.02) drop-shadow(0px 3px 5px rgba(0,0,0,0.12))",
+};
+const LIFT_HIGH = {
+  transform: "scale(1.045)",
+  filter: "brightness(1.055) drop-shadow(1px 9px 12px rgba(0,0,0,0.2))",
+};
+const LIFT_STATIC = {
+  transform: "scale(1.03)",
+  filter: "brightness(1.03) drop-shadow(0px 5px 8px rgba(0,0,0,0.16))",
+};
 const GRAIN_TILE = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">' +
   '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>' +
@@ -237,23 +253,20 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .seg:focus-visible .seg-focus-ring { visibility: visible; }
 .seg.is-hot { transform: scale(1.03); }
 .seg.is-press { transform: scale(1.055); }
+/* Подъём выбранной ячейки — отдельный слой, не конфликтует с press/hover на .seg */
+.tile-motion {
+  transform-box: view-box;
+  transform-origin: 400px 400px;
+  transform: scale(1);
+  filter: brightness(1) drop-shadow(0px 0px 0px rgba(0,0,0,0));
+  will-change: transform, filter;
+}
 .seg .tile-fill {
   transition: filter .18s ease;
   transform-box: fill-box;
 }
-.seg.is-hot .tile-fill { filter: brightness(1.05); }
+.seg.is-hot:not([data-selected="1"]) .tile-fill { filter: brightness(1.05); }
 .seg.is-press .tile-fill { filter: brightness(1.1); }
-.seg[data-selected="1"]:not(.is-press) .tile-fill {
-  animation: seg-breathe 3s ease-in-out infinite;
-}
-@keyframes seg-breathe {
-  0%, 100% {
-    filter: brightness(1) drop-shadow(0 0 0 transparent);
-  }
-  50% {
-    filter: brightness(1.07) drop-shadow(0 0 7px color-mix(in srgb, var(--seg-hex, #888) 50%, transparent));
-  }
-}
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -360,7 +373,6 @@ span.chip { cursor: default; }
 @media (prefers-reduced-motion: reduce) {
   .seg, .tile-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
   .seg.is-hot, .seg.is-press, .center-hit.is-back:hover { transform: none; }
-  .seg[data-selected="1"] .tile-fill { animation: none !important; }
   .wheel-tilt {
     transform: none !important;
     filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.12)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.07));
@@ -407,6 +419,7 @@ class FlavorWheel extends HTMLElement {
     this.urlTimer = 0;
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.pressedSeg = null;
+    this.liftAnims = new WeakMap();
     this.tiltTarget = { x: 0, y: 0 };
     this.tiltCurrent = { x: 0, y: 0 };
     this.tiltRaf = 0;
@@ -917,9 +930,10 @@ class FlavorWheel extends HTMLElement {
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
     return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" style="--seg-hex:${s.node.hex}">` +
+      `<g class="tile-motion">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
       `<path class="tile-fill" d="${d}" fill="${s.node.hex}" fill-opacity="1" stroke="none" stroke-width="0"></path>` +
-      `</g>` +
+      `</g></g>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
       `</g>`;
@@ -950,9 +964,87 @@ class FlavorWheel extends HTMLElement {
   paintSeg(seg) {
     const selected = seg.dataset.selected === "1";
     const hot = seg === this.hot || seg.matches(":focus-visible");
-    seg.classList.toggle("is-hot", hot || selected);
-    const name = hot ? "hover" : selected ? "selected" : "default";
-    seg.querySelector(".tile-body")?.setAttribute("filter", `url(#wheel-petal-shadow-${name})`);
+    // is-hot только для невыбранных — иначе hover-filter конфликтует с lift.
+    seg.classList.toggle("is-hot", hot && !selected);
+    const body = seg.querySelector(".tile-body");
+    const motion = seg.querySelector(".tile-motion");
+    if (selected) {
+      body?.setAttribute("filter", "url(#wheel-petal-shadow-selected)");
+      this.startLiftAnim(motion);
+    } else {
+      body?.setAttribute("filter", `url(#wheel-petal-shadow-${hot ? "hover" : "default"})`);
+      this.stopLiftAnim(motion);
+    }
+  }
+
+  startLiftAnim(motion) {
+    if (!motion) return;
+    const prev = this.liftAnims.get(motion) || {};
+    if (prev.loop && prev.loop.playState !== "finished") return;
+    if (prev.exit) {
+      try { prev.exit.cancel(); } catch { /* ignore */ }
+    }
+    if (this.reduced) {
+      motion.style.transform = LIFT_STATIC.transform;
+      motion.style.filter = LIFT_STATIC.filter;
+      this.liftAnims.set(motion, { static: true });
+      return;
+    }
+    if (prev.enter) {
+      try { prev.enter.cancel(); } catch { /* ignore */ }
+    }
+    const enter = motion.animate([LIFT_REST, LIFT_LOW], {
+      duration: 380,
+      easing: "ease-out",
+      fill: "forwards",
+    });
+    this.liftAnims.set(motion, { enter });
+    enter.finished.then(() => {
+      const cur = this.liftAnims.get(motion);
+      if (!cur || cur.enter !== enter) return;
+      try { enter.cancel(); } catch { /* ignore */ }
+      const loop = motion.animate([LIFT_LOW, LIFT_HIGH], {
+        duration: 3000,
+        easing: "ease-in-out",
+        direction: "alternate",
+        iterations: Infinity,
+      });
+      this.liftAnims.set(motion, { loop });
+    }).catch(() => {});
+  }
+
+  stopLiftAnim(motion) {
+    if (!motion) return;
+    const prev = this.liftAnims.get(motion);
+    if (!prev) return;
+    if (this.reduced || prev.static) {
+      motion.style.transform = "";
+      motion.style.filter = "";
+      this.liftAnims.delete(motion);
+      return;
+    }
+    if (prev.exit && prev.exit.playState !== "finished") return;
+    const running = prev.loop || prev.enter;
+    let fromT = getComputedStyle(motion).transform;
+    let fromF = getComputedStyle(motion).filter;
+    if (running) {
+      try { running.cancel(); } catch { /* ignore */ }
+    }
+    if (!fromT || fromT === "none") fromT = LIFT_REST.transform;
+    if (!fromF || fromF === "none") fromF = LIFT_REST.filter;
+    const exit = motion.animate(
+      [{ transform: fromT, filter: fromF }, LIFT_REST],
+      { duration: 420, easing: "ease-out", fill: "forwards" },
+    );
+    this.liftAnims.set(motion, { exit });
+    exit.finished.then(() => {
+      const cur = this.liftAnims.get(motion);
+      if (!cur || cur.exit !== exit) return;
+      try { exit.cancel(); } catch { /* ignore */ }
+      motion.style.transform = "";
+      motion.style.filter = "";
+      this.liftAnims.delete(motion);
+    }).catch(() => {});
   }
 
   updateSelected() {
