@@ -93,10 +93,13 @@ function cssText() {
   --fw-max-width: 1280px;
   --fw-bg: transparent;
   --fw-ink: #000000;
+  /* Размер колеса только от viewport — не от контента панели/уровня. */
+  --fw-wheel-size: min(600px, calc(100vw - 40px), calc(100vh - 160px));
+  --fw-trail-slot: 44px;
   display: block;
   width: 100%;
   min-width: 0;
-  align-self: center;
+  align-self: flex-start;
   max-width: var(--fw-max-width);
   margin: 0 auto;
   background: var(--fw-bg);
@@ -104,25 +107,54 @@ function cssText() {
   font-family: var(--fw-font-family);
   position: relative;
 }
+:host([data-layout="wide"]) {
+  --fw-wheel-size: min(700px, calc(100vw - 420px), calc(100vh - 96px));
+}
 :host *, :host *::before, :host *::after { box-sizing: border-box; }
-.stage { position: relative; }
-.wrap { position: relative; z-index: 1; width: 100%; padding: 0; container-type: inline-size; }
+.stage { position: relative; width: 100%; }
+:host([data-layout="wide"]) .stage {
+  min-height: calc(100dvh - 64px);
+  display: flex;
+  align-items: center;
+}
+.wrap { position: relative; z-index: 1; width: 100%; padding: 0; }
 .grid {
-  display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 0;
+  width: 100%;
 }
 :host([data-layout="wide"]) .grid {
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-  gap: 0 40px; align-items: center;
+  grid-template-columns: var(--fw-wheel-size) minmax(260px, 1fr);
+  gap: 0 40px; align-items: start;
 }
-.wheel-col { order: 1; display: flex; width: 100%; min-width: 0; flex-direction: column; align-items: center; }
-.panel { order: 2; width: 100%; margin-top: 24px; min-width: 0; }
-:host([data-layout="wide"]) .panel { margin-top: 0; }
+.wheel-col {
+  order: 1; display: flex; width: var(--fw-wheel-size); max-width: 100%;
+  min-width: 0; flex-direction: column; align-items: center;
+  flex: 0 0 auto;
+  position: relative;
+  padding-top: calc(var(--fw-trail-slot) + 12px);
+}
+.panel {
+  order: 2; width: 100%; margin-top: 20px; min-width: 0; min-height: 0;
+  align-self: start;
+}
+:host([data-layout="wide"]) .panel {
+  margin-top: 0;
+  max-height: calc(var(--fw-wheel-size) + var(--fw-trail-slot) + 12px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
 .trail {
-  width: 100%; max-width: 700px; margin: 0 auto 12px;
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  min-height: 0;
+  position: absolute; top: 0; left: 0; right: 0;
+  height: var(--fw-trail-slot);
+  width: 100%; max-width: var(--fw-wheel-size); margin: 0 auto;
+  display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;
+  overflow: hidden;
 }
-.trail:empty { display: none; margin: 0; }
+.trail:empty {
+  visibility: hidden;
+  pointer-events: none;
+}
 .trail-crumb {
   border: 0; border-radius: 999px; padding: 10px 14px;
   font: 600 13px/1 var(--fw-font-family); letter-spacing: -0.5px;
@@ -134,13 +166,13 @@ function cssText() {
 .trail-crumb.is-current:hover { filter: none; transform: none; }
 .trail-sep { color: #000000; opacity: .35; font-size: 13px; font-weight: 600; }
 .wheel-box {
-  width: 600px; max-width: calc(100% + 16px);
-  margin-left: -8px; margin-right: -8px;
+  width: var(--fw-wheel-size);
+  max-width: 100%;
+  margin: 0 auto;
+  flex: 0 0 auto;
+  aspect-ratio: 1;
 }
-@container (min-width: 1024px) {
-  .wheel-box { max-width: 100%; margin-left: 0; margin-right: 0; }
-}
-:host([data-layout="wide"]) .wheel-box { width: 700px; max-width: 100%; margin: 0; }
+:host([data-layout="wide"]) .wheel-box { margin: 0; }
 svg.wheel {
   display: block; width: 100%; height: auto; overflow: visible;
   touch-action: none; user-select: none; cursor: grab;
