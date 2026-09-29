@@ -76,12 +76,21 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion4b";
+const DATA_CACHE_BUST = "motion5";
 const TILE_LIT_REST = 0.08;
 const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
 const PARA_MAX_NARROW = 1.75;
 const PARA_LERP = 0.18;
+/** Каскад «лесенкой» дочерних превью при hover/press родителя (уровни 0–1). */
+const CASCADE_DELAY = 48;
+const CASCADE_UP_MS = 260;
+const CASCADE_DOWN_MS = 170;
+const CASCADE_DOWN_DELAY = 26;
+const CASCADE_FAST_MS = 130;
+const CASCADE_FAST_DELAY = 16;
+const CASCADE_SCALE = 1.05;
+const CASCADE_OUT = 6;
 const LIFT_REST = {
   transform: "scale(1)",
   filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0))",
@@ -308,6 +317,15 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transition: fill .22s ease;
   transform-box: fill-box;
 }
+/* Каскад дочерних превью — отдельный слой, не трогает hit-test основных .seg */
+.preview-tile { pointer-events: none; }
+.preview-motion {
+  transform-box: view-box;
+  transform-origin: 400px 400px;
+  transform: translate(0px, 0px) scale(1);
+  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
+  will-change: transform, filter;
+}
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -415,6 +433,7 @@ span.chip { cursor: default; }
   .seg, .tile-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
   .seg.is-hot, .seg.is-press, .center-hit.is-back:hover { transform: none; }
   .tile-parallax { transform: none !important; will-change: auto; }
+  .preview-motion { transform: none !important; filter: none !important; will-change: auto; }
   .wheel-tilt {
     transform: none !important;
     filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.12)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.07));
@@ -472,6 +491,8 @@ class FlavorWheel extends HTMLElement {
     this.paraTarget = { x: 0, y: 0 };
     this.paraCurrent = { x: 0, y: 0 };
     this.paraRaf = 0;
+    this.cascadeParentId = null;
+    this.cascadeMode = "idle";
     this.onOrient = (e) => this.handleOrientation(e);
     this.onMouseMove = (e) => this.handleMouseTilt(e);
     this.onMouseLeave = () => {
@@ -483,9 +504,11 @@ class FlavorWheel extends HTMLElement {
       if (this.reduced) {
         this.resetTilt(true);
         this.resetParallax(true);
+        this.resetCascade(true);
       } else {
         this.ensureTiltLoop();
         this.ensureParaLoop();
+        this.syncCascade();
       }
     };
   }
@@ -590,28 +613,28 @@ class FlavorWheel extends HTMLElement {
     this.svg.addEventListener("pointerover", (e) => {
       const seg = e.target.closest?.(".seg");
       if (!seg || seg === this.hot) return;
-      this.hot = seg;
-      this.paintSeg(seg);
+      this.setHot(seg);
     });
     this.svg.addEventListener("pointerout", (e) => {
       const seg = e.target.closest?.(".seg");
       if (!seg) return;
       if (e.relatedTarget && seg.contains(e.relatedTarget)) return;
-      if (this.hot === seg) this.hot = null;
-      this.paintSeg(seg);
-      if (this.paraSeg === seg) this.clearParaTarget();
+      if (this.hot === seg) {
+        // Прямой переход на соседний блок — без промежуточного collapse всех превью.
+        const next = e.relatedTarget?.closest?.(".seg") || null;
+        this.setHot(next);
+      }
+      if (this.paraSeg === seg && this.hot !== seg) this.clearParaTarget();
     });
     this.svg.addEventListener("focusin", (e) => {
       const seg = e.target.closest?.(".seg");
       if (!seg) return;
-      this.hot = seg;
-      this.paintSeg(seg);
+      this.setHot(seg);
     });
     this.svg.addEventListener("focusout", (e) => {
       const seg = e.target.closest?.(".seg");
       if (!seg) return;
-      if (this.hot === seg) this.hot = null;
-      this.paintSeg(seg);
+      if (this.hot === seg) this.setHot(null);
     });
     this.svg.addEventListener("pointermove", (e) => this.handleTileParallax(e), { passive: true });
     this.shadowRoot.addEventListener("click", (e) => this.onClick(e));
@@ -919,15 +942,20 @@ class FlavorWheel extends HTMLElement {
     const previews = model.preview.map((p) => {
       const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PREVIEW_GAP, PREVIEW_RADIUS);
       const fill = lightenJuicy(p.hex, TILE_LIT_REST);
-      return `<path d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0" data-hex-raw="${esc(p.hex)}"></path>`;
+      const mid = (p.a0 + p.a1) / 2;
+      return `<g class="preview-tile" data-parent-id="${esc(String(p.parentId))}" data-preview-i="${p.index}" data-mid="${mid}">` +
+        `<g class="preview-motion">` +
+        `<path d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0" data-hex-raw="${esc(p.hex)}"></path>` +
+        `</g></g>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
     this.rotor.innerHTML =
-      `<g pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
+      `<g class="preview-ring" pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
     this.resetParallax(true);
+    this.resetCascade(true);
     this.renderCenter();
     this.shadowRoot.querySelectorAll(".seg").forEach((seg) => this.paintSeg(seg));
   }
@@ -943,7 +971,9 @@ class FlavorWheel extends HTMLElement {
       this.tree.forEach((sec, i) => {
         const span = step / sec.subsectors.length;
         sec.subsectors.forEach((su, j) => {
-          preview.push({ hex: su.hex, a0: i * step + j * span, a1: i * step + (j + 1) * span });
+          const a0 = i * step + j * span;
+          const a1 = i * step + (j + 1) * span;
+          preview.push({ hex: su.hex, a0, a1, parentId: sec.id, index: j });
         });
       });
       return { main, preview };
@@ -963,7 +993,9 @@ class FlavorWheel extends HTMLElement {
         if (!vis.length) return;
         const span = step / vis.length;
         vis.forEach((de, j) => {
-          preview.push({ hex: de.hex, a0: i * step + j * span, a1: i * step + (j + 1) * span });
+          const a0 = i * step + j * span;
+          const a1 = i * step + (j + 1) * span;
+          preview.push({ hex: de.hex, a0, a1, parentId: su.id, index: j });
         });
       });
       return { main, preview };
@@ -1021,7 +1053,17 @@ class FlavorWheel extends HTMLElement {
     this.centerLayer.innerHTML = `<g class="${cls}"${aria} filter="url(#wheel-center-shadow)"><circle class="center-disc" cx="400" cy="400" r="${r}"></circle><circle class="center-focus-ring" cx="400" cy="400" r="${r + 3}" aria-hidden="true"></circle>${texts}</g>`;
   }
 
+  setHot(seg) {
+    const prev = this.hot;
+    if (prev === seg) return;
+    this.hot = seg;
+    if (prev) this.paintSeg(prev);
+    if (seg) this.paintSeg(seg);
+    this.syncCascade();
+  }
+
   paintSeg(seg) {
+    if (!seg) return;
     const selected = seg.dataset.selected === "1";
     const hot = seg === this.hot || seg.matches(":focus-visible");
     const pressed = seg.classList.contains("is-press") || seg === this.pressedSeg;
@@ -1040,6 +1082,144 @@ class FlavorWheel extends HTMLElement {
       body?.setAttribute("filter", `url(#wheel-petal-shadow-${hot || pressed ? "hover" : "default"})`);
       this.stopLiftAnim(motion);
     }
+  }
+
+  cascadeSource() {
+    return this.pressedSeg || this.hot || null;
+  }
+
+  previewPose(tile, up) {
+    if (!up) {
+      return {
+        transform: "translate(0px, 0px) scale(1)",
+        filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0))",
+      };
+    }
+    const mid = Number(tile.dataset.mid) || 0;
+    const rad = ((mid - 90) * Math.PI) / 180;
+    const dx = Math.cos(rad) * CASCADE_OUT;
+    const dy = Math.sin(rad) * CASCADE_OUT;
+    return {
+      transform: `translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) scale(${CASCADE_SCALE})`,
+      filter: "drop-shadow(0px 2px 3px rgba(0,0,0,0.14))",
+    };
+  }
+
+  animatePreview(tile, dir, delay, duration) {
+    const motion = tile.querySelector(".preview-motion");
+    if (!motion) return null;
+    motion.getAnimations().forEach((a) => {
+      try { a.cancel(); } catch { /* ignore */ }
+    });
+    let fromT = getComputedStyle(motion).transform;
+    let fromF = getComputedStyle(motion).filter;
+    if (!fromT || fromT === "none") fromT = "translate(0px, 0px) scale(1)";
+    if (!fromF || fromF === "none") fromF = "drop-shadow(0px 0px 0px rgba(0,0,0,0))";
+    const to = this.previewPose(tile, dir === "up");
+    const anim = motion.animate(
+      [{ transform: fromT, filter: fromF }, to],
+      {
+        duration,
+        delay,
+        fill: "forwards",
+        easing: dir === "up"
+          ? "cubic-bezier(.22,.82,.28,1)"
+          : "cubic-bezier(.33,.12,.25,1)",
+      },
+    );
+    if (dir === "down") {
+      anim.finished.then(() => {
+        if (this.cascadeParentId != null && String(tile.dataset.parentId) === String(this.cascadeParentId)) {
+          return;
+        }
+        try { anim.cancel(); } catch { /* ignore */ }
+        motion.style.transform = "";
+        motion.style.filter = "";
+      }).catch(() => {});
+    }
+    return anim;
+  }
+
+  resetCascade(hard = false) {
+    this.cascadeParentId = null;
+    this.cascadeMode = "idle";
+    if (!hard || !this.shadowRoot) return;
+    this.shadowRoot.querySelectorAll(".preview-motion").forEach((motion) => {
+      motion.getAnimations().forEach((a) => {
+        try { a.cancel(); } catch { /* ignore */ }
+      });
+      motion.style.transform = "";
+      motion.style.filter = "";
+    });
+  }
+
+  syncCascade() {
+    if (this.reduced || this.viewLevel > 1) {
+      this.collapseCascade({ fast: true });
+      return;
+    }
+    const source = this.cascadeSource();
+    if (!source) {
+      this.collapseCascade({ fast: false });
+      return;
+    }
+    const kind = source.dataset.kind;
+    if (kind !== "sector" && kind !== "subsector") {
+      this.collapseCascade({ fast: true });
+      return;
+    }
+    this.expandCascade(source.dataset.id);
+  }
+
+  expandCascade(parentId) {
+    const id = String(parentId);
+    if (this.cascadeParentId === id && this.cascadeMode === "up") return;
+    this.cascadeParentId = id;
+    this.cascadeMode = "up";
+    const all = [...this.shadowRoot.querySelectorAll(".preview-tile")];
+    const kids = all
+      .filter((t) => String(t.dataset.parentId) === id)
+      .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI));
+    const others = all.filter((t) => String(t.dataset.parentId) !== id);
+    others.forEach((tile, i) => {
+      this.animatePreview(tile, "down", i * CASCADE_FAST_DELAY, CASCADE_FAST_MS);
+    });
+    kids.forEach((tile, i) => {
+      this.animatePreview(tile, "up", i * CASCADE_DELAY, CASCADE_UP_MS);
+    });
+  }
+
+  collapseCascade({ fast = false } = {}) {
+    if (this.cascadeMode === "idle" && this.cascadeParentId == null) return;
+    const parentId = this.cascadeParentId;
+    this.cascadeParentId = null;
+    this.cascadeMode = parentId == null ? "idle" : "down";
+    const delay = fast ? CASCADE_FAST_DELAY : CASCADE_DOWN_DELAY;
+    const dur = fast ? CASCADE_FAST_MS : CASCADE_DOWN_MS;
+    let tiles;
+    if (parentId == null) {
+      tiles = [...this.shadowRoot.querySelectorAll(".preview-tile")];
+    } else {
+      const id = String(parentId);
+      tiles = [...this.shadowRoot.querySelectorAll(".preview-tile")]
+        .filter((t) => String(t.dataset.parentId) === id);
+    }
+    tiles
+      .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI))
+      .forEach((tile, i) => {
+        this.animatePreview(tile, "down", i * delay, dur);
+      });
+    // stray elevated tiles from interrupted switches
+    this.shadowRoot.querySelectorAll(".preview-motion").forEach((motion) => {
+      const tile = motion.closest(".preview-tile");
+      if (!tile) return;
+      if (parentId != null && String(tile.dataset.parentId) === String(parentId)) return;
+      if (!motion.getAnimations().length) {
+        const t = getComputedStyle(motion).transform;
+        if (t && t !== "none") this.animatePreview(tile, "down", 0, CASCADE_FAST_MS);
+      }
+    });
+    if (!tiles.length) this.cascadeMode = "idle";
   }
 
   startLiftAnim(motion) {
@@ -1284,6 +1464,7 @@ class FlavorWheel extends HTMLElement {
     prev.classList.remove("is-press");
     this.pressedSeg = null;
     this.paintSeg(prev);
+    this.syncCascade();
   }
 
   setPress(seg) {
@@ -1293,6 +1474,7 @@ class FlavorWheel extends HTMLElement {
     this.pressedSeg = seg;
     seg.classList.add("is-press");
     this.paintSeg(seg);
+    this.syncCascade();
   }
 
   paraMaxPx() {
