@@ -75,7 +75,7 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion14";
+const DATA_CACHE_BUST = "motion15";
 
 /** Нормализованный непрозрачный hex из JSON — без mix/lighten. */
 function solidHex(hex) {
@@ -116,22 +116,15 @@ const CASCADE_STAGGER_MS = 20;
 const CASCADE_STAGGER_MAX_MS = 60;
 const CASCADE_SCALE = 1.05;
 const CASCADE_OUT = 6;
-const LIFT_REST = {
-  transform: "scale(1)",
-  filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0))",
-};
-const LIFT_LOW = {
-  transform: "scale(1.02)",
-  filter: "drop-shadow(0px 3px 5px rgba(0,0,0,0.12))",
-};
-const LIFT_HIGH = {
-  transform: "scale(1.045)",
-  filter: "drop-shadow(1px 9px 12px rgba(0,0,0,0.2))",
-};
-const LIFT_STATIC = {
-  transform: "scale(1.03)",
-  filter: "drop-shadow(0px 5px 8px rgba(0,0,0,0.16))",
-};
+/* Selected-lift: transform на .tile-motion, тень на .tile-shade — текст не попадает под filter. */
+const LIFT_REST_T = { transform: "scale(1)" };
+const LIFT_LOW_T = { transform: "scale(1.02)" };
+const LIFT_HIGH_T = { transform: "scale(1.045)" };
+const LIFT_STATIC_T = { transform: "scale(1.03)" };
+const LIFT_REST_F = { filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0))" };
+const LIFT_LOW_F = { filter: "drop-shadow(0px 3px 5px rgba(0,0,0,0.12))" };
+const LIFT_HIGH_F = { filter: "drop-shadow(1px 9px 12px rgba(0,0,0,0.2))" };
+const LIFT_STATIC_F = { filter: "drop-shadow(0px 5px 8px rgba(0,0,0,0.16))" };
 const GRAIN_TILE = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">' +
   '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>' +
@@ -488,53 +481,54 @@ svg.wheel.is-dragging { cursor: grabbing; }
   visibility: hidden;
 }
 .seg:focus-visible .seg-focus-ring { visibility: visible; }
-/* Подъём выбранной ячейки — отдельный слой, не конфликтует с hover/press */
+/* Подъём выбранной: transform здесь; тень — на .tile-shade (текст без filter/blur) */
 .tile-motion {
   transform-box: view-box;
   transform-origin: 400px 400px;
   transform: scale(1);
-  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
-  will-change: transform, filter;
 }
-/* Hover-левитация основного блока: --lift-dur/--lift-ease; press — короткий */
+/* Hover-левитация: только scale; press — короткий */
 .tile-levitate {
   transform-box: view-box;
   transform-origin: 400px 400px;
   transform: scale(1);
-  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
-  transition:
-    transform var(--lift-dur) var(--lift-ease),
-    filter var(--lift-dur) var(--lift-ease);
-  will-change: transform, filter;
+  transition: transform var(--lift-dur) var(--lift-ease);
 }
 .seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-levitate {
   transform: scale(1.03);
-  filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
-  transition:
-    transform var(--lift-dur) var(--lift-ease),
-    filter var(--lift-dur) var(--lift-ease);
+  transition: transform var(--lift-dur) var(--lift-ease);
 }
 .seg.is-press .tile-levitate {
   transform: scale(1.055);
-  filter: drop-shadow(0px 7px 14px rgba(0, 0, 0, 0.22));
-  transition:
-    transform ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1),
-    filter ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1);
+  transition: transform ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1);
 }
-/* Selected: hover-левитация сбрасывается; WAAPI-пульс (п.3) не трогаем */
+/* Selected: hover-scale сбрасывается; WAAPI-пульс (п.3) на .tile-motion */
 .seg[data-selected="1"] .tile-levitate {
   transform: scale(1);
-  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
-  transition:
-    transform var(--lift-dur) var(--lift-ease),
-    filter var(--lift-dur) var(--lift-ease);
+  transition: transform var(--lift-dur) var(--lift-ease);
 }
-/* Локальный параллакс заливки — отдельный слой внутри подъёма; hit-test остаётся на path */
+/* Тень hover/press/selected — только заливка, не текст */
+.tile-shade {
+  transition: filter var(--lift-dur) var(--lift-ease);
+  filter: drop-shadow(0px 0px 0px rgba(0, 0, 0, 0));
+}
+.seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-shade {
+  filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
+  transition: filter var(--lift-dur) var(--lift-ease);
+}
+.seg.is-press .tile-shade {
+  filter: drop-shadow(0px 7px 14px rgba(0, 0, 0, 0.22));
+  transition: filter ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1);
+}
+.seg[data-selected="1"] .tile-shade {
+  filter: drop-shadow(0px 0px 0px rgba(0, 0, 0, 0));
+  transition: filter var(--lift-dur) var(--lift-ease);
+}
+/* Локальный параллакс — fill + подпись в одной группе */
 .tile-parallax {
   transform-box: fill-box;
   transform-origin: center;
   transform: translate(0px, 0px);
-  will-change: transform;
 }
 /* Осветление: тот же темп, что подъём */
 .seg .tile-fill {
@@ -559,11 +553,13 @@ svg.wheel.is-dragging { cursor: grabbing; }
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
   will-change: transform, filter;
 }
-.seg text {
+/* Подпись — часть плитки (внутри tile-parallax); без will-change, без filter */
+.seg text, .tile-label {
   pointer-events: none;
   fill: #000000;
   stroke: none;
   paint-order: normal;
+  text-rendering: geometricPrecision;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
@@ -698,11 +694,11 @@ button.chip:hover { filter: brightness(1.08); transform: scale(1.03); }
 span.chip { cursor: default; }
 .load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
-  .seg, .tile-fill, .tile-levitate, .center-hit, .chip, .trail-crumb, .panel-layer, .panel-viewport { transition: none !important; }
+  .seg, .tile-fill, .tile-levitate, .tile-shade, .center-hit, .chip, .trail-crumb, .panel-layer, .panel-viewport { transition: none !important; }
   .seg.is-hot .tile-levitate, .seg.is-press .tile-levitate,
-  .center-hit.is-back:hover { transform: none !important; filter: none !important; }
-  .tile-parallax { transform: none !important; will-change: auto; }
-  .tile-levitate { will-change: auto; }
+  .center-hit.is-back:hover { transform: none !important; }
+  .seg.is-hot .tile-shade, .seg.is-press .tile-shade { filter: none !important; }
+  .tile-parallax { transform: none !important; }
   .preview-motion { transform: none !important; filter: none !important; will-change: auto; }
   .wheel-tilt {
     transform: none !important;
@@ -1343,14 +1339,18 @@ class FlavorWheel extends HTMLElement {
     const mid = (s.a0 + s.a1) / 2;
     const raw = s.node.hex;
     const fill = lightenJuicy(raw, s.selected ? TILE_LIT_HOT : TILE_LIT_REST);
+    // Подпись внутри тех же transform-групп, что fill (motion→levitate→parallax),
+    // снаружи .tile-shade/.tile-body — чтобы filter/тень не мылили текст.
     return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-hex-raw="${esc(raw)}" style="--seg-hex:${raw}">` +
       `<g class="tile-motion">` +
       `<g class="tile-levitate">` +
       `<g class="tile-parallax">` +
+      `<g class="tile-shade">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
       `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0"></path>` +
-      `</g></g></g></g>` +
-      `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
+      `</g></g>` +
+      `<text class="tile-label" x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000" stroke="none">${tspans}</text>` +
+      `</g></g></g>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
       `</g>`;
   }
@@ -1557,70 +1557,95 @@ class FlavorWheel extends HTMLElement {
 
   startLiftAnim(motion) {
     if (!motion) return;
+    const shade = motion.querySelector(".tile-shade");
     const prev = this.liftAnims.get(motion) || {};
     if (prev.loop && prev.loop.playState !== "finished") return;
     if (prev.exit) {
       try { prev.exit.cancel(); } catch { /* ignore */ }
+      try { prev.exitF?.cancel(); } catch { /* ignore */ }
     }
     if (this.reduced) {
-      motion.style.transform = LIFT_STATIC.transform;
-      motion.style.filter = LIFT_STATIC.filter;
+      motion.style.transform = LIFT_STATIC_T.transform;
+      if (shade) shade.style.filter = LIFT_STATIC_F.filter;
       this.liftAnims.set(motion, { static: true });
       return;
     }
     if (prev.enter) {
       try { prev.enter.cancel(); } catch { /* ignore */ }
+      try { prev.enterF?.cancel(); } catch { /* ignore */ }
     }
-    const enter = motion.animate([LIFT_REST, LIFT_LOW], {
+    const enter = motion.animate([LIFT_REST_T, LIFT_LOW_T], {
       duration: 380,
       easing: "ease-out",
       fill: "forwards",
     });
-    this.liftAnims.set(motion, { enter });
+    const enterF = shade?.animate([LIFT_REST_F, LIFT_LOW_F], {
+      duration: 380,
+      easing: "ease-out",
+      fill: "forwards",
+    });
+    this.liftAnims.set(motion, { enter, enterF });
     enter.finished.then(() => {
       const cur = this.liftAnims.get(motion);
       if (!cur || cur.enter !== enter) return;
       try { enter.cancel(); } catch { /* ignore */ }
-      const loop = motion.animate([LIFT_LOW, LIFT_HIGH], {
+      try { enterF?.cancel(); } catch { /* ignore */ }
+      const loop = motion.animate([LIFT_LOW_T, LIFT_HIGH_T], {
         duration: 3000,
         easing: "ease-in-out",
         direction: "alternate",
         iterations: Infinity,
       });
-      this.liftAnims.set(motion, { loop });
+      const loopF = shade?.animate([LIFT_LOW_F, LIFT_HIGH_F], {
+        duration: 3000,
+        easing: "ease-in-out",
+        direction: "alternate",
+        iterations: Infinity,
+      });
+      this.liftAnims.set(motion, { loop, loopF });
     }).catch(() => {});
   }
 
   stopLiftAnim(motion) {
     if (!motion) return;
+    const shade = motion.querySelector(".tile-shade");
     const prev = this.liftAnims.get(motion);
     if (!prev) return;
     if (this.reduced || prev.static) {
       motion.style.transform = "";
-      motion.style.filter = "";
+      if (shade) shade.style.filter = "";
       this.liftAnims.delete(motion);
       return;
     }
     if (prev.exit && prev.exit.playState !== "finished") return;
     const running = prev.loop || prev.enter;
+    const runningF = prev.loopF || prev.enterF;
     let fromT = getComputedStyle(motion).transform;
-    let fromF = getComputedStyle(motion).filter;
+    let fromF = shade ? getComputedStyle(shade).filter : LIFT_REST_F.filter;
     if (running) {
       try { running.cancel(); } catch { /* ignore */ }
     }
-    if (!fromT || fromT === "none") fromT = LIFT_REST.transform;
-    if (!fromF || fromF === "none") fromF = LIFT_REST.filter;
+    if (runningF) {
+      try { runningF.cancel(); } catch { /* ignore */ }
+    }
+    if (!fromT || fromT === "none") fromT = LIFT_REST_T.transform;
+    if (!fromF || fromF === "none") fromF = LIFT_REST_F.filter;
     const exit = motion.animate(
-      [{ transform: fromT, filter: fromF }, LIFT_REST],
+      [{ transform: fromT }, LIFT_REST_T],
       { duration: 420, easing: "ease-out", fill: "forwards" },
     );
-    this.liftAnims.set(motion, { exit });
+    const exitF = shade?.animate(
+      [{ filter: fromF }, LIFT_REST_F],
+      { duration: 420, easing: "ease-out", fill: "forwards" },
+    );
+    this.liftAnims.set(motion, { exit, exitF });
     exit.finished.then(() => {
       const cur = this.liftAnims.get(motion);
       if (!cur || cur.exit !== exit) return;
       try { exit.cancel(); } catch { /* ignore */ }
+      try { exitF?.cancel(); } catch { /* ignore */ }
       motion.style.transform = "";
-      motion.style.filter = "";
+      if (shade) shade.style.filter = "";
       this.liftAnims.delete(motion);
     }).catch(() => {});
   }
