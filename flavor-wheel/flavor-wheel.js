@@ -630,12 +630,6 @@ svg.wheel.is-dragging { cursor: grabbing; }
   flex: 1 1 auto;
   padding: 4px clamp(14px, 3.8vw, 20px) clamp(14px, 3.5vw, 20px);
 }
-:host([data-layout="narrow"]) .sheet-empty {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
 .sheet-section { padding: 16px 0; border-top: 1px solid rgba(0,0,0,.1); }
 :host([data-layout="narrow"]) .sheet-section { padding: clamp(10px, 2.4vw, 14px) 0; }
 .sheet-section:first-child { border-top: 0; }
@@ -656,6 +650,10 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .sheet-section p:last-child { margin-bottom: 0; }
 .sheet-empty { padding: 28px 24px; color: #000000; }
 :host([data-layout="narrow"]) .sheet-empty {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: clamp(14px, 3.5vw, 22px) clamp(14px, 3.8vw, 22px);
 }
 .sheet-empty h2 {
