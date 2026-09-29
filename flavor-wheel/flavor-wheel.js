@@ -1,6 +1,6 @@
 import {
   CX, CY, wheelGeometry, petalPath, fitLabel, labelPlacement,
-  isLight, glow, inertiaTarget,
+  isLight, inertiaTarget,
 } from "./geometry.js";
 
 const INFO_EMPTY = "Выберите сектор, подкатегорию или конкретную ноту на колесе — здесь появится описание.";
@@ -74,16 +74,38 @@ function tuneHex(hex, { sat = 1, light = 1 } = {}) {
   return toHex({ r: (r1 + m) * 255, g: (g1 + m) * 255, b: (b1 + m) * 255 });
 }
 
-/** Палитра витража от базового hex из данных: насыщенный край, осветлённый центр под чёрный текст. */
-function glassPalette(hex) {
-  const vivid = tuneHex(hex, { sat: 1.28, light: 1.02 });
-  return {
-    rim: mixBlack(tuneHex(hex, { sat: 1.2, light: 0.82 }), 0.18),
-    deep: tuneHex(hex, { sat: 1.22, light: 0.9 }),
-    mid: vivid,
-    core: mixHex(vivid, 0.42),
-    bloom: mixHex(vivid, 0.7),
-  };
+const LEAD_COLOR = "#1a1a1a";
+const LEAD_WIDTH = 3.5;
+const PETAL_GAP = 0;
+const PETAL_RADIUS = 0;
+/** Общий угол «падения света» для всех стёкол (viewBox 800×800). */
+const GLASS_LIGHT = { x1: 240, y1: 210, x2: 560, y2: 590 };
+
+function glassStops(hex, { outer = false } = {}) {
+  const base = hex;
+  const light = outer
+    ? tuneHex(hex, { sat: 1.14, light: 1.14 })
+    : tuneHex(hex, { sat: 1.06, light: 1.08 });
+  const deep = outer
+    ? tuneHex(hex, { sat: 1.1, light: 0.78 })
+    : tuneHex(hex, { sat: 1.04, light: 0.84 });
+  return { light, base, deep };
+}
+
+function glassGradientDefs(gid, eid, hex, { outer = false } = {}) {
+  const { light, base, deep } = glassStops(hex, { outer });
+  const { x1, y1, x2, y2 } = GLASS_LIGHT;
+  return `<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">` +
+    `<stop offset="0%" stop-color="${light}"></stop>` +
+    `<stop offset="52%" stop-color="${base}"></stop>` +
+    `<stop offset="100%" stop-color="${deep}"></stop>` +
+    `</linearGradient>` +
+    `<linearGradient id="${eid}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">` +
+    `<stop offset="0%" stop-color="#ffffff" stop-opacity="0"></stop>` +
+    `<stop offset="12%" stop-color="#ffffff" stop-opacity="0.34"></stop>` +
+    `<stop offset="16%" stop-color="#ffffff" stop-opacity="0"></stop>` +
+    `<stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>` +
+    `</linearGradient>`;
 }
 
 function cssText() {
@@ -183,13 +205,13 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform-box: view-box; transform-origin: 400px 400px;
   transition: transform .2s ease;
 }
-.seg.is-hot { transform: scale(1.03); }
+.seg.is-hot { transform: scale(1.02); }
 .seg .glass-fill { transition: fill-opacity .2s ease; }
-.seg .glass-sheen {
-  pointer-events: none; mix-blend-mode: screen; opacity: .38;
-  transition: opacity .28s ease;
+.seg .glass-edge {
+  pointer-events: none; opacity: .72;
+  transition: opacity .24s ease;
 }
-.seg.is-hot .glass-sheen { opacity: .72; }
+.seg.is-hot .glass-edge { opacity: .95; }
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -205,8 +227,13 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .center-hit.is-back:hover, .center-hit.is-back:focus-visible { transform: scale(1.04); opacity: .92; }
 .center-hit circle.center-disc {
   fill: #ffffff;
-  stroke: rgba(0,0,0,.08);
-  stroke-width: 1.2;
+  stroke: #1a1a1a;
+  stroke-width: 3.5;
+}
+.wheel-frame circle {
+  fill: none;
+  stroke: #1a1a1a;
+  stroke-width: 3.5;
 }
 .sheet {
   border-radius: 28px; overflow: hidden;
@@ -269,7 +296,7 @@ span.chip { cursor: default; }
 .show-cta:disabled { opacity: .4; cursor: not-allowed; }
 .load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
-  .seg, .glass-fill, .glass-sheen, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
+  .seg, .glass-fill, .glass-edge, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
   .seg.is-hot, .center-hit.is-back:hover { transform: none; }
 }
 `;
@@ -371,6 +398,7 @@ class FlavorWheel extends HTMLElement {
                   <title>Колесо вкусов</title>
                   <defs>${filters()}</defs>
                   <g class="rotor" transform="rotate(0 400 400)"></g>
+                  <g class="wheel-frame" pointer-events="none"></g>
                   <g class="center-layer"></g>
                 </svg>
               </div>
@@ -381,6 +409,7 @@ class FlavorWheel extends HTMLElement {
       </div>`;
     this.svg = this.shadowRoot.querySelector("svg.wheel");
     this.rotor = this.shadowRoot.querySelector(".rotor");
+    this.frameLayer = this.shadowRoot.querySelector(".wheel-frame");
     this.centerLayer = this.shadowRoot.querySelector(".center-layer");
     this.wheelBox = this.shadowRoot.querySelector(".wheel-box");
     this.panelEl = this.shadowRoot.querySelector(".panel");
@@ -665,21 +694,16 @@ class FlavorWheel extends HTMLElement {
     this.segmentCount = Math.max(1, model.main.length);
     const previewDefs = [];
     const previews = model.preview.map((p, i) => {
-      const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, 6, 12);
-      const mid = (p.a0 + p.a1) / 2;
-      const gl = glow(g.middleR + 12, g.outerR, p.a0, p.a1);
-      const id = `preview-grad-${level}-${i}`;
-      const pal = glassPalette(p.hex);
-      previewDefs.push(
-        `<radialGradient id="${id}" cx="${gl.cx}" cy="${gl.cy}" r="${Math.max(18, (g.outerR - g.middleR) * 0.95)}" gradientUnits="userSpaceOnUse">` +
-        `<stop offset="0%" stop-color="${pal.bloom}"></stop>` +
-        `<stop offset="55%" stop-color="${pal.mid}"></stop>` +
-        `<stop offset="100%" stop-color="${pal.deep}"></stop></radialGradient>`
-      );
-      return `<path d="${d}" fill="url(#${id})" fill-opacity="0.72" stroke="#1c1510" stroke-width="1.35" stroke-linejoin="round" data-mid="${mid}"></path>`;
+      const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PETAL_GAP, PETAL_RADIUS);
+      const gid = `preview-glass-${level}-${i}`;
+      const eid = `preview-edge-${level}-${i}`;
+      previewDefs.push(glassGradientDefs(gid, eid, p.hex, { outer: true }));
+      return `<path class="preview-glass" d="${d}" fill="url(#${gid})" fill-opacity="1" stroke="${LEAD_COLOR}" stroke-width="${LEAD_WIDTH}" stroke-linejoin="miter"></path>` +
+        `<path class="preview-edge" d="${d}" fill="url(#${eid})" pointer-events="none"></path>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
-    this.rotor.innerHTML = `<defs>${previewDefs.join("")}</defs><g pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
+    this.rotor.innerHTML = `<defs>${previewDefs.join("")}</defs><g pointer-events="none">${previews}</g>${segs}`;
+    this.frameLayer.innerHTML = `<circle cx="${CX}" cy="${CY}" r="${g.outerR}"></circle>`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
@@ -734,37 +758,22 @@ class FlavorWheel extends HTMLElement {
   }
 
   segmentHtml(s, level, g) {
-    const d = petalPath(CX, CY, s.rIn, s.rOut, s.a0, s.a1, 12, 24);
+    const d = petalPath(CX, CY, s.rIn, s.rOut, s.a0, s.a1, PETAL_GAP, PETAL_RADIUS);
     const fitted = fitLabel(s.node.name, s.rIn, s.rOut, s.a0, s.a1, g.labelMaxFont(level));
     const place = labelPlacement(s.rIn, s.rOut, s.a0, s.a1, fitted.fontSize, fitted.lines.length);
-    const gl = glow(s.rIn, s.rOut, s.a0, s.a1);
-    const pal = glassPalette(s.node.hex);
     const gid = `petal-glass-${level}-${s.node.id}`;
-    const sid = `petal-sheen-${level}-${s.node.id}`;
-    const baseOp = level === 2 ? 0.96 : 0.94;
+    const eid = `petal-edge-${level}-${s.node.id}`;
+    const baseOp = 1;
     const tspans = fitted.lines.map((line, i) =>
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
-    const sheenR = Math.max(24, gl.r * 0.72);
     return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}">` +
-      `<defs>` +
-      `<radialGradient id="${gid}" cx="${gl.cx}" cy="${gl.cy}" r="${gl.r}" gradientUnits="userSpaceOnUse">` +
-      `<stop offset="0%" stop-color="${pal.bloom}"></stop>` +
-      `<stop offset="28%" stop-color="${pal.core}"></stop>` +
-      `<stop offset="68%" stop-color="${pal.mid}"></stop>` +
-      `<stop offset="100%" stop-color="${pal.rim}"></stop>` +
-      `</radialGradient>` +
-      `<radialGradient id="${sid}" cx="${gl.cx}" cy="${gl.cy}" r="${sheenR}" gradientUnits="userSpaceOnUse">` +
-      `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"></stop>` +
-      `<stop offset="45%" stop-color="#ffffff" stop-opacity="0.16"></stop>` +
-      `<stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>` +
-      `</radialGradient>` +
-      `</defs>` +
-      `<g class="glass-body" filter="url(#wheel-petal-shadow-default)">` +
-      `<path class="glass-fill" d="${d}" fill="url(#${gid})" fill-opacity="${baseOp}" stroke="#1c1510" stroke-width="2.6" stroke-linejoin="round"></path>` +
+      `<defs>${glassGradientDefs(gid, eid, s.node.hex, { outer: level === 2 })}</defs>` +
+      `<g class="glass-body">` +
+      `<path class="glass-fill" d="${d}" fill="url(#${gid})" fill-opacity="${baseOp}" stroke="${LEAD_COLOR}" stroke-width="${LEAD_WIDTH}" stroke-linejoin="miter"></path>` +
       `</g>` +
-      `<path class="glass-sheen" d="${d}" fill="url(#${sid})"></path>` +
+      `<path class="glass-edge" d="${d}" fill="url(#${eid})"></path>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `</g>`;
   }
@@ -788,18 +797,16 @@ class FlavorWheel extends HTMLElement {
     const texts = lines.map((t, i) =>
       `<text x="400" y="${startY + i * step}" text-anchor="middle" dominant-baseline="central" font-family="Mulish, sans-serif" font-weight="700" font-size="${fs}" letter-spacing="${canBack ? -1 : -1.2}" fill="${color}" stroke="none" pointer-events="none">${esc(t)}</text>`
     ).join("");
-    this.centerLayer.innerHTML = `<g class="${cls}"${aria} filter="url(#wheel-center-shadow)"><circle class="center-disc" cx="400" cy="400" r="${r}"></circle>${texts}</g>`;
+    this.centerLayer.innerHTML = `<g class="${cls}"${aria}><circle class="center-disc" cx="400" cy="400" r="${r}"></circle>${texts}</g>`;
   }
 
   paintSeg(seg) {
     const selected = seg.dataset.selected === "1";
     const hot = seg === this.hot || seg.matches(":focus-visible");
     seg.classList.toggle("is-hot", hot || selected);
-    const name = hot ? "hover" : selected ? "selected" : "default";
-    seg.querySelector(".glass-body")?.setAttribute("filter", `url(#wheel-petal-shadow-${name})`);
-    const base = Number(seg.dataset.baseOp || 0.94);
+    const base = Number(seg.dataset.baseOp || 1);
     const fill = seg.querySelector(".glass-fill");
-    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.04 : 0))));
+    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.03 : 0))));
   }
 
   updateSelected() {
