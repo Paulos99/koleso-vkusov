@@ -145,6 +145,8 @@ function cssText() {
   width: 100%;
   min-width: 0;
   align-self: flex-start;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
   max-width: var(--fw-max-width);
   margin: 0 auto;
   background: var(--fw-bg);
@@ -216,18 +218,31 @@ function cssText() {
   margin: 0 auto;
   flex: 0 0 auto;
   aspect-ratio: 1;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 :host([data-layout="wide"]) .wheel-box { margin: 0; }
 svg.wheel {
   display: block; width: 100%; height: auto; overflow: visible;
   touch-action: none; user-select: none; cursor: grab;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
+svg.wheel:focus { outline: none; }
+svg.wheel:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 6px;
+}
+svg.wheel:focus:not(:focus-visible) { outline: none; }
 svg.wheel.is-dragging { cursor: grabbing; }
 .seg {
   cursor: pointer; outline: none; isolation: isolate;
   transform-box: view-box; transform-origin: 400px 400px;
   transition: transform .2s ease;
 }
+.seg:focus { outline: none; }
+.seg:focus:not(:focus-visible) { outline: none; }
+.seg:focus-visible { outline: none; }
 .seg.is-hot { transform: scale(1.03); }
 .seg .glass-fill { transition: fill-opacity .2s ease; }
 .seg .glass-glint { pointer-events: none; }
@@ -239,10 +254,12 @@ svg.wheel.is-dragging { cursor: grabbing; }
 }
 .center-hit {
   cursor: default; outline: none;
+  -webkit-tap-highlight-color: transparent;
   transform-box: view-box; transform-origin: 400px 400px;
   transition: transform .2s ease, opacity .2s ease;
 }
 .center-hit.is-back { cursor: pointer; }
+.center-hit:focus:not(:focus-visible) { outline: none; }
 .center-hit.is-back:hover, .center-hit.is-back:focus-visible { transform: scale(1.04); opacity: .92; }
 .center-hit circle.center-disc {
   fill: #ffffff;
@@ -348,6 +365,7 @@ class FlavorWheel extends HTMLElement {
     this.wheelW = 0;
     this.hot = null;
     this.drag = null;
+    this.lastPointerType = "";
     this.suppressClick = false;
     this.inertiaRaf = 0;
     this.urlTimer = 0;
@@ -409,7 +427,7 @@ class FlavorWheel extends HTMLElement {
             <div class="wheel-col">
               <nav class="trail" data-testid="wheel-trail" aria-label="Путь выбора"></nav>
               <div class="wheel-box" data-testid="wheel-filter">
-                <svg class="wheel" viewBox="0 0 800 800" role="img" aria-label="Колесо вкусов — фильтр по нотам (потяните для вращения)">
+                <svg class="wheel" tabindex="-1" viewBox="0 0 800 800" role="img" aria-label="Колесо вкусов — фильтр по нотам (потяните для вращения)">
                   <title>Колесо вкусов</title>
                   <defs>${filters()}</defs>
                   <g class="rotor" transform="rotate(0 400 400)"></g>
@@ -680,11 +698,16 @@ class FlavorWheel extends HTMLElement {
     if (e.target.closest?.(".center-hit.is-back") || (e.target.closest?.("svg.wheel") && this.hitCenter(e) && !e.target.closest?.(".seg"))) {
       if (this.viewLevel > 0 && !e.target.closest?.(".seg")) {
         this.back();
+        if (this.isPointerLike(this.lastPointerType)) this.blurPointerFocus();
         return;
       }
     }
     const seg = e.target.closest?.(".seg");
-    if (seg) { this.onSegment(seg); return; }
+    if (seg) {
+      this.onSegment(seg);
+      if (this.isPointerLike(this.lastPointerType)) this.blurPointerFocus();
+      return;
+    }
     const crumb = e.target.closest?.("[data-trail-level]");
     if (crumb) {
       const level = Number(crumb.dataset.trailLevel);
@@ -985,8 +1008,23 @@ class FlavorWheel extends HTMLElement {
     return (Math.atan2(p.y - CY, p.x - CX) * 180) / Math.PI;
   }
 
+  isPointerLike(type) {
+    return type === "mouse" || type === "touch" || type === "pen";
+  }
+
+  blurPointerFocus() {
+    const root = this.shadowRoot;
+    const ae = root.activeElement;
+    if (ae && ae !== this.svg && (ae.closest?.(".seg") || ae.closest?.(".center-hit"))) ae.blur();
+    if (root.activeElement === this.svg) this.svg.blur();
+  }
+
   onDown(e) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
+    this.lastPointerType = e.pointerType || "";
+    if (e.pointerType === "mouse" || e.pointerType === "touch" || e.pointerType === "pen") {
+      this.blurPointerFocus();
+    }
     this.cancelInertia();
     this.drag = { last: this.pointerAngle(e), moved: 0, active: false, ts: e.timeStamp, id: e.pointerId };
     this.velocity = 0;
@@ -1005,6 +1043,7 @@ class FlavorWheel extends HTMLElement {
       this.drag.active = true;
       this.svg.setPointerCapture?.(e.pointerId);
       this.svg.classList.add("is-dragging");
+      this.blurPointerFocus();
     }
     this.rotation += delta;
     if (dt > 0) this.velocity = delta / dt;
@@ -1017,6 +1056,9 @@ class FlavorWheel extends HTMLElement {
     const active = this.drag.active;
     this.drag = null;
     this.svg.classList.remove("is-dragging");
+    if (e && (e.pointerType === "mouse" || e.pointerType === "touch" || e.pointerType === "pen")) {
+      this.blurPointerFocus();
+    }
     if (!active) return;
     this.suppressClick = true;
     setTimeout(() => { this.suppressClick = false; }, 0);
