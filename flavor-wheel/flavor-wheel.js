@@ -52,7 +52,7 @@ function lightenJuicy(hex, dl = 0.08) {
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
     else if (max === g) h = ((b - r) / d + 2) * 60;
-    else h = ((r - b) / d + 4) * 60;
+    else h = ((r - g) / d + 4) * 60;
   }
   s = Math.min(1, s * 1.03);
   l = Math.min(0.9, l + dl);
@@ -76,7 +76,7 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion4";
+const DATA_CACHE_BUST = "motion4b";
 const TILE_LIT_REST = 0.08;
 const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
