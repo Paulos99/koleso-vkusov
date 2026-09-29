@@ -268,13 +268,39 @@ export function preferRasterPreview(t) {
 
 const rasterCache = new Map();
 
-/** AABB плитки по полярным углам/радиусам — без getBBox (без гонок и DOM). */
-function tileBBox(t) {
+/** AABB по координатам path `d` (M/C/…); устойчиво к «хвостам» за полярным сектором. */
+function pathDBBox(d) {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-  const steps = 12;
+  const re = /-?\d*\.?\d+(?:e[-+]?\d+)?/gi;
+  let m;
+  const nums = [];
+  while ((m = re.exec(d))) nums.push(+m[0]);
+  for (let i = 0; i + 1 < nums.length; i += 2) {
+    const x = nums[i];
+    const y = nums[i + 1];
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    if (x < minX) minX = x;
+    if (y < minY) minY = y;
+    if (x > maxX) maxX = x;
+    if (y > maxY) maxY = y;
+  }
+  if (!(maxX > minX) || !(maxY > minY)) return null;
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * AABB плитки: union полярного сектора и реальных path (если есть).
+ * Полярный AABB один не режет canvas, когда деформация чуть выходит за (a0,a1)×(rIn,rOut).
+ */
+function tileBBox(t, layers) {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  const steps = 16;
   for (let i = 0; i <= steps; i++) {
     const a = t.a0 + ((t.a1 - t.a0) * i) / steps;
     const rad = ((a - 90) * Math.PI) / 180;
@@ -289,7 +315,17 @@ function tileBBox(t) {
       if (y > maxY) maxY = y;
     }
   }
-  const pad = Math.max(4, t.corner || 12);
+  if (layers) {
+    for (const { d } of layers) {
+      const bb = pathDBBox(d);
+      if (!bb) continue;
+      if (bb.minX < minX) minX = bb.minX;
+      if (bb.minY < minY) minY = bb.minY;
+      if (bb.maxX > maxX) maxX = bb.maxX;
+      if (bb.maxY > maxY) maxY = bb.maxY;
+    }
+  }
+  const pad = Math.max(6, (t.corner || 12) * 0.75);
   return {
     x: minX - pad,
     y: minY - pad,
@@ -310,15 +346,16 @@ export function vitrazhTileRasterHtml(t, targetHex, scale) {
   let hit = rasterCache.get(key);
   if (hit) return hit;
 
-  const bb = tileBBox(t);
+  const bb = tileBBox(t, layers);
   const x = bb.x;
   const y = bb.y;
   const w = Math.max(1, bb.width);
   const h = Math.max(1, bb.height);
   if (![x, y, w, h, sc].every(Number.isFinite)) return layersToSvg(layers);
+  // Ограничение размера canvas: при очень широком AABB (ошибка path) не раздуваем bitmap.
   const cw = Math.max(2, Math.min(512, Math.round(w * sc)));
   const ch = Math.max(2, Math.min(512, Math.round(h * sc)));
-  if (!Number.isFinite(cw) || !Number.isFinite(ch)) return layersToSvg(layers);
+  if (!Number.isFinite(cw) || !Number.isFinite(ch) || cw * ch > 512 * 512) return layersToSvg(layers);
   const canvas = document.createElement("canvas");
   canvas.width = cw;
   canvas.height = ch;

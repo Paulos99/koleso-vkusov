@@ -15,7 +15,7 @@ import {
 } from "./vitrazh-style.js";
 
 const ETALON_URL = new URL("./vitrazh-cell-etalon.svg", import.meta.url).href;
-const VITRAZH_CACHE_BUST = "vitrazh2";
+const VITRAZH_CACHE_BUST = "vitrazh3";
 
 const vitrazhReady = initVitrazhEngine(`${ETALON_URL}?v=${VITRAZH_CACHE_BUST}`);
 
@@ -76,8 +76,8 @@ class FlavorWheelVitrazh extends FlavorWheel {
       const pending = raster ? ` data-raster-pending="1"` : "";
       // data-* в нижнем регистре — dataset/getAttribute без сюрпризов camelCase
       const tAttr = ` data-a0="${t.a0}" data-a1="${t.a1}" data-rin="${t.rIn}" data-rout="${t.rOut}" data-gap="${t.gap}" data-corner="${t.corner}"`;
-      // Узкие превью: без векторного DOM (дорого на «Фруктовом») — bitmap с учётом DPR.
-      const body = raster ? "" : vitrazhTileInnerHtml(t, fill);
+      // Сразу вектор (кольцо полное на первом кадре); узкие превью потом заменим на bitmap.
+      const body = vitrazhTileInnerHtml(t, fill);
       return `<g class="preview-tile" data-parent-id="${String(p.parentId)}" data-preview-i="${p.index}" data-mid="${mid}">` +
         `<g class="preview-motion">` +
         `<g class="tile-vitrazh preview-vitrazh"${pending}${tAttr} data-hex-lit="${fill}">${body}</g>` +
@@ -93,7 +93,7 @@ class FlavorWheelVitrazh extends FlavorWheel {
     this.resetCascade(true);
     this.renderCenter();
     this.shadowRoot.querySelectorAll(".seg").forEach((seg) => this.paintSeg(seg));
-    // preview: растеризация после paint (отложенно — не блокировать первый кадр)
+    // Синхронно в microtask: без rAF-батчей — иначе при раннем скриншоте/VTB хвост кольца пустой.
     queueMicrotask(() => this.upgradePreviewRasters());
   }
 
@@ -102,39 +102,31 @@ class FlavorWheelVitrazh extends FlavorWheel {
     const pending = [...this.shadowRoot.querySelectorAll(".preview-vitrazh[data-raster-pending='1']")];
     if (!pending.length) return;
     const scale = this.vitrazhScale();
-    void (async () => {
-      const BATCH = 3;
-      for (let i = 0; i < pending.length; i += BATCH) {
-        if (gen !== this._previewUpgradeGen) return;
-        const batch = pending.slice(i, i + BATCH);
-        for (const el of batch) {
-          if (gen !== this._previewUpgradeGen || !el.isConnected) return;
-          const num = (name) => Number(el.getAttribute(name));
-          const t = {
-            a0: num("data-a0"),
-            a1: num("data-a1"),
-            rIn: num("data-rin"),
-            rOut: num("data-rout"),
-            gap: num("data-gap"),
-            corner: num("data-corner"),
-          };
-          if (![t.a0, t.a1, t.rIn, t.rOut, t.gap, t.corner].every(Number.isFinite)) {
-            el.removeAttribute("data-raster-pending");
-            continue;
-          }
-          const hex = el.getAttribute("data-hex-lit");
-          try {
-            el.innerHTML = vitrazhTileRasterHtml(t, hex, scale);
-            el.classList.add("is-raster");
-          } catch (err) {
-            el.innerHTML = vitrazhTileInnerHtml(t, hex);
-            console.warn("vitrazh raster failed", err);
-          }
-          el.removeAttribute("data-raster-pending");
-        }
-        await new Promise((r) => requestAnimationFrame(r));
+    for (const el of pending) {
+      if (gen !== this._previewUpgradeGen || !el.isConnected) return;
+      const num = (name) => Number(el.getAttribute(name));
+      const t = {
+        a0: num("data-a0"),
+        a1: num("data-a1"),
+        rIn: num("data-rin"),
+        rOut: num("data-rout"),
+        gap: num("data-gap"),
+        corner: num("data-corner"),
+      };
+      if (![t.a0, t.a1, t.rIn, t.rOut, t.gap, t.corner].every(Number.isFinite)) {
+        el.removeAttribute("data-raster-pending");
+        continue;
       }
-    })();
+      const hex = el.getAttribute("data-hex-lit");
+      try {
+        el.innerHTML = vitrazhTileRasterHtml(t, hex, scale);
+        el.classList.add("is-raster");
+      } catch (err) {
+        el.innerHTML = vitrazhTileInnerHtml(t, hex);
+        console.warn("vitrazh raster failed", err);
+      }
+      el.removeAttribute("data-raster-pending");
+    }
   }
 
   segmentHtml(s, level, g) {
