@@ -19,17 +19,29 @@ function paras(text) {
   return String(text || "").split("\n").filter((p) => p.trim()).map((p) => `<p>${esc(p)}</p>`).join("") || `<p>${esc(FALLBACK_INFO)}</p>`;
 }
 
+function mixHex(hex, amount = 0.78) {
+  const raw = String(hex || "#cccccc").replace("#", "");
+  const full = raw.length === 3 ? raw.split("").map((c) => c + c).join("") : raw.padEnd(6, "0").slice(0, 6);
+  const n = Number.parseInt(full, 16);
+  if (Number.isNaN(n)) return "#f3f3f0";
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  const mix = (c) => Math.round(c + (255 - c) * amount);
+  return `#${[mix(r), mix(g), mix(b)].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+}
+
 function cssText() {
   return `
 :host {
   --fw-font-family: Mulish, "Mulish Fallback", Arial, sans-serif;
   --fw-max-width: 1280px;
   --fw-bg: transparent;
-  --fw-ink: #101010;
+  --fw-ink: #000000;
   display: block;
   width: 100%;
   min-width: 0;
-  align-self: stretch;
+  align-self: center;
   max-width: var(--fw-max-width);
   margin: 0 auto;
   background: var(--fw-bg);
@@ -41,15 +53,15 @@ function cssText() {
 .stage { position: relative; }
 .wrap { position: relative; z-index: 1; width: 100%; padding: 0; container-type: inline-size; }
 .grid {
-  display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 0;
 }
 :host([data-layout="wide"]) .grid {
   grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-  gap: 0 40px; align-items: start;
+  gap: 0 40px; align-items: center;
 }
 .wheel-col { order: 1; display: flex; width: 100%; min-width: 0; flex-direction: column; align-items: center; }
 .panel { order: 2; width: 100%; margin-top: 24px; min-width: 0; }
-:host([data-layout="wide"]) .panel { margin-top: 8px; }
+:host([data-layout="wide"]) .panel { margin-top: 0; }
 .trail {
   width: 100%; max-width: 700px; margin: 0 auto 12px;
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
@@ -59,13 +71,13 @@ function cssText() {
 .trail-crumb {
   border: 0; border-radius: 999px; padding: 10px 14px;
   font: 600 13px/1 var(--fw-font-family); letter-spacing: -0.5px;
-  color: #101010;
+  color: #000000;
   cursor: pointer; transition: filter .2s ease, transform .2s ease, box-shadow .2s ease;
 }
 .trail-crumb:hover { filter: brightness(1.06); transform: scale(1.03); }
-.trail-crumb.is-current { cursor: default; box-shadow: 0 8px 20px rgba(16,16,16,.18); }
+.trail-crumb.is-current { cursor: default; box-shadow: 0 8px 20px rgba(0,0,0,.14); }
 .trail-crumb.is-current:hover { filter: none; transform: none; }
-.trail-sep { color: #101010; opacity: .35; font-size: 13px; font-weight: 600; }
+.trail-sep { color: #000000; opacity: .35; font-size: 13px; font-weight: 600; }
 .wheel-box {
   width: 600px; max-width: calc(100% + 16px);
   margin-left: -8px; margin-right: -8px;
@@ -93,10 +105,9 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .seg.is-hot .glass-sheen { opacity: .95; }
 .seg text {
   pointer-events: none;
-  paint-order: stroke fill;
-  stroke: rgba(255,255,255,.55);
-  stroke-width: 2px;
-  stroke-linejoin: round;
+  fill: #000000;
+  stroke: none;
+  paint-order: normal;
 }
 .center-hit {
   cursor: default; outline: none;
@@ -107,46 +118,51 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .center-hit.is-back:hover, .center-hit.is-back:focus-visible { transform: scale(1.04); opacity: .92; }
 .center-hit circle.center-disc {
   fill: #ffffff;
-  stroke: rgba(16,16,16,.08);
+  stroke: rgba(0,0,0,.08);
   stroke-width: 1.2;
 }
 .sheet {
   border-radius: 28px; overflow: hidden;
   background: #ffffff;
-  box-shadow: 0 18px 48px rgba(16,16,16,.1);
-  border: 1px solid rgba(16,16,16,.08);
-  color: #101010;
+  box-shadow: 0 18px 48px rgba(0,0,0,.1);
+  border: 1px solid rgba(0,0,0,.08);
+  color: #000000;
 }
 .sheet-head {
   padding: 24px 24px 20px;
+  color: #000000;
+  background: #f5f5f2;
   box-shadow: inset 0 -1px 0 rgba(0,0,0,.06);
+  border-left: 6px solid var(--sheet-accent, #000000);
 }
 .sheet-head h2 {
   margin: 0 0 10px; font-size: 24px; font-weight: 700;
   line-height: 1.15; letter-spacing: -1.2px;
+  color: #000000;
 }
 .sheet-head .lead {
   margin: 0; font-size: 16px; font-weight: 500; line-height: 1.5; letter-spacing: -0.6px;
-  opacity: .95;
+  color: #000000; opacity: .88;
 }
-.sheet-body { padding: 8px 24px 8px; }
-.sheet-section { padding: 16px 0; border-top: 1px solid rgba(16,16,16,.1); }
+.sheet-body { padding: 8px 24px 8px; color: #000000; }
+.sheet-section { padding: 16px 0; border-top: 1px solid rgba(0,0,0,.1); }
 .sheet-section:first-child { border-top: 0; }
 .sheet-section h3 {
   margin: 0 0 8px; font-size: 12px; font-weight: 700;
-  letter-spacing: .02em; text-transform: uppercase; color: #101010; opacity: .55;
+  letter-spacing: .02em; text-transform: uppercase; color: #000000; opacity: .55;
 }
-.sheet-section p { margin: 0 0 8px; font-size: 15px; font-weight: 500; line-height: 1.55; letter-spacing: -0.4px; color: #101010; }
+.sheet-section p { margin: 0 0 8px; font-size: 15px; font-weight: 500; line-height: 1.55; letter-spacing: -0.4px; color: #000000; }
 .sheet-section p:last-child { margin-bottom: 0; }
-.sheet-empty { padding: 28px 24px; }
+.sheet-empty { padding: 28px 24px; color: #000000; }
 .sheet-empty h2 {
-  margin: 0 0 12px; font-size: 20px; font-weight: 700; letter-spacing: -1px; color: #101010;
+  margin: 0 0 12px; font-size: 20px; font-weight: 700; letter-spacing: -1px; color: #000000;
 }
-.sheet-empty p { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.5; letter-spacing: -0.4px; color: #101010; opacity: .72; }
+.sheet-empty p { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.5; letter-spacing: -0.4px; color: #000000; opacity: .72; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
   border: 0; border-radius: 32px; padding: 11px 14px;
   font: 600 12px/1 var(--fw-font-family); letter-spacing: -0.5px;
+  color: #000000;
   cursor: pointer; transition: filter .2s ease, transform .2s ease;
 }
 button.chip:hover { filter: brightness(1.08); transform: scale(1.03); }
@@ -157,14 +173,14 @@ span.chip { cursor: default; }
 .show-cta {
   width: 100%; border: 0; border-radius: 999px; padding: 16px 20px;
   font: 700 16px/1 var(--fw-font-family); letter-spacing: -0.8px;
-  color: #101010; cursor: pointer;
+  color: #000000; cursor: pointer;
   background: #ecece8;
-  box-shadow: inset 0 0 0 1px rgba(16,16,16,.08);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
   transition: transform .2s ease, filter .2s ease, opacity .2s ease, background .2s ease;
 }
 .show-cta:hover:not(:disabled) { background: #e2e2dc; transform: translateY(-1px); }
 .show-cta:disabled { opacity: .4; cursor: not-allowed; }
-.load-msg { padding: 24px; text-align: center; color: #101010; font-weight: 600; }
+.load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   .seg, .glass-fill, .glass-sheen, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
   .seg.is-hot, .center-hit.is-back:hover { transform: none; }
@@ -621,7 +637,7 @@ class FlavorWheel extends HTMLElement {
     const place = labelPlacement(s.rIn, s.rOut, s.a0, s.a1, fitted.fontSize, fitted.lines.length);
     const gl = glow(s.rIn, s.rOut, s.a0, s.a1);
     const gid = `petal-glow-${level}-${s.node.id}`;
-    const fill = isLight(s.node.hex) ? "#101010" : "#f5f5f5";
+    const fill = "#000000";
     const baseOp = level === 2 ? 0.64 : 0.5;
     const tspans = fitted.lines.map((line, i) =>
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
@@ -637,12 +653,12 @@ class FlavorWheel extends HTMLElement {
     const fs = long ? 16 : g.centerFont;
     const y1 = CY - g.centerLineStep / 2;
     const y2 = CY + g.centerLineStep / 2;
-    let color = "#101010";
+    let color = "#000000";
     if (this.viewLevel === 1 && this.sector()) {
-      color = isLight(this.sector().hex) ? "#101010" : this.sector().hex;
+      color = isLight(this.sector().hex) ? "#000000" : this.sector().hex;
     }
     if (this.viewLevel === 2 && this.subsector()) {
-      color = isLight(this.subsector().hex) ? "#101010" : this.subsector().hex;
+      color = isLight(this.subsector().hex) ? "#000000" : this.subsector().hex;
     }
     const r = g.innerR - 14;
     const canBack = this.viewLevel > 0;
@@ -676,10 +692,9 @@ class FlavorWheel extends HTMLElement {
   }
 
   crumbBtn(level, node, current) {
-    const fg = isLight(node.hex) ? "#101010" : "#fefefe";
     const cur = current ? " is-current" : "";
     const aria = current ? ` aria-current="true"` : "";
-    return `<button type="button" class="trail-crumb${cur}" data-trail-level="${level}" style="background:${node.hex};color:${fg}"${aria}>${esc(node.name)}</button>`;
+    return `<button type="button" class="trail-crumb${cur}" data-trail-level="${level}" style="background:${mixHex(node.hex)};color:#000000"${aria}>${esc(node.name)}</button>`;
   }
 
   renderTrail() {
@@ -722,15 +737,13 @@ class FlavorWheel extends HTMLElement {
     const node = desc || (this.viewLevel === 2 ? sub : sector);
     const note = node ? this.notes.get(node.id) : null;
     const hex = node.hex;
-    const light = isLight(hex);
-    const fg = light ? "#101010" : "#fefefe";
     const short = note?.short || FALLBACK_SHORT;
     const how = note?.howInCoffee || FALLBACK_INFO;
     const result = note?.result || FALLBACK_INFO;
     const chips = this.chipsHtml(sector, sub, desc);
     this.panelEl.innerHTML = `
       <article class="sheet">
-        <header class="sheet-head" data-testid="wheel-info-description" style="background:${hex};color:${fg}">
+        <header class="sheet-head" data-testid="wheel-info-description" style="--sheet-accent:${hex};background:${mixHex(hex, 0.86)};color:#000000">
           <h2>${esc(node.name)}</h2>
           <p class="lead">${esc(short)}</p>
         </header>
@@ -762,18 +775,16 @@ class FlavorWheel extends HTMLElement {
       chips = sub.descriptors.map((d) => this.chip("desc", d)).join("");
     } else if (desc?.children?.length) {
       title = "Оттенки";
-      chips = desc.children.map((c) => {
-        const fg = isLight(c.hex) ? "#101010" : "#fefefe";
-        return `<span class="chip" style="background:${c.hex};color:${fg}">${esc(c.name)}</span>`;
-      }).join("");
+      chips = desc.children.map((c) =>
+        `<span class="chip" style="background:${mixHex(c.hex)};color:#000000">${esc(c.name)}</span>`
+      ).join("");
     }
     if (!chips) return "";
     return `<section class="sheet-section" data-testid="wheel-info-subcategories"><h3>${esc(title)}</h3><div class="chips">${chips}</div></section>`;
   }
 
   chip(kind, item) {
-    const fg = isLight(item.hex) ? "#101010" : "#fefefe";
-    return `<button type="button" class="chip" data-kind="${kind}" data-slug="${esc(item.slug)}" style="background:${item.hex};color:${fg}">${esc(item.name)}</button>`;
+    return `<button type="button" class="chip" data-kind="${kind}" data-slug="${esc(item.slug)}" style="background:${mixHex(item.hex)};color:#000000">${esc(item.name)}</button>`;
   }
 
   snapshot() {
