@@ -127,15 +127,6 @@ export function glow(rIn, rOut, a0, a1) {
   return { cx: CX + r * Math.cos(a), cy: CY + r * Math.sin(a), r: (rOut - rIn) * 0.9 };
 }
 
-/** Инерция вращения после drag: возвращает целевой угол (снап к шагу сегмента) и длительность. */
-export function inertiaTarget(currentDeg, velocityDegPerMs, stepDeg) {
-  const projected = currentDeg + velocityDegPerMs / 0.0025;
-  const target = (velocityDegPerMs >= 0 ? Math.ceil(projected / stepDeg) : Math.floor(projected / stepDeg)) * stepDeg;
-  const delta = target - currentDeg;
-  const duration = Math.min(1400, Math.max(280, 4 * Math.abs(delta)));
-  return { target, delta, duration, ease: (p) => 1 - (1 - p) ** 3 }; // easeOutCubic
-}
-
 /** Запасной цвет подсектора без hex (в текущих данных не используется — у всех подсекторов hex есть).
  *  HSL сектора, светлота L += -25 + (50/(count-1))*index (clamp 0..100), затем обратно в hex. */
 export function shadeFromSector(sectorHex, index, count) {

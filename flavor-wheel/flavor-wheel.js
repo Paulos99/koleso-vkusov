@@ -1,6 +1,5 @@
 import {
   CX, CY, wheelGeometry, petalPath, fitLabel, labelPlacement,
-  inertiaTarget,
 } from "./geometry.js";
 
 const INFO_EMPTY = "Выберите сектор, подкатегорию или конкретную ноту на колесе — здесь появится описание.";
@@ -76,7 +75,7 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion6c";
+const DATA_CACHE_BUST = "motion7";
 /** Hover-левитация плитки (scale/тень/fill): было ~180–220 ms → ~×5. */
 const HOVER_LIFT_MS = 1200;
 const PRESS_LIFT_MS = 140;
@@ -517,7 +516,6 @@ class FlavorWheel extends HTMLElement {
     this.selection = {};
     this.viewLevel = 0;
     this.rotation = 0;
-    this.velocity = 0;
     this.segmentCount = 5;
     this.geom = wheelGeometry(700);
     this.wheelW = 0;
@@ -525,7 +523,6 @@ class FlavorWheel extends HTMLElement {
     this.drag = null;
     this.lastPointerType = "";
     this.suppressClick = false;
-    this.inertiaRaf = 0;
     this.urlTimer = 0;
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.pressedSeg = null;
@@ -579,7 +576,6 @@ class FlavorWheel extends HTMLElement {
   disconnectedCallback() {
     this.ro?.disconnect();
     this.hostRo?.disconnect();
-    cancelAnimationFrame(this.inertiaRaf);
     cancelAnimationFrame(this.tiltRaf);
     cancelAnimationFrame(this.paraRaf);
     clearTimeout(this.urlTimer);
@@ -846,7 +842,6 @@ class FlavorWheel extends HTMLElement {
   }
 
   afterNav(rebuild) {
-    this.cancelInertia();
     if (rebuild) {
       this.rotation = 0;
       this.renderWheel();
@@ -1734,9 +1729,7 @@ class FlavorWheel extends HTMLElement {
     if (e.pointerType === "touch" || e.pointerType === "pen") this.maybeRequestGyro();
     const seg = e.target.closest?.(".seg");
     if (seg) this.setPress(seg);
-    this.cancelInertia();
-    this.drag = { last: this.pointerAngle(e), moved: 0, active: false, ts: e.timeStamp, id: e.pointerId };
-    this.velocity = 0;
+    this.drag = { last: this.pointerAngle(e), moved: 0, active: false, id: e.pointerId };
   }
 
   onMove(e) {
@@ -1745,8 +1738,6 @@ class FlavorWheel extends HTMLElement {
     const delta = angDelta(this.drag.last, a);
     this.drag.last = a;
     this.drag.moved += Math.abs(delta);
-    const dt = e.timeStamp - this.drag.ts;
-    this.drag.ts = e.timeStamp;
     if (!this.drag.active) {
       if (this.drag.moved <= 5) return;
       this.drag.active = true;
@@ -1756,7 +1747,6 @@ class FlavorWheel extends HTMLElement {
       this.blurPointerFocus();
     }
     this.rotation += delta;
-    if (dt > 0) this.velocity = delta / dt;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     if (e.cancelable) e.preventDefault();
   }
@@ -1770,34 +1760,10 @@ class FlavorWheel extends HTMLElement {
     if (e && (e.pointerType === "mouse" || e.pointerType === "touch" || e.pointerType === "pen")) {
       this.blurPointerFocus();
     }
+    // Без инерции/snap: угол остаётся ровно там, где отпустили.
     if (!active) return;
     this.suppressClick = true;
     setTimeout(() => { this.suppressClick = false; }, 0);
-    this.startInertia();
-  }
-
-  startInertia() {
-    const step = 360 / this.segmentCount;
-    const { target, duration } = inertiaTarget(this.rotation, this.velocity, step);
-    if (this.reduced) {
-      this.rotation = target;
-      this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
-      return;
-    }
-    const from = this.rotation;
-    const t0 = performance.now();
-    const tick = (now) => {
-      const p = Math.min(1, (now - t0) / duration);
-      this.rotation = from + (target - from) * (1 - (1 - p) ** 3);
-      this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
-      if (p < 1) this.inertiaRaf = requestAnimationFrame(tick);
-    };
-    this.inertiaRaf = requestAnimationFrame(tick);
-  }
-
-  cancelInertia() {
-    if (this.inertiaRaf) cancelAnimationFrame(this.inertiaRaf);
-    this.inertiaRaf = 0;
   }
 }
 
