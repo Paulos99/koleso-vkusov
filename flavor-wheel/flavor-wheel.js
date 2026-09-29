@@ -78,12 +78,14 @@ const MAIN_GAP = 12;
 const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 6;
 const PREVIEW_RADIUS = 12;
-const TILE_FACE_OP = 0.5;
-const TILE_PREVIEW_OP = 0.46;
-const CAST_OP = 0.34;
-const CAST_OP_HOT = 0.42;
+const TILE_FACE_OP = 1;
+const TILE_PREVIEW_OP = 1;
+const CAST_OP = 0.72;
+const CAST_OP_HOT = 0.82;
 /** Свет сверху-слева (viewBox 800×800). */
 const SUN = { x1: 230, y1: 200, x2: 570, y2: 600 };
+/** Cache-bust для flavor-data.json (менять при деплое данных). */
+const DATA_CACHE_BUST = "v4";
 
 function createGlassFilterRegistry() {
   return {
@@ -93,27 +95,26 @@ function createGlassFilterRegistry() {
     },
     defsHtml() {
       return [
-        glassBlurFilterDef("glass-blur-sm", 1.1),
-        glassBlurFilterDef("glass-blur-sm-hot", 1.35),
-        glassBlurFilterDef("glass-blur-lg", 2),
-        glassBlurFilterDef("glass-blur-lg-hot", 2.4),
+        glassBlurFilterDef("glass-blur-sm", 1),
+        glassBlurFilterDef("glass-blur-sm-hot", 1.25),
+        glassBlurFilterDef("glass-blur-lg", 1.5),
+        glassBlurFilterDef("glass-blur-lg-hot", 1.8),
       ].join("");
     },
   };
 }
 
 function glassBlurFilterDef(id, dev) {
-  return `<filter id="${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">` +
+  return `<filter id="${id}" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">` +
     `<feGaussianBlur stdDeviation="${dev}"></feGaussianBlur></filter>`;
 }
 
 function acrylicTileFx(prefix, hex, rIn, rOut, a0, a1, { compact = false, filters = null } = {}) {
   const gl = glow(rIn, rOut, a0, a1);
   const base = hex;
-  const lit = tuneHex(hex, { sat: 1.12, light: 1.34 });
-  const mid = tuneHex(hex, { sat: 1.1, light: 1.2 });
-  const edge = tuneHex(hex, { sat: 1.16, light: 1.06 });
-  const cast = tuneHex(hex, { sat: 1.08, light: 1.28 });
+  // Край гуще/насыщеннее без белого подмеса; тело — чистый hex из данных.
+  const edge = tuneHex(hex, { sat: 1.28, light: 0.78 });
+  const cast = tuneHex(hex, { sat: 1.18, light: 0.9 });
   const fillId = `${prefix}-fill`;
   const rimLightId = `${prefix}-rim-hi`;
   const rimSatId = `${prefix}-rim-sat`;
@@ -122,19 +123,20 @@ function acrylicTileFx(prefix, hex, rIn, rOut, a0, a1, { compact = false, filter
   const filterHotId = filters ? filters.blurId(true, compact) : `${prefix}-blur-hot`;
   const defs =
     `<radialGradient id="${fillId}" cx="${gl.cx}" cy="${gl.cy}" r="${Math.max(30, gl.r * 0.98)}" gradientUnits="userSpaceOnUse">` +
-    `<stop offset="0%" stop-color="${lit}" stop-opacity="0.56"></stop>` +
-    `<stop offset="52%" stop-color="${mid}" stop-opacity="0.46"></stop>` +
-    `<stop offset="88%" stop-color="${base}" stop-opacity="0.42"></stop>` +
-    `<stop offset="100%" stop-color="${edge}" stop-opacity="0.52"></stop>` +
+    `<stop offset="0%" stop-color="${base}" stop-opacity="0.58"></stop>` +
+    `<stop offset="40%" stop-color="${base}" stop-opacity="0.68"></stop>` +
+    `<stop offset="75%" stop-color="${base}" stop-opacity="0.84"></stop>` +
+    `<stop offset="100%" stop-color="${edge}" stop-opacity="0.98"></stop>` +
     `</radialGradient>` +
     `<linearGradient id="${rimLightId}" gradientUnits="userSpaceOnUse" x1="${SUN.x1}" y1="${SUN.y1}" x2="${SUN.x2}" y2="${SUN.y2}">` +
-    `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.96"></stop>` +
-    `<stop offset="32%" stop-color="#ffffff" stop-opacity="0.35"></stop>` +
+    `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.78"></stop>` +
+    `<stop offset="14%" stop-color="#ffffff" stop-opacity="0.12"></stop>` +
+    `<stop offset="32%" stop-color="#ffffff" stop-opacity="0"></stop>` +
     `<stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>` +
     `</linearGradient>` +
     `<linearGradient id="${rimSatId}" gradientUnits="userSpaceOnUse" x1="${SUN.x2}" y1="${SUN.y2}" x2="${SUN.x1}" y2="${SUN.y1}">` +
-    `<stop offset="0%" stop-color="${edge}" stop-opacity="0.82"></stop>` +
-    `<stop offset="45%" stop-color="${base}" stop-opacity="0.28"></stop>` +
+    `<stop offset="0%" stop-color="${edge}" stop-opacity="0.98"></stop>` +
+    `<stop offset="40%" stop-color="${base}" stop-opacity="0.55"></stop>` +
     `<stop offset="100%" stop-color="${base}" stop-opacity="0"></stop>` +
     `</linearGradient>`;
   return { defs, fillId, rimLightId, rimSatId, clipId, hex: base, cast, filterId, filterHotId };
@@ -144,20 +146,23 @@ function glassTileDefs(d, fx) {
   return `<clipPath id="${fx.clipId}"><path d="${d}"></path></clipPath>${fx.defs}`;
 }
 
-function glassTileLayers(d, fx, baseOp, compact) {
-  const castDx = compact ? 7 : 14;
-  const castDy = compact ? 8 : 17;
-  const hiW = compact ? 1.05 : 1.35;
-  const satW = compact ? 0.95 : 1.15;
-  return `<g class="glass-tile">` +
-    `<path class="glass-cast" d="${d}" fill="${fx.cast}" fill-opacity="${CAST_OP}" transform="translate(${castDx} ${castDy})" filter="url(#${fx.filterId})"></path>` +
-    `<g class="glass-body">` +
+function glassCastLayer(d, fx, compact, forKey = "") {
+  const castDx = compact ? 7 : 15;
+  const castDy = compact ? 8 : 18;
+  const key = forKey ? ` data-for="${forKey}"` : "";
+  return `<path class="glass-cast"${key} d="${d}" fill="${fx.cast}" fill-opacity="${CAST_OP}" transform="translate(${castDx} ${castDy})" filter="url(#${fx.filterId})"></path>`;
+}
+
+function glassTileBody(d, fx, baseOp, compact) {
+  const hiW = compact ? 0.9 : 1.15;
+  const satW = compact ? 1.25 : 1.55;
+  return `<g class="glass-body">` +
     `<g clip-path="url(#${fx.clipId})">` +
     `<path class="glass-fill" d="${d}" fill="url(#${fx.fillId})" fill-opacity="${baseOp}"></path>` +
     `<path class="glass-rim-sat" d="${d}" fill="none" stroke="url(#${fx.rimSatId})" stroke-width="${satW}" stroke-linejoin="round"></path>` +
     `<path class="glass-rim-hi" d="${d}" fill="none" stroke="url(#${fx.rimLightId})" stroke-width="${hiW}" stroke-linejoin="round"></path>` +
-    `<path class="glass-contact" d="${d}" fill="none" stroke="#141414" stroke-opacity="0.07" stroke-width="0.55" stroke-linejoin="round"></path>` +
-    `</g></g></g>`;
+    `<path class="glass-contact" d="${d}" fill="none" stroke="#141414" stroke-opacity="0.055" stroke-width="0.4" stroke-linejoin="round"></path>` +
+    `</g></g>`;
 }
 
 function glassSparkStar(x, y, arm, sw) {
@@ -641,25 +646,76 @@ class FlavorWheel extends HTMLElement {
     });
   }
 
-  async load() {
+  dataUrls() {
+    const attr = this.getAttribute("data-src");
+    if (attr) return [attr];
+    const urls = [];
     try {
-      const src = this.getAttribute("data-src") || new URL("./flavor-data.json", import.meta.url).href;
-      const data = await fetch(src).then((r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json();
-      });
-      this.tree = data.tree || [];
-      this.notes = new Map((data.notes || []).map((n) => [n.id, n]));
-      const ww = this.wheelBox?.clientWidth || 0;
-      if (ww) {
-        this.wheelW = ww;
-        this.geom = wheelGeometry(ww);
+      const u = new URL("./flavor-data.json", import.meta.url);
+      u.searchParams.set("v", DATA_CACHE_BUST);
+      urls.push(u.href);
+    } catch { /* ignore */ }
+    try {
+      const u = new URL("flavor-wheel/flavor-data.json", document.baseURI || location.href);
+      u.searchParams.set("v", DATA_CACHE_BUST);
+      urls.push(u.href);
+    } catch { /* ignore */ }
+    return [...new Set(urls)];
+  }
+
+  async fetchJson(src, { timeoutMs = 8000 } = {}) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const r = await fetch(src, { signal: ctrl.signal, cache: "no-cache", credentials: "same-origin" });
+      if (!r.ok) throw new Error(`HTTP ${r.status} for ${src}`);
+      const data = await r.json();
+      if (!data || !Array.isArray(data.tree)) throw new Error(`Invalid wheel JSON from ${src}`);
+      return data;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  async load() {
+    if (this._loading) return;
+    this._loading = true;
+    let data = null;
+    let lastErr = null;
+    const urls = this.dataUrls();
+    try {
+      for (let attempt = 0; attempt < 3 && !data; attempt++) {
+        for (const src of urls) {
+          try {
+            data = await this.fetchJson(src);
+            break;
+          } catch (err) {
+            lastErr = err;
+          }
+        }
+        if (!data) await new Promise((r) => setTimeout(r, 180 * (attempt + 1)));
       }
-      this.applyInitial();
-      this.afterNav(true);
-    } catch (err) {
-      this.panelEl.innerHTML = `<p class="load-msg">Не удалось загрузить данные колеса.</p>`;
-      console.error(err);
+      if (!data) {
+        this.panelEl.innerHTML = `<p class="load-msg">Не удалось загрузить данные колеса.</p>`;
+        console.error(lastErr || new Error("wheel data fetch failed"));
+        return;
+      }
+      try {
+        this.tree = data.tree || [];
+        this.notes = new Map((data.notes || []).map((n) => [n.id, n]));
+        const ww = this.wheelBox?.clientWidth || 0;
+        if (ww) {
+          this.wheelW = ww;
+          this.geom = wheelGeometry(ww);
+        }
+        this.applyInitial();
+        this.afterNav(true);
+      } catch (err) {
+        console.error(err);
+        this.panelEl.innerHTML = `<p class="load-msg">Не удалось отрисовать колесо.</p>`;
+      }
+    } finally {
+      this._loading = false;
     }
   }
 
@@ -853,19 +909,28 @@ class FlavorWheel extends HTMLElement {
     this.segmentCount = Math.max(1, model.main.length);
     const filterReg = createGlassFilterRegistry();
     const compact = this.fxCompact;
-    const previewParts = [];
-    const previews = model.preview.map((p, i) => {
+    const previewDefs = [];
+    const previewCasts = [];
+    const previewBodies = [];
+    model.preview.forEach((p, i) => {
       const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PREVIEW_GAP, PREVIEW_RADIUS);
       const prefix = `preview-${level}-${i}`;
       const fx = acrylicTileFx(prefix, p.hex, g.middleR + 12, g.outerR, p.a0, p.a1, { compact, filters: filterReg });
-      previewParts.push(glassTileDefs(d, fx));
-      return `<g pointer-events="none">` +
-        `${glassTileLayers(d, fx, TILE_PREVIEW_OP, compact)}` +
-        `${glassEdgeSparks(g.middleR + 12, g.outerR, p.a0, p.a1, compact)}` +
-        `</g>`;
-    }).join("");
-    const segs = model.main.map((s) => this.segmentHtml(s, level, g, filterReg)).join("");
-    this.rotor.innerHTML = `<defs>${filterReg.defsHtml()}${previewParts.join("")}</defs><g pointer-events="none">${previews}</g>${segs}`;
+      previewDefs.push(glassTileDefs(d, fx));
+      previewCasts.push(glassCastLayer(d, fx, compact, `preview-${i}`));
+      previewBodies.push(
+        `<g pointer-events="none">${glassTileBody(d, fx, TILE_PREVIEW_OP, compact)}` +
+        `${glassEdgeSparks(g.middleR + 12, g.outerR, p.a0, p.a1, compact)}</g>`
+      );
+    });
+    const mainBuilt = model.main.map((s) => this.segmentHtml(s, level, g, filterReg));
+    const mainDefs = mainBuilt.map((x) => x.defs).join("");
+    const mainCasts = mainBuilt.map((x) => x.cast).join("");
+    const segs = mainBuilt.map((x) => x.html).join("");
+    this.rotor.innerHTML =
+      `<defs>${filterReg.defsHtml()}${previewDefs.join("")}${mainDefs}</defs>` +
+      `<g class="glass-casts" pointer-events="none">${previewCasts.join("")}${mainCasts}</g>` +
+      `<g pointer-events="none">${previewBodies.join("")}</g>${segs}`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
@@ -931,13 +996,14 @@ class FlavorWheel extends HTMLElement {
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
-    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}" data-filter-default="${fx.filterId}" data-filter-hot="${fx.filterHotId}">` +
-      `<defs>${glassTileDefs(d, fx)}</defs>` +
-      `${glassTileLayers(d, fx, baseOp, compact)}` +
+    const cast = glassCastLayer(d, fx, compact, `${s.kind}-${s.node.id}`);
+    const html = `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}" data-filter-default="${fx.filterId}" data-filter-hot="${fx.filterHotId}">` +
+      `${glassTileBody(d, fx, baseOp, compact)}` +
       `${glassEdgeSparks(s.rIn, s.rOut, s.a0, s.a1, compact)}` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
       `</g>`;
+    return { defs: glassTileDefs(d, fx), cast, html };
   }
 
   renderCenter() {
@@ -967,14 +1033,14 @@ class FlavorWheel extends HTMLElement {
     const hot = seg === this.hot || seg.matches(":focus-visible");
     seg.classList.toggle("is-hot", hot || selected);
     const filterId = (hot || selected) ? seg.dataset.filterHot : seg.dataset.filterDefault;
-    const cast = seg.querySelector(".glass-cast");
-    if (cast) {
-      if (filterId) cast.setAttribute("filter", `url(#${filterId})`);
-      cast.setAttribute("fill-opacity", String(hot || selected ? CAST_OP_HOT : CAST_OP));
+    const castEl = this.rotor?.querySelector(`.glass-casts .glass-cast[data-for="${seg.dataset.kind}-${seg.dataset.id}"]`);
+    if (castEl) {
+      if (filterId) castEl.setAttribute("filter", `url(#${filterId})`);
+      castEl.setAttribute("fill-opacity", String(hot || selected ? CAST_OP_HOT : CAST_OP));
     }
     const base = Number(seg.dataset.baseOp || TILE_FACE_OP);
     const fill = seg.querySelector(".glass-fill");
-    if (fill) fill.setAttribute("fill-opacity", String(Math.min(0.62, base + (hot || selected ? 0.05 : 0))));
+    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.04 : 0))));
   }
 
   updateSelected() {
