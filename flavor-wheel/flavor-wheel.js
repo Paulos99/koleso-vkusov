@@ -312,6 +312,11 @@ function cssText() {
   width: 100%;
   will-change: opacity, transform, filter;
 }
+:host([data-layout="narrow"]) .panel-layer {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 /* Мягкий fade у нижнего края при переполнении инфо-блока. */
 :host([data-layout="narrow"]) .panel::after {
   content: "";
@@ -585,6 +590,10 @@ svg.wheel.is-dragging { cursor: grabbing; }
 :host([data-layout="narrow"]) .sheet {
   border-radius: clamp(18px, 5vw, 24px);
   box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  flex: 1 1 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .sheet-head {
   padding: 24px 24px 20px;
@@ -618,7 +627,14 @@ svg.wheel.is-dragging { cursor: grabbing; }
 }
 .sheet-body { padding: 8px 24px 24px; color: #000000; }
 :host([data-layout="narrow"]) .sheet-body {
+  flex: 1 1 auto;
   padding: 4px clamp(14px, 3.8vw, 20px) clamp(14px, 3.5vw, 20px);
+}
+:host([data-layout="narrow"]) .sheet-empty {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .sheet-section { padding: 16px 0; border-top: 1px solid rgba(0,0,0,.1); }
 :host([data-layout="narrow"]) .sheet-section { padding: clamp(10px, 2.4vw, 14px) 0; }
