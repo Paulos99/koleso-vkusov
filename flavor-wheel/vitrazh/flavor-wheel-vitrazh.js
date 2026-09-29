@@ -85,7 +85,8 @@ class FlavorWheelVitrazh extends FlavorWheel {
     }).join("");
 
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
-    this.rotor.innerHTML = `<g class="preview-ring" pointer-events="none">${previews}</g>${segs}`;
+    // Превью поверх main: витражная деформация L1 иногда заходит в полосу outer-кольца и закрывала хвост.
+    this.rotor.innerHTML = `${segs}<g class="preview-ring" pointer-events="none">${previews}</g>`;
     this.applyRotation();
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
