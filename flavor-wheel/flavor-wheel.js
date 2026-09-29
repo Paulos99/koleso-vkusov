@@ -1507,12 +1507,13 @@ class FlavorWheel extends HTMLElement {
       .filter((t) => String(t.dataset.parentId) === id)
       .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI));
     const others = all.filter((t) => String(t.dataset.parentId) !== id);
+    const step = (i) => Math.min(i * CASCADE_STAGGER_MS, CASCADE_STAGGER_MAX_MS);
     // Чужие превью опускаются тем же темпом; свои — поднимаются синхронно с родителем.
     others.forEach((tile, i) => {
-      this.animatePreview(tile, "down", Math.min(i, 2) * CASCADE_STAGGER_MS, HOVER_LIFT_MS);
+      this.animatePreview(tile, "down", step(i), HOVER_LIFT_MS);
     });
     kids.forEach((tile, i) => {
-      this.animatePreview(tile, "up", i * CASCADE_STAGGER_MS, HOVER_LIFT_MS);
+      this.animatePreview(tile, "up", step(i), HOVER_LIFT_MS);
     });
   }
 
@@ -1525,6 +1526,7 @@ class FlavorWheel extends HTMLElement {
       this.resetCascade(true);
       return;
     }
+    const step = (i) => Math.min(i * CASCADE_STAGGER_MS, CASCADE_STAGGER_MAX_MS);
     let tiles;
     if (parentId == null) {
       tiles = [...this.shadowRoot.querySelectorAll(".preview-tile")];
@@ -1536,7 +1538,7 @@ class FlavorWheel extends HTMLElement {
     tiles
       .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI))
       .forEach((tile, i) => {
-        this.animatePreview(tile, "down", i * CASCADE_STAGGER_MS, HOVER_LIFT_MS);
+        this.animatePreview(tile, "down", step(i), HOVER_LIFT_MS);
       });
     // stray elevated tiles from interrupted switches — тоже плавно, от текущего состояния
     this.shadowRoot.querySelectorAll(".preview-motion").forEach((motion) => {
