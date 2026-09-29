@@ -110,8 +110,9 @@ const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
 const PARA_MAX_NARROW = 1.75;
 const PARA_LERP = 0.18;
-/** Каскад «лесенкой»: тот же темп, что hover; ступень ≤30 ms. */
-const CASCADE_STAGGER_MS = 24;
+/** Каскад «лесенкой»: тот же темп, что hover; ступень ≤30 ms, суммарно ≤60 ms. */
+const CASCADE_STAGGER_MS = 20;
+const CASCADE_STAGGER_MAX_MS = 60;
 const CASCADE_SCALE = 1.05;
 const CASCADE_OUT = 6;
 const LIFT_REST = {
