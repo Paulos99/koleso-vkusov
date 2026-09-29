@@ -38,6 +38,37 @@ function mixHex(hex, amount = 0.78) {
   return toHex({ r: mix(r), g: mix(g), b: mix(b) });
 }
 
+/** HSL: поднять lightness на dl (абс. 0–1), насыщенность сохранить/чуть усилить — без белого подмеса. */
+function lightenJuicy(hex, dl = 0.08) {
+  let { r, g, b } = parseRgb(hex);
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  let l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
+    else if (max === g) h = ((b - r) / d + 2) * 60;
+    else h = ((r - b) / d + 4) * 60;
+  }
+  s = Math.min(1, s * 1.03);
+  l = Math.min(0.9, l + dl);
+  const C = s * (1 - Math.abs(2 * l - 1));
+  const X = C * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - C / 2;
+  let r1 = 0; let g1 = 0; let b1 = 0;
+  if (h < 60) [r1, g1, b1] = [C, X, 0];
+  else if (h < 120) [r1, g1, b1] = [X, C, 0];
+  else if (h < 180) [r1, g1, b1] = [0, C, X];
+  else if (h < 240) [r1, g1, b1] = [0, X, C];
+  else if (h < 300) [r1, g1, b1] = [X, 0, C];
+  else [r1, g1, b1] = [C, 0, X];
+  return toHex({ r: (r1 + m) * 255, g: (g1 + m) * 255, b: (b1 + m) * 255 });
+}
+
 /* Зазор чуть увеличен (+stroke), чтобы после снятия белой обводки
    видимая ширина щели между цветными заливками осталась как раньше. */
 const MAIN_GAP = 13.25;
@@ -45,22 +76,27 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion3";
+const DATA_CACHE_BUST = "motion4";
+const TILE_LIT_REST = 0.08;
+const TILE_LIT_HOT = 0.15;
+const PARA_MAX_WIDE = 2.5;
+const PARA_MAX_NARROW = 1.75;
+const PARA_LERP = 0.18;
 const LIFT_REST = {
   transform: "scale(1)",
-  filter: "brightness(1) drop-shadow(0px 0px 0px rgba(0,0,0,0))",
+  filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0))",
 };
 const LIFT_LOW = {
   transform: "scale(1.02)",
-  filter: "brightness(1.02) drop-shadow(0px 3px 5px rgba(0,0,0,0.12))",
+  filter: "drop-shadow(0px 3px 5px rgba(0,0,0,0.12))",
 };
 const LIFT_HIGH = {
   transform: "scale(1.045)",
-  filter: "brightness(1.055) drop-shadow(1px 9px 12px rgba(0,0,0,0.2))",
+  filter: "drop-shadow(1px 9px 12px rgba(0,0,0,0.2))",
 };
 const LIFT_STATIC = {
   transform: "scale(1.03)",
-  filter: "brightness(1.03) drop-shadow(0px 5px 8px rgba(0,0,0,0.16))",
+  filter: "drop-shadow(0px 5px 8px rgba(0,0,0,0.16))",
 };
 const GRAIN_TILE = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">' +
@@ -258,15 +294,20 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform-box: view-box;
   transform-origin: 400px 400px;
   transform: scale(1);
-  filter: brightness(1) drop-shadow(0px 0px 0px rgba(0,0,0,0));
+  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
   will-change: transform, filter;
 }
+/* Локальный параллакс заливки — отдельный слой внутри подъёма; hit-test остаётся на path */
+.tile-parallax {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translate(0px, 0px);
+  will-change: transform;
+}
 .seg .tile-fill {
-  transition: filter .18s ease;
+  transition: fill .22s ease;
   transform-box: fill-box;
 }
-.seg.is-hot:not([data-selected="1"]) .tile-fill { filter: brightness(1.05); }
-.seg.is-press .tile-fill { filter: brightness(1.1); }
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -373,6 +414,7 @@ span.chip { cursor: default; }
 @media (prefers-reduced-motion: reduce) {
   .seg, .tile-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
   .seg.is-hot, .seg.is-press, .center-hit.is-back:hover { transform: none; }
+  .tile-parallax { transform: none !important; will-change: auto; }
   .wheel-tilt {
     transform: none !important;
     filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.12)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.07));
@@ -426,6 +468,10 @@ class FlavorWheel extends HTMLElement {
     this.tiltMode = "none";
     this.gyroAllowed = false;
     this.gyroAsked = false;
+    this.paraSeg = null;
+    this.paraTarget = { x: 0, y: 0 };
+    this.paraCurrent = { x: 0, y: 0 };
+    this.paraRaf = 0;
     this.onOrient = (e) => this.handleOrientation(e);
     this.onMouseMove = (e) => this.handleMouseTilt(e);
     this.onMouseLeave = () => {
@@ -434,8 +480,13 @@ class FlavorWheel extends HTMLElement {
     };
     this.onReducedChange = (e) => {
       this.reduced = e.matches;
-      if (this.reduced) this.resetTilt(true);
-      else this.ensureTiltLoop();
+      if (this.reduced) {
+        this.resetTilt(true);
+        this.resetParallax(true);
+      } else {
+        this.ensureTiltLoop();
+        this.ensureParaLoop();
+      }
     };
   }
 
@@ -458,6 +509,7 @@ class FlavorWheel extends HTMLElement {
     this.hostRo?.disconnect();
     cancelAnimationFrame(this.inertiaRaf);
     cancelAnimationFrame(this.tiltRaf);
+    cancelAnimationFrame(this.paraRaf);
     clearTimeout(this.urlTimer);
     window.removeEventListener("deviceorientation", this.onOrient);
     this.shadowRoot?.removeEventListener("pointermove", this.onMouseMove);
@@ -547,6 +599,7 @@ class FlavorWheel extends HTMLElement {
       if (e.relatedTarget && seg.contains(e.relatedTarget)) return;
       if (this.hot === seg) this.hot = null;
       this.paintSeg(seg);
+      if (this.paraSeg === seg) this.clearParaTarget();
     });
     this.svg.addEventListener("focusin", (e) => {
       const seg = e.target.closest?.(".seg");
@@ -560,6 +613,7 @@ class FlavorWheel extends HTMLElement {
       if (this.hot === seg) this.hot = null;
       this.paintSeg(seg);
     });
+    this.svg.addEventListener("pointermove", (e) => this.handleTileParallax(e), { passive: true });
     this.shadowRoot.addEventListener("click", (e) => this.onClick(e));
     this.shadowRoot.addEventListener("keydown", (e) => {
       if (e.key !== "Enter" && e.key !== " ") return;
@@ -577,6 +631,7 @@ class FlavorWheel extends HTMLElement {
     this.shadowRoot.addEventListener("pointermove", this.onMouseMove, { passive: true });
     this.wheelPerspective?.addEventListener("pointerleave", this.onMouseLeave);
     this.ensureTiltLoop();
+    this.ensureParaLoop();
   }
 
   watch() {
@@ -863,7 +918,8 @@ class FlavorWheel extends HTMLElement {
     this.segmentCount = Math.max(1, model.main.length);
     const previews = model.preview.map((p) => {
       const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PREVIEW_GAP, PREVIEW_RADIUS);
-      return `<path d="${d}" fill="${p.hex}" fill-opacity="1" stroke="none" stroke-width="0"></path>`;
+      const fill = lightenJuicy(p.hex, TILE_LIT_REST);
+      return `<path d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0" data-hex-raw="${esc(p.hex)}"></path>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
     this.rotor.innerHTML =
@@ -871,6 +927,7 @@ class FlavorWheel extends HTMLElement {
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
+    this.resetParallax(true);
     this.renderCenter();
     this.shadowRoot.querySelectorAll(".seg").forEach((seg) => this.paintSeg(seg));
   }
@@ -929,11 +986,14 @@ class FlavorWheel extends HTMLElement {
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
-    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" style="--seg-hex:${s.node.hex}">` +
+    const raw = s.node.hex;
+    const fill = lightenJuicy(raw, s.selected ? TILE_LIT_HOT : TILE_LIT_REST);
+    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-hex-raw="${esc(raw)}" style="--seg-hex:${raw}">` +
       `<g class="tile-motion">` +
+      `<g class="tile-parallax">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
-      `<path class="tile-fill" d="${d}" fill="${s.node.hex}" fill-opacity="1" stroke="none" stroke-width="0"></path>` +
-      `</g></g>` +
+      `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0"></path>` +
+      `</g></g></g>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
       `</g>`;
@@ -964,15 +1024,20 @@ class FlavorWheel extends HTMLElement {
   paintSeg(seg) {
     const selected = seg.dataset.selected === "1";
     const hot = seg === this.hot || seg.matches(":focus-visible");
-    // is-hot только для невыбранных — иначе hover-filter конфликтует с lift.
+    const pressed = seg.classList.contains("is-press") || seg === this.pressedSeg;
+    // is-hot только для невыбранных — иначе hover-scale конфликтует с lift.
     seg.classList.toggle("is-hot", hot && !selected);
     const body = seg.querySelector(".tile-body");
     const motion = seg.querySelector(".tile-motion");
+    const fill = seg.querySelector(".tile-fill");
+    const raw = seg.dataset.hexRaw || "#cccccc";
+    const lit = selected || hot || pressed ? TILE_LIT_HOT : TILE_LIT_REST;
+    if (fill) fill.setAttribute("fill", lightenJuicy(raw, lit));
     if (selected) {
       body?.setAttribute("filter", "url(#wheel-petal-shadow-selected)");
       this.startLiftAnim(motion);
     } else {
-      body?.setAttribute("filter", `url(#wheel-petal-shadow-${hot ? "hover" : "default"})`);
+      body?.setAttribute("filter", `url(#wheel-petal-shadow-${hot || pressed ? "hover" : "default"})`);
       this.stopLiftAnim(motion);
     }
   }
@@ -1215,8 +1280,10 @@ class FlavorWheel extends HTMLElement {
 
   clearPress() {
     if (!this.pressedSeg) return;
-    this.pressedSeg.classList.remove("is-press");
+    const prev = this.pressedSeg;
+    prev.classList.remove("is-press");
     this.pressedSeg = null;
+    this.paintSeg(prev);
   }
 
   setPress(seg) {
@@ -1225,6 +1292,108 @@ class FlavorWheel extends HTMLElement {
     if (!seg) return;
     this.pressedSeg = seg;
     seg.classList.add("is-press");
+    this.paintSeg(seg);
+  }
+
+  paraMaxPx() {
+    const w = window.innerWidth || this.wheelBox?.clientWidth || 1440;
+    return w >= 800 ? PARA_MAX_WIDE : PARA_MAX_NARROW;
+  }
+
+  clearParaTarget() {
+    this.paraTarget.x = 0;
+    this.paraTarget.y = 0;
+    this.ensureParaLoop();
+  }
+
+  resetParallax(hard = false) {
+    this.paraTarget.x = 0;
+    this.paraTarget.y = 0;
+    if (hard) {
+      if (this.paraSeg) {
+        const layer = this.paraSeg.querySelector?.(".tile-parallax");
+        if (layer) layer.style.transform = "";
+      }
+      this.paraSeg = null;
+      this.paraCurrent.x = 0;
+      this.paraCurrent.y = 0;
+      cancelAnimationFrame(this.paraRaf);
+      this.paraRaf = 0;
+    }
+  }
+
+  applyParaStyles() {
+    if (!this.paraSeg) return;
+    const layer = this.paraSeg.querySelector(".tile-parallax");
+    if (!layer) return;
+    const x = this.paraCurrent.x;
+    const y = this.paraCurrent.y;
+    if (Math.abs(x) < 0.02 && Math.abs(y) < 0.02) {
+      layer.style.transform = "";
+      return;
+    }
+    layer.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
+  }
+
+  ensureParaLoop() {
+    if (this.reduced || this.paraRaf) return;
+    const tick = () => {
+      if (this.reduced) {
+        this.paraRaf = 0;
+        this.resetParallax(true);
+        return;
+      }
+      const dx = this.paraTarget.x - this.paraCurrent.x;
+      const dy = this.paraTarget.y - this.paraCurrent.y;
+      this.paraCurrent.x += dx * PARA_LERP;
+      this.paraCurrent.y += dy * PARA_LERP;
+      if (Math.abs(dx) < 0.02 && Math.abs(dy) < 0.02) {
+        this.paraCurrent.x = this.paraTarget.x;
+        this.paraCurrent.y = this.paraTarget.y;
+      }
+      this.applyParaStyles();
+      const idle =
+        this.paraTarget.x === 0 && this.paraTarget.y === 0 &&
+        Math.abs(this.paraCurrent.x) < 0.02 && Math.abs(this.paraCurrent.y) < 0.02;
+      if (idle) {
+        if (this.paraSeg) {
+          const layer = this.paraSeg.querySelector(".tile-parallax");
+          if (layer) layer.style.transform = "";
+        }
+        this.paraCurrent.x = 0;
+        this.paraCurrent.y = 0;
+        this.paraSeg = null;
+        this.paraRaf = 0;
+        return;
+      }
+      this.paraRaf = requestAnimationFrame(tick);
+    };
+    this.paraRaf = requestAnimationFrame(tick);
+  }
+
+  handleTileParallax(e) {
+    if (this.reduced || this.drag?.active) return;
+    const seg = e.target.closest?.(".seg");
+    if (!seg) {
+      if (this.paraSeg) this.clearParaTarget();
+      return;
+    }
+    if (this.paraSeg && this.paraSeg !== seg) {
+      const prev = this.paraSeg.querySelector(".tile-parallax");
+      if (prev) prev.style.transform = "";
+      this.paraCurrent.x = 0;
+      this.paraCurrent.y = 0;
+    }
+    this.paraSeg = seg;
+    const fill = seg.querySelector(".tile-fill");
+    const box = (fill || seg).getBoundingClientRect();
+    if (!box.width || !box.height) return;
+    const max = this.paraMaxPx();
+    const nx = ((e.clientX - box.left) / box.width) * 2 - 1;
+    const ny = ((e.clientY - box.top) / box.height) * 2 - 1;
+    this.paraTarget.x = Math.max(-max, Math.min(max, nx * max));
+    this.paraTarget.y = Math.max(-max, Math.min(max, ny * max));
+    this.ensureParaLoop();
   }
 
   async maybeRequestGyro() {
