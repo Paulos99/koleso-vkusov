@@ -1,5 +1,5 @@
 import { converter, formatHex, clampChroma } from "./vendor/culori.esm.js";
-import { loadGirlFromSvg, toCubics, polarOf, cart } from "./vitrazh-lib.js";
+import { loadGirlFromSvg, toCubics, polarOf, cart } from "./vitrazh-lib.js?v=vitrazh3";
 
 export const MAIN_GAP = 13.25;
 export const MAIN_RADIUS = 24;

@@ -12,7 +12,7 @@ import {
   preferRasterPreview,
   vitrazhPixelScale,
   vitrazhTileRasterHtml,
-} from "./vitrazh-style.js";
+} from "./vitrazh-style.js?v=vitrazh3";
 
 const ETALON_URL = new URL("./vitrazh-cell-etalon.svg", import.meta.url).href;
 const VITRAZH_CACHE_BUST = "vitrazh3";
