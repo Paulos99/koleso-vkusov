@@ -2361,3 +2361,5 @@ class FlavorWheel extends HTMLElement {
 if (!customElements.get("flavor-wheel")) {
   customElements.define("flavor-wheel", FlavorWheel);
 }
+
+export { FlavorWheel, lightenJuicy, TILE_LIT_REST, TILE_LIT_HOT };
