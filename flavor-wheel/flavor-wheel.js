@@ -75,7 +75,11 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion15";
+const DATA_CACHE_BUST = "motion16";
+/** Лёгкая «материя» плитки (п.14): прозрачность / blur / зерно — без молочного стекла. */
+const TILE_FILL_OPACITY = 0.9;
+const TILE_SOFT_STDDEV = 0.55;
+const TILE_GRAIN_OPACITY = 0.055;
 
 /** Нормализованный непрозрачный hex из JSON — без mix/lighten. */
 function solidHex(hex) {
@@ -122,9 +126,9 @@ const LIFT_LOW_T = { transform: "scale(1.02)" };
 const LIFT_HIGH_T = { transform: "scale(1.045)" };
 const LIFT_STATIC_T = { transform: "scale(1.03)" };
 const LIFT_REST_F = { filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0))" };
-const LIFT_LOW_F = { filter: "drop-shadow(0px 3px 5px rgba(0,0,0,0.12))" };
-const LIFT_HIGH_F = { filter: "drop-shadow(1px 9px 12px rgba(0,0,0,0.2))" };
-const LIFT_STATIC_F = { filter: "drop-shadow(0px 5px 8px rgba(0,0,0,0.16))" };
+const LIFT_LOW_F = { filter: "drop-shadow(0px 3px 5px rgba(0,0,0,0.09))" };
+const LIFT_HIGH_F = { filter: "drop-shadow(1px 8px 11px rgba(0,0,0,0.14))" };
+const LIFT_STATIC_F = { filter: "drop-shadow(0px 4px 7px rgba(0,0,0,0.11))" };
 const GRAIN_TILE = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">' +
   '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>' +
@@ -403,9 +407,10 @@ function cssText() {
   transform-style: preserve-3d;
   transform: rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry));
   will-change: transform;
+  /* Чуть мягче тень колеса — с полупрозрачными плитками не сереет */
   filter:
-    drop-shadow(var(--tilt-sx) var(--tilt-sy) 28px rgba(0, 0, 0, 0.14))
-    drop-shadow(0 6px 10px rgba(0, 0, 0, 0.08));
+    drop-shadow(var(--tilt-sx) var(--tilt-sy) 26px rgba(0, 0, 0, 0.10))
+    drop-shadow(0 5px 9px rgba(0, 0, 0, 0.06));
 }
 .wheel-shine {
   position: absolute;
@@ -513,11 +518,11 @@ svg.wheel.is-dragging { cursor: grabbing; }
   filter: drop-shadow(0px 0px 0px rgba(0, 0, 0, 0));
 }
 .seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-shade {
-  filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.14));
   transition: filter var(--lift-dur) var(--lift-ease);
 }
 .seg.is-press .tile-shade {
-  filter: drop-shadow(0px 7px 14px rgba(0, 0, 0, 0.22));
+  filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.16));
   transition: filter ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1);
 }
 .seg[data-selected="1"] .tile-shade {
@@ -702,23 +707,34 @@ span.chip { cursor: default; }
   .preview-motion { transform: none !important; filter: none !important; will-change: auto; }
   .wheel-tilt {
     transform: none !important;
-    filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.12)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.07));
+    filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.09)) drop-shadow(0 3px 7px rgba(0, 0, 0, 0.05));
   }
 }
 `;
 }
 
 function filters() {
+  // Тени чуть слабее: сквозь fill-opacity ~0.9 не должны сереть.
   const specs = [
-    ["wheel-petal-shadow-default", 2, 5, 0.12],
-    ["wheel-petal-shadow-selected", 4, 8, 0.18],
-    ["wheel-petal-shadow-hover", 6, 12, 0.22],
-    ["wheel-preview-shadow", 1, 3, 0.08],
-    ["wheel-center-shadow", 2, 6, 0.08],
+    ["wheel-petal-shadow-default", 2, 4.5, 0.08],
+    ["wheel-petal-shadow-selected", 3.5, 7, 0.12],
+    ["wheel-petal-shadow-hover", 5, 10, 0.14],
+    ["wheel-preview-shadow", 1, 2.5, 0.05],
+    ["wheel-center-shadow", 2, 5, 0.06],
   ];
-  return specs.map(([id, dy, dev, op]) =>
+  const shadows = specs.map(([id, dy, dev, op]) =>
     `<filter id="${id}" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="${dy}" stdDeviation="${dev}" flood-color="#000" flood-opacity="${op}"></feDropShadow></filter>`
   ).join("");
+  // Один общий finish-фильтр на все плитки/превью: мягкий край + статичное зерно.
+  const surface =
+    `<filter id="wheel-tile-surface" x="-14%" y="-14%" width="128%" height="128%" color-interpolation-filters="sRGB">` +
+    `<feGaussianBlur in="SourceGraphic" stdDeviation="${TILE_SOFT_STDDEV}" result="soft"/>` +
+    `<feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="4" stitchTiles="stitch" result="noise"/>` +
+    `<feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.52 0 0 0 0 0.52 0 0 0 0 0.52 0 0 0 ${TILE_GRAIN_OPACITY} 0" result="grain"/>` +
+    `<feComposite in="grain" in2="soft" operator="in" result="grainClip"/>` +
+    `<feBlend in="soft" in2="grainClip" mode="overlay" result="out"/>` +
+    `</filter>`;
+  return shadows + surface;
 }
 
 class FlavorWheel extends HTMLElement {
@@ -1264,7 +1280,7 @@ class FlavorWheel extends HTMLElement {
       const mid = (p.a0 + p.a1) / 2;
       return `<g class="preview-tile" data-parent-id="${esc(String(p.parentId))}" data-preview-i="${p.index}" data-mid="${mid}">` +
         `<g class="preview-motion">` +
-        `<path d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0" data-hex-raw="${esc(p.hex)}"></path>` +
+        `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="${TILE_FILL_OPACITY}" stroke="none" stroke-width="0" filter="url(#wheel-tile-surface)" data-hex-raw="${esc(p.hex)}"></path>` +
         `</g></g>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
@@ -1347,7 +1363,7 @@ class FlavorWheel extends HTMLElement {
       `<g class="tile-parallax">` +
       `<g class="tile-shade">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
-      `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0"></path>` +
+      `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="${TILE_FILL_OPACITY}" stroke="none" stroke-width="0" filter="url(#wheel-tile-surface)"></path>` +
       `</g></g>` +
       `<text class="tile-label" x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000" stroke="none">${tspans}</text>` +
       `</g></g></g>` +
