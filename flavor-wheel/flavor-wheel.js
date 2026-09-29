@@ -75,12 +75,20 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion7";
+const DATA_CACHE_BUST = "motion8";
 /** Hover-левитация плитки (scale/тень/fill): было ~180–220 ms → ~×5. */
 const HOVER_LIFT_MS = 1200;
 const PRESS_LIFT_MS = 140;
 const EASE_LIFT_UP = "cubic-bezier(0.22, 0.2, 0.36, 1)";
 const EASE_LIFT_DOWN = "cubic-bezier(0.45, 0.05, 0.55, 0.95)";
+/** Тяжёлая инерция маховика (°/с, трение 1/с). */
+const INERTIA_SAMPLE_MS = 100;
+const INERTIA_PAUSE_MS = 100;
+const INERTIA_MIN_GESTURE_DPS = 36;
+const INERTIA_TRANSFER = 0.48;
+const INERTIA_VMAX_DPS = 480;
+const INERTIA_FRICTION = 2.1;
+const INERTIA_STOP_DPS = 10;
 const TILE_LIT_REST = 0.08;
 const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
@@ -523,6 +531,9 @@ class FlavorWheel extends HTMLElement {
     this.drag = null;
     this.lastPointerType = "";
     this.suppressClick = false;
+    this.inertiaRaf = 0;
+    this.inertiaV = 0;
+    this.inertiaLastT = 0;
     this.urlTimer = 0;
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.pressedSeg = null;
@@ -551,6 +562,7 @@ class FlavorWheel extends HTMLElement {
         this.resetTilt(true);
         this.resetParallax(true);
         this.resetCascade(true);
+        this.stopInertia();
       } else {
         this.ensureTiltLoop();
         this.ensureParaLoop();
@@ -576,6 +588,7 @@ class FlavorWheel extends HTMLElement {
   disconnectedCallback() {
     this.ro?.disconnect();
     this.hostRo?.disconnect();
+    this.stopInertia();
     cancelAnimationFrame(this.tiltRaf);
     cancelAnimationFrame(this.paraRaf);
     clearTimeout(this.urlTimer);
@@ -654,6 +667,7 @@ class FlavorWheel extends HTMLElement {
       this.drag = null;
       this.svg.classList.remove("is-dragging");
       this.clearPress();
+      this.stopInertia();
     });
     this.svg.addEventListener("pointerover", (e) => {
       const seg = e.target.closest?.(".seg");
@@ -842,6 +856,7 @@ class FlavorWheel extends HTMLElement {
   }
 
   afterNav(rebuild) {
+    this.stopInertia();
     if (rebuild) {
       this.rotation = 0;
       this.renderWheel();
@@ -1719,6 +1734,70 @@ class FlavorWheel extends HTMLElement {
     this.tiltRaf = requestAnimationFrame(tick);
   }
 
+  stopInertia() {
+    const was = !!this.inertiaRaf || Math.abs(this.inertiaV) > 0;
+    if (this.inertiaRaf) {
+      cancelAnimationFrame(this.inertiaRaf);
+      this.inertiaRaf = 0;
+    }
+    this.inertiaV = 0;
+    this.inertiaLastT = 0;
+    return was;
+  }
+
+  /** Угловая скорость жеста (°/с) по последним ~100 мс сэмплов. */
+  gestureSpeedDps(samples, nowTs) {
+    if (!samples?.length) return 0;
+    const last = samples[samples.length - 1];
+    if (nowTs - last.t > INERTIA_PAUSE_MS) return 0;
+    const t0 = last.t - INERTIA_SAMPLE_MS;
+    let i = 0;
+    while (i < samples.length - 1 && samples[i].t < t0) i += 1;
+    const first = samples[i];
+    const dt = last.t - first.t;
+    if (dt < 20) return 0;
+    return ((last.rot - first.rot) / dt) * 1000;
+  }
+
+  /** Передача <1 + мягкий потолок tanh → стартовая скорость инерции °/с. */
+  mapInertiaSpeed(gestureDps) {
+    if (!Number.isFinite(gestureDps)) return 0;
+    if (Math.abs(gestureDps) < INERTIA_MIN_GESTURE_DPS) return 0;
+    const raw = gestureDps * INERTIA_TRANSFER;
+    const sign = raw < 0 ? -1 : 1;
+    return sign * INERTIA_VMAX_DPS * Math.tanh(Math.abs(raw) / INERTIA_VMAX_DPS);
+  }
+
+  startInertia(v0Dps) {
+    this.stopInertia();
+    if (this.reduced || Math.abs(v0Dps) < INERTIA_STOP_DPS) return;
+    this.inertiaV = v0Dps;
+    this.inertiaLastT = performance.now();
+    const tick = (now) => {
+      if (this.reduced) {
+        this.stopInertia();
+        return;
+      }
+      let dt = (now - this.inertiaLastT) / 1000;
+      this.inertiaLastT = now;
+      if (dt <= 0) {
+        this.inertiaRaf = requestAnimationFrame(tick);
+        return;
+      }
+      if (dt > 0.05) dt = 0.05;
+      this.rotation += this.inertiaV * dt;
+      this.inertiaV *= Math.exp(-INERTIA_FRICTION * dt);
+      this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
+      if (Math.abs(this.inertiaV) < INERTIA_STOP_DPS) {
+        this.inertiaV = 0;
+        this.inertiaRaf = 0;
+        return;
+      }
+      this.inertiaRaf = requestAnimationFrame(tick);
+    };
+    this.inertiaRaf = requestAnimationFrame(tick);
+  }
+
   onDown(e) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     this.lastPointerType = e.pointerType || "";
@@ -1727,9 +1806,18 @@ class FlavorWheel extends HTMLElement {
       if (e.cancelable) e.preventDefault();
     }
     if (e.pointerType === "touch" || e.pointerType === "pen") this.maybeRequestGyro();
+    // Хват во время инерции: стоп + это касание не клик.
+    const grabbed = this.stopInertia();
     const seg = e.target.closest?.(".seg");
-    if (seg) this.setPress(seg);
-    this.drag = { last: this.pointerAngle(e), moved: 0, active: false, id: e.pointerId };
+    if (seg && !grabbed) this.setPress(seg);
+    this.drag = {
+      last: this.pointerAngle(e),
+      moved: 0,
+      active: false,
+      id: e.pointerId,
+      samples: [],
+      suppressTap: grabbed,
+    };
   }
 
   onMove(e) {
@@ -1748,22 +1836,37 @@ class FlavorWheel extends HTMLElement {
     }
     this.rotation += delta;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
+    const samples = this.drag.samples;
+    samples.push({ t: e.timeStamp, rot: this.rotation });
+    const cut = e.timeStamp - (INERTIA_SAMPLE_MS + 40);
+    while (samples.length && samples[0].t < cut) samples.shift();
     if (e.cancelable) e.preventDefault();
   }
 
   onUp(e) {
     if (!this.drag || (e && e.pointerId !== this.drag.id)) return;
     const active = this.drag.active;
+    const samples = this.drag.samples;
+    const suppressTap = this.drag.suppressTap;
+    const nowTs = e?.timeStamp ?? performance.now();
     this.drag = null;
     this.svg.classList.remove("is-dragging");
     this.clearPress();
     if (e && (e.pointerType === "mouse" || e.pointerType === "touch" || e.pointerType === "pen")) {
       this.blurPointerFocus();
     }
-    // Без инерции/snap: угол остаётся ровно там, где отпустили.
-    if (!active) return;
-    this.suppressClick = true;
-    setTimeout(() => { this.suppressClick = false; }, 0);
+    if (active) {
+      this.suppressClick = true;
+      setTimeout(() => { this.suppressClick = false; }, 0);
+      const gesture = this.gestureSpeedDps(samples, nowTs);
+      const v0 = this.mapInertiaSpeed(gesture);
+      this.startInertia(v0);
+      return;
+    }
+    if (suppressTap) {
+      this.suppressClick = true;
+      setTimeout(() => { this.suppressClick = false; }, 0);
+    }
   }
 }
 
