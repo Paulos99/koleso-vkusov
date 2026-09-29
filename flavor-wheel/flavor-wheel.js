@@ -76,7 +76,7 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion6";
+const DATA_CACHE_BUST = "motion6b";
 /** Hover-левитация плитки (scale/тень/fill): было ~180–220 ms → ~×5. */
 const HOVER_LIFT_MS = 1200;
 const PRESS_LIFT_MS = 140;
@@ -312,17 +312,19 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform-origin: 400px 400px;
   transform: scale(1);
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
+  /* Опускание: мягкий симметричный settle на всю длительность */
   transition:
-    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.33, 0, 0.2, 1),
-    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.33, 0, 0.2, 1);
+    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.45, 0.05, 0.55, 0.95),
+    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.45, 0.05, 0.55, 0.95);
   will-change: transform, filter;
 }
 .seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-levitate {
   transform: scale(1.03);
   filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
+  /* Подъём: мягкий ease-in-out (не front-loaded), ~×5 к прежним ~180 ms */
   transition:
-    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 0.2, 0.36, 1),
+    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 0.2, 0.36, 1);
 }
 .seg.is-press .tile-levitate {
   transform: scale(1.055);
@@ -347,7 +349,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
   will-change: transform;
 }
 .seg .tile-fill {
-  transition: fill ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: fill ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 0.2, 0.36, 1);
   transform-box: fill-box;
 }
 .seg.is-press .tile-fill {
