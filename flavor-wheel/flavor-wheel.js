@@ -75,7 +75,7 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion10";
+const DATA_CACHE_BUST = "motion11";
 /** Смена info-панели: контент + высота. */
 const PANEL_HEIGHT_MS = 560;
 const PANEL_OUT_MS = 280;
@@ -141,7 +141,7 @@ function cssText() {
   --fw-max-width: 1280px;
   --fw-bg: transparent;
   --fw-ink: #000000;
-  /* Стабильная высота: JS --fw-stable-h (px) при смене ширины/ориентации; CSS — svh/vh. */
+  /* Стабильная высота экрана (панель/layout); на размер колеса не влияет. */
   --fw-vh: 1vh;
   --fw-stable-h: calc(var(--fw-vh) * 100);
   --fw-stable-h: 100vh;
@@ -153,9 +153,9 @@ function cssText() {
   --fw-trail-slot: 44px;
   --fw-trail-reserve: calc(var(--fw-trail-slot) + 12px);
   --fw-gap-panel: 20px;
-  --fw-panel-min: 132px;
-  /* Размер колеса только от viewport — не от контента панели/уровня (b25a928). */
-  --fw-wheel-size: min(600px, calc(100vw - 40px), calc(var(--fw-stable-h) - 160px));
+  /* Размер колеса только от viewport/ширины — не от высоты панели/уровня (b25a928).
+     На мобильных ширина обычно лимитирует: 375 → 335px, 360 → 320px. Без ужатия по высоте. */
+  --fw-wheel-size: min(600px, calc(100vw - 40px), calc(100vh - 160px));
   display: block;
   width: 100%;
   min-width: 0;
@@ -175,28 +175,11 @@ function cssText() {
 :host([data-layout="wide"]) {
   --fw-wheel-size: min(700px, calc(100vw - 420px), calc(100vh - 96px));
 }
-/* Узкий layout: колесо + панель в один экран; размер колеса стабилен. */
+/* Узкий layout: один экран за счёт отступов/панели. Размер колеса НЕ переопределяем. */
 :host([data-layout="narrow"]) {
-  --fw-trail-slot: 38px;
-  --fw-trail-reserve: calc(var(--fw-trail-slot) + 8px);
-  --fw-gap-panel: clamp(6px, 1.1vh, 12px);
-  /* Минимальная высота инфо-блока — читаемый empty/заголовок; остаток — колесу. */
-  --fw-panel-min: clamp(108px, 18svh, 150px);
-  --fw-wheel-size: clamp(
-    268px,
-    min(
-      calc(100vw - 20px - var(--fw-safe-l) - var(--fw-safe-r)),
-      calc(
-        var(--fw-stable-h)
-        - var(--fw-safe-t) - var(--fw-safe-b)
-        - 2 * clamp(6px, 1.2vh, 12px)
-        - var(--fw-trail-reserve)
-        - var(--fw-gap-panel)
-        - var(--fw-panel-min)
-      )
-    ),
-    600px
-  );
+  --fw-trail-slot: 40px;
+  --fw-trail-reserve: calc(var(--fw-trail-slot) + 4px);
+  --fw-gap-panel: 8px;
   align-self: stretch;
   height: 100%;
   max-height: 100%;
@@ -204,19 +187,6 @@ function cssText() {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  container-type: size;
-}
-@supports (width: 1cqw) {
-  :host([data-layout="narrow"]) {
-    --fw-wheel-size: clamp(
-      268px,
-      min(
-        100cqw,
-        calc(100cqh - var(--fw-trail-reserve) - var(--fw-gap-panel) - var(--fw-panel-min))
-      ),
-      600px
-    );
-  }
 }
 :host *, :host *::before, :host *::after { box-sizing: border-box; }
 .stage { position: relative; width: 100%; }
@@ -250,7 +220,8 @@ function cssText() {
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
-  grid-template-rows: auto minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: var(--fw-gap-panel);
   align-items: stretch;
   overflow: hidden;
@@ -267,9 +238,9 @@ function cssText() {
   padding-top: var(--fw-trail-reserve);
 }
 :host([data-layout="narrow"]) .wheel-col {
-  justify-self: center;
-  /* Тень/наклон не раздувают layout и не дают скролл страницы. */
-  overflow: hidden;
+  margin: 0 auto;
+  /* overflow visible — наклон/тень/каскад не обрезаются контейнером колеса */
+  overflow: visible;
   max-width: 100%;
 }
 .panel {
@@ -279,6 +250,7 @@ function cssText() {
 :host([data-layout="narrow"]) .panel {
   margin-top: 0;
   align-self: stretch;
+  flex: 0 1 auto;
   min-height: 0;
   max-height: 100%;
   overflow: hidden;
@@ -312,11 +284,6 @@ function cssText() {
   width: 100%;
   will-change: opacity, transform, filter;
 }
-:host([data-layout="narrow"]) .panel-layer {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-}
 /* Мягкий fade у нижнего края при переполнении инфо-блока. */
 :host([data-layout="narrow"]) .panel::after {
   content: "";
@@ -324,10 +291,10 @@ function cssText() {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 36px;
+  height: 32px;
   pointer-events: none;
   z-index: 2;
-  border-radius: 0 0 22px 22px;
+  border-radius: 0 0 18px 18px;
   background: linear-gradient(to top, rgba(255, 255, 255, 0.96) 8%, rgba(255, 255, 255, 0) 100%);
   opacity: 0;
   transition: opacity .25s ease;
@@ -352,7 +319,6 @@ function cssText() {
 }
 :host([data-layout="narrow"]) .trail-crumb {
   padding: 8px 12px;
-  font-size: clamp(11px, 3.1vw, 13px);
 }
 .trail-crumb:hover { filter: brightness(1.06); transform: scale(1.03); }
 .trail-crumb.is-current { cursor: default; box-shadow: 0 8px 20px rgba(0,0,0,.14); }
@@ -366,7 +332,7 @@ function cssText() {
 }
 :host([data-layout="narrow"]) .wheel-perspective {
   flex: 0 0 auto;
-  overflow: hidden;
+  overflow: visible;
 }
 :host([data-layout="wide"]) .wheel-perspective { margin: 0; }
 .wheel-tilt {
@@ -382,13 +348,6 @@ function cssText() {
   filter:
     drop-shadow(var(--tilt-sx) var(--tilt-sy) 28px rgba(0, 0, 0, 0.14))
     drop-shadow(0 6px 10px rgba(0, 0, 0, 0.08));
-}
-:host([data-layout="narrow"]) .wheel-tilt {
-  /* Чуть короче тень, чтобы не требовать лишнего места по вертикали. */
-  --tilt-sy: 12px;
-  filter:
-    drop-shadow(var(--tilt-sx) var(--tilt-sy) 18px rgba(0, 0, 0, 0.14))
-    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
 }
 .wheel-shine {
   position: absolute;
@@ -588,12 +547,8 @@ svg.wheel.is-dragging { cursor: grabbing; }
   color: #000000;
 }
 :host([data-layout="narrow"]) .sheet {
-  border-radius: clamp(18px, 5vw, 24px);
+  border-radius: 20px;
   box-shadow: 0 10px 28px rgba(0,0,0,.08);
-  flex: 1 1 auto;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 .sheet-head {
   padding: 24px 24px 20px;
@@ -603,7 +558,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
   border-left: 6px solid var(--sheet-accent, #000000);
 }
 :host([data-layout="narrow"]) .sheet-head {
-  padding: clamp(12px, 3.2vw, 18px) clamp(14px, 3.8vw, 20px) clamp(10px, 2.6vw, 14px);
+  padding: 12px 14px 10px;
   border-left-width: 5px;
 }
 .sheet-head h2 {
@@ -612,61 +567,58 @@ svg.wheel.is-dragging { cursor: grabbing; }
   color: #000000;
 }
 :host([data-layout="narrow"]) .sheet-head h2 {
-  margin: 0 0 6px;
-  font-size: clamp(17px, 4.6vw, 22px);
-  letter-spacing: -0.9px;
+  margin: 0 0 4px;
+  font-size: clamp(16px, 4.4vw, 20px);
+  line-height: 1.2;
+  letter-spacing: -0.8px;
 }
 .sheet-head .lead {
   margin: 0; font-size: 16px; font-weight: 500; line-height: 1.5; letter-spacing: -0.6px;
   color: #000000; opacity: .88;
 }
 :host([data-layout="narrow"]) .sheet-head .lead {
-  font-size: clamp(13px, 3.5vw, 15px);
-  line-height: 1.45;
-  letter-spacing: -0.4px;
+  font-size: clamp(12.5px, 3.4vw, 14px);
+  line-height: 1.4;
+  letter-spacing: -0.35px;
 }
 .sheet-body { padding: 8px 24px 24px; color: #000000; }
 :host([data-layout="narrow"]) .sheet-body {
-  flex: 1 1 auto;
-  padding: 4px clamp(14px, 3.8vw, 20px) clamp(14px, 3.5vw, 20px);
+  padding: 2px 14px 12px;
 }
 .sheet-section { padding: 16px 0; border-top: 1px solid rgba(0,0,0,.1); }
-:host([data-layout="narrow"]) .sheet-section { padding: clamp(10px, 2.4vw, 14px) 0; }
+:host([data-layout="narrow"]) .sheet-section { padding: 10px 0; }
 .sheet-section:first-child { border-top: 0; }
 .sheet-section h3 {
   margin: 0 0 8px; font-size: 12px; font-weight: 700;
   letter-spacing: .02em; text-transform: uppercase; color: #000000; opacity: .55;
 }
 :host([data-layout="narrow"]) .sheet-section h3 {
-  margin: 0 0 6px;
-  font-size: clamp(10px, 2.8vw, 12px);
+  margin: 0 0 4px;
+  font-size: 11px;
 }
 .sheet-section p { margin: 0 0 8px; font-size: 15px; font-weight: 500; line-height: 1.55; letter-spacing: -0.4px; color: #000000; }
 :host([data-layout="narrow"]) .sheet-section p {
-  margin: 0 0 6px;
-  font-size: clamp(13px, 3.5vw, 15px);
-  line-height: 1.45;
+  margin: 0 0 4px;
+  font-size: clamp(12.5px, 3.4vw, 14px);
+  line-height: 1.4;
 }
 .sheet-section p:last-child { margin-bottom: 0; }
 .sheet-empty { padding: 28px 24px; color: #000000; }
 :host([data-layout="narrow"]) .sheet-empty {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(14px, 3.5vw, 22px) clamp(14px, 3.8vw, 22px);
+  padding: 14px 14px;
 }
 .sheet-empty h2 {
   margin: 0 0 12px; font-size: 20px; font-weight: 700; letter-spacing: -1px; color: #000000;
 }
 :host([data-layout="narrow"]) .sheet-empty h2 {
-  margin: 0 0 8px;
-  font-size: clamp(16px, 4.4vw, 20px);
+  margin: 0 0 6px;
+  font-size: clamp(16px, 4.4vw, 18px);
+  line-height: 1.2;
 }
 .sheet-empty p { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.5; letter-spacing: -0.4px; color: #000000; opacity: .72; }
 :host([data-layout="narrow"]) .sheet-empty p {
-  font-size: clamp(13px, 3.5vw, 15px);
-  line-height: 1.45;
+  font-size: clamp(12.5px, 3.4vw, 14px);
+  line-height: 1.4;
 }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
@@ -676,8 +628,8 @@ svg.wheel.is-dragging { cursor: grabbing; }
   cursor: pointer; transition: filter .2s ease, transform .2s ease;
 }
 :host([data-layout="narrow"]) .chip {
-  padding: 9px 12px;
-  font-size: clamp(11px, 3vw, 12px);
+  padding: 8px 11px;
+  font-size: 11px;
 }
 button.chip:hover { filter: brightness(1.08); transform: scale(1.03); }
 span.chip { cursor: default; }
@@ -1711,20 +1663,25 @@ class FlavorWheel extends HTMLElement {
 
     const panelCap = () => {
       if (!narrow) return Infinity;
+      const hostH = this.clientHeight || 0;
+      const wheelCol = this.shadowRoot?.querySelector(".wheel-col");
+      const wheelH = wheelCol?.getBoundingClientRect().height || 0;
+      const grid = this.shadowRoot?.querySelector(".grid");
+      let gap = 8;
+      if (grid) {
+        const g = parseFloat(getComputedStyle(grid).rowGap || getComputedStyle(grid).gap);
+        if (Number.isFinite(g)) gap = g;
+      }
+      const rem = hostH - wheelH - gap;
+      if (rem > 0) return rem;
       const h = this.panelEl?.clientHeight || 0;
       return h > 0 ? h : Infinity;
     };
 
     const settle = () => {
       if (gen !== this.panelGen) return;
-      if (narrow) {
-        // В пределах max-height панели; длинный контент — внутренний scroll.
-        viewport.style.height = "100%";
-        viewport.style.maxHeight = "100%";
-      } else {
-        viewport.style.height = "auto";
-        viewport.style.maxHeight = "";
-      }
+      viewport.style.height = "auto";
+      viewport.style.maxHeight = narrow ? "100%" : "";
       layer.style.opacity = "";
       layer.style.transform = "";
       layer.style.filter = "";

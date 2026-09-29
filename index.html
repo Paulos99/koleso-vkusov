@@ -42,7 +42,7 @@
       padding: 24px 20px;
       box-sizing: border-box;
     }
-    /* Мобильный «один экран»: страница не скроллится; высота стабильна (svh). */
+    /* Мобильный «один экран»: страница не скроллится; боковые 20px сохраняют размер колеса (100vw-40). */
     @media (max-width: 1279.98px) {
       html {
         height: 100%;
@@ -75,7 +75,8 @@
         height: 100%;
         max-height: 100%;
         margin: 0;
-        padding: clamp(6px, 1.2vh, 12px) clamp(10px, 2.8vw, 16px);
+        /* Верх уменьшен (было 24 → ~80 с trail); стороны 20 — как в формуле колеса. */
+        padding: 8px 20px 8px;
         overflow: hidden;
       }
     }
@@ -88,6 +89,6 @@
   <flavor-wheel sync-url="true">
     <noscript>Для интерактивного колеса вкусов включите JavaScript.</noscript>
   </flavor-wheel>
-  <script type="module" src="./flavor-wheel/flavor-wheel.js?v=motion10"></script>
+  <script type="module" src="./flavor-wheel/flavor-wheel.js?v=motion11"></script>
 </body>
 </html>
