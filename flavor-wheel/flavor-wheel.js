@@ -76,7 +76,10 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion5";
+const DATA_CACHE_BUST = "motion6";
+/** Hover-левитация плитки (scale/тень/fill): было ~180–220 ms → ~×5. */
+const HOVER_LIFT_MS = 1200;
+const PRESS_LIFT_MS = 140;
 const TILE_LIT_REST = 0.08;
 const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
@@ -277,7 +280,6 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .seg {
   cursor: pointer; outline: none; isolation: isolate;
   transform-box: view-box; transform-origin: 400px 400px;
-  transition: transform .18s cubic-bezier(.22,.8,.3,1);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
@@ -296,15 +298,46 @@ svg.wheel.is-dragging { cursor: grabbing; }
   visibility: hidden;
 }
 .seg:focus-visible .seg-focus-ring { visibility: visible; }
-.seg.is-hot { transform: scale(1.03); }
-.seg.is-press { transform: scale(1.055); }
-/* Подъём выбранной ячейки — отдельный слой, не конфликтует с press/hover на .seg */
+/* Подъём выбранной ячейки — отдельный слой, не конфликтует с hover/press */
 .tile-motion {
   transform-box: view-box;
   transform-origin: 400px 400px;
   transform: scale(1);
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
   will-change: transform, filter;
+}
+/* Hover-левитация: медленный мягкий взлёт; press — короткий отклик на том же слое */
+.tile-levitate {
+  transform-box: view-box;
+  transform-origin: 400px 400px;
+  transform: scale(1);
+  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
+  transition:
+    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.33, 0, 0.2, 1),
+    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.33, 0, 0.2, 1);
+  will-change: transform, filter;
+}
+.seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-levitate {
+  transform: scale(1.03);
+  filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
+  transition:
+    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.seg.is-press .tile-levitate {
+  transform: scale(1.055);
+  filter: drop-shadow(0px 7px 14px rgba(0, 0, 0, 0.22));
+  transition:
+    transform ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1),
+    filter ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1);
+}
+/* Selected: левитация отдаёт подъём WAAPI, короткий плавный handoff */
+.seg[data-selected="1"] .tile-levitate {
+  transform: scale(1);
+  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
+  transition:
+    transform 450ms cubic-bezier(0.33, 0, 0.2, 1),
+    filter 450ms cubic-bezier(0.33, 0, 0.2, 1);
 }
 /* Локальный параллакс заливки — отдельный слой внутри подъёма; hit-test остаётся на path */
 .tile-parallax {
@@ -314,8 +347,14 @@ svg.wheel.is-dragging { cursor: grabbing; }
   will-change: transform;
 }
 .seg .tile-fill {
-  transition: fill .22s ease;
+  transition: fill ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 1, 0.36, 1);
   transform-box: fill-box;
+}
+.seg.is-press .tile-fill {
+  transition: fill ${PRESS_LIFT_MS}ms ease;
+}
+.seg[data-selected="1"] .tile-fill {
+  transition: fill 450ms cubic-bezier(0.33, 0, 0.2, 1);
 }
 /* Каскад дочерних превью — отдельный слой, не трогает hit-test основных .seg */
 .preview-tile { pointer-events: none; }
@@ -430,9 +469,11 @@ span.chip { cursor: default; }
 .show-cta:disabled { opacity: .4; cursor: not-allowed; }
 .load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
-  .seg, .tile-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
-  .seg.is-hot, .seg.is-press, .center-hit.is-back:hover { transform: none; }
+  .seg, .tile-fill, .tile-levitate, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
+  .seg.is-hot .tile-levitate, .seg.is-press .tile-levitate,
+  .center-hit.is-back:hover { transform: none !important; filter: none !important; }
   .tile-parallax { transform: none !important; will-change: auto; }
+  .tile-levitate { will-change: auto; }
   .preview-motion { transform: none !important; filter: none !important; will-change: auto; }
   .wheel-tilt {
     transform: none !important;
@@ -1022,10 +1063,11 @@ class FlavorWheel extends HTMLElement {
     const fill = lightenJuicy(raw, s.selected ? TILE_LIT_HOT : TILE_LIT_REST);
     return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-hex-raw="${esc(raw)}" style="--seg-hex:${raw}">` +
       `<g class="tile-motion">` +
+      `<g class="tile-levitate">` +
       `<g class="tile-parallax">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
       `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="1" stroke="none" stroke-width="0"></path>` +
-      `</g></g></g>` +
+      `</g></g></g></g>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
       `</g>`;
@@ -1079,7 +1121,8 @@ class FlavorWheel extends HTMLElement {
       body?.setAttribute("filter", "url(#wheel-petal-shadow-selected)");
       this.startLiftAnim(motion);
     } else {
-      body?.setAttribute("filter", `url(#wheel-petal-shadow-${hot || pressed ? "hover" : "default"})`);
+      // Hover-тень анимируется CSS на .tile-levitate — SVG-filter не дёргаем при is-hot.
+      body?.setAttribute("filter", "url(#wheel-petal-shadow-default)");
       this.stopLiftAnim(motion);
     }
   }
