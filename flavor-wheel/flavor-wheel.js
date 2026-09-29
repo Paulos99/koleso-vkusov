@@ -483,10 +483,14 @@ class FlavorWheel extends HTMLElement {
   descriptor() { return this.subsector()?.descriptors.find((d) => d.id === this.selection.descriptorId) || null; }
 
   centerLines() {
+    // viewLevel 0 = старт; 1–2 = «Назад».
+    if (this.viewLevel > 0) return ["←", "Назад"];
     const raw = this.getAttribute("center-text");
-    if (!raw) return ["Coffee", "Choice"];
-    const parts = raw.split("|");
-    return [parts[0] || "Coffee", parts[1] || ""];
+    if (raw) {
+      const parts = raw.split("|").map((p) => p.trim()).filter(Boolean);
+      if (parts.length) return parts.slice(0, 2);
+    }
+    return ["Выберите", "вкус"];
   }
 
   afterNav(rebuild) {
@@ -735,26 +739,24 @@ class FlavorWheel extends HTMLElement {
 
   renderCenter() {
     const g = this.geom;
-    const lines = this.centerLines();
-    const long = lines.some((w) => w.length > 10);
-    const fs = long ? 16 : g.centerFont;
-    const y1 = CY - g.centerLineStep / 2;
-    const y2 = CY + g.centerLineStep / 2;
-    let color = "#000000";
-    if (this.viewLevel === 1 && this.sector()) {
-      color = isLight(this.sector().hex) ? "#000000" : this.sector().hex;
-    }
-    if (this.viewLevel === 2 && this.subsector()) {
-      color = isLight(this.subsector().hex) ? "#000000" : this.subsector().hex;
-    }
-    const r = g.innerR - 14;
+    const lines = this.centerLines().filter(Boolean);
     const canBack = this.viewLevel > 0;
+    const r = g.innerR - 14;
+    const maxW = r * 1.65;
+    const longest = Math.max(...lines.map((w) => String(w).length), 1);
+    const fit = maxW / (longest * 0.58);
+    const fs = Math.max(14, Math.min(canBack ? 34 : 26, Math.floor(fit), g.centerFont));
+    const step = Math.round(Math.min(g.centerLineStep, fs * 1.2));
+    const startY = lines.length === 1 ? CY : CY - (step * (lines.length - 1)) / 2;
+    const color = "#000000";
     const cls = canBack ? "center-hit is-back" : "center-hit";
-    const aria = canBack ? ` role="button" tabindex="0" aria-label="Назад на уровень"` : ` aria-hidden="true"`;
-    const text = (t, y) => t
-      ? `<text x="400" y="${y}" text-anchor="middle" dominant-baseline="central" font-family="Mulish, sans-serif" font-weight="700" font-size="${fs}" letter-spacing="-2" fill="${color}" pointer-events="none">${esc(t)}</text>`
-      : "";
-    this.centerLayer.innerHTML = `<g class="${cls}"${aria} filter="url(#wheel-center-shadow)"><circle class="center-disc" cx="400" cy="400" r="${r}"></circle></g>${text(lines[0], y1)}${text(lines[1], y2)}`;
+    const aria = canBack
+      ? ` role="button" tabindex="0" aria-label="Назад"`
+      : ` aria-hidden="true"`;
+    const texts = lines.map((t, i) =>
+      `<text x="400" y="${startY + i * step}" text-anchor="middle" dominant-baseline="central" font-family="Mulish, sans-serif" font-weight="700" font-size="${fs}" letter-spacing="${canBack ? -1 : -1.2}" fill="${color}" stroke="none" pointer-events="none">${esc(t)}</text>`
+    ).join("");
+    this.centerLayer.innerHTML = `<g class="${cls}"${aria} filter="url(#wheel-center-shadow)"><circle class="center-disc" cx="400" cy="400" r="${r}"></circle>${texts}</g>`;
   }
 
   paintSeg(seg) {
