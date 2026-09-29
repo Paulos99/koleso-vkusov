@@ -9,10 +9,13 @@ import {
   vitrazhTileInnerHtml,
   asMainTile,
   previewToTile,
+  preferRasterPreview,
+  vitrazhPixelScale,
+  vitrazhTileRasterHtml,
 } from "./vitrazh-style.js";
 
 const ETALON_URL = new URL("./vitrazh-cell-etalon.svg", import.meta.url).href;
-const VITRAZH_CACHE_BUST = "vitrazh1";
+const VITRAZH_CACHE_BUST = "vitrazh2";
 
 const vitrazhReady = initVitrazhEngine(`${ETALON_URL}?v=${VITRAZH_CACHE_BUST}`);
 
@@ -20,6 +23,7 @@ class FlavorWheelVitrazh extends FlavorWheel {
   constructor() {
     super();
     this._vitrazhBoot = vitrazhReady;
+    this._previewUpgradeGen = 0;
   }
 
   connectedCallback() {
@@ -48,6 +52,11 @@ class FlavorWheelVitrazh extends FlavorWheel {
     return lightenJuicy(raw, lit);
   }
 
+  vitrazhScale() {
+    const css = this.wheelBox?.clientWidth || this.wheelW || 335;
+    return vitrazhPixelScale(css);
+  }
+
   vitrazhBodyHtml(t, hex) {
     return `<g class="tile-vitrazh" data-hex-lit="${hex}">${vitrazhTileInnerHtml(t, hex)}</g>`;
   }
@@ -63,9 +72,15 @@ class FlavorWheelVitrazh extends FlavorWheel {
       const t = previewToTile(p, g);
       const fill = this.vitrazhHex(p.hex, TILE_LIT_REST);
       const mid = (p.a0 + p.a1) / 2;
+      const raster = preferRasterPreview(t);
+      const pending = raster ? ` data-raster-pending="1"` : "";
+      // data-* в нижнем регистре — dataset/getAttribute без сюрпризов camelCase
+      const tAttr = ` data-a0="${t.a0}" data-a1="${t.a1}" data-rin="${t.rIn}" data-rout="${t.rOut}" data-gap="${t.gap}" data-corner="${t.corner}"`;
+      // Узкие превью: без векторного DOM (дорого на «Фруктовом») — bitmap с учётом DPR.
+      const body = raster ? "" : vitrazhTileInnerHtml(t, fill);
       return `<g class="preview-tile" data-parent-id="${String(p.parentId)}" data-preview-i="${p.index}" data-mid="${mid}">` +
         `<g class="preview-motion">` +
-        `<g class="tile-vitrazh preview-vitrazh" data-hex-lit="${fill}">${vitrazhTileInnerHtml(t, fill)}</g>` +
+        `<g class="tile-vitrazh preview-vitrazh"${pending}${tAttr} data-hex-lit="${fill}">${body}</g>` +
         `</g></g>`;
     }).join("");
 
@@ -78,6 +93,48 @@ class FlavorWheelVitrazh extends FlavorWheel {
     this.resetCascade(true);
     this.renderCenter();
     this.shadowRoot.querySelectorAll(".seg").forEach((seg) => this.paintSeg(seg));
+    // preview: растеризация после paint (отложенно — не блокировать первый кадр)
+    queueMicrotask(() => this.upgradePreviewRasters());
+  }
+
+  upgradePreviewRasters() {
+    const gen = ++this._previewUpgradeGen;
+    const pending = [...this.shadowRoot.querySelectorAll(".preview-vitrazh[data-raster-pending='1']")];
+    if (!pending.length) return;
+    const scale = this.vitrazhScale();
+    void (async () => {
+      const BATCH = 3;
+      for (let i = 0; i < pending.length; i += BATCH) {
+        if (gen !== this._previewUpgradeGen) return;
+        const batch = pending.slice(i, i + BATCH);
+        for (const el of batch) {
+          if (gen !== this._previewUpgradeGen || !el.isConnected) return;
+          const num = (name) => Number(el.getAttribute(name));
+          const t = {
+            a0: num("data-a0"),
+            a1: num("data-a1"),
+            rIn: num("data-rin"),
+            rOut: num("data-rout"),
+            gap: num("data-gap"),
+            corner: num("data-corner"),
+          };
+          if (![t.a0, t.a1, t.rIn, t.rOut, t.gap, t.corner].every(Number.isFinite)) {
+            el.removeAttribute("data-raster-pending");
+            continue;
+          }
+          const hex = el.getAttribute("data-hex-lit");
+          try {
+            el.innerHTML = vitrazhTileRasterHtml(t, hex, scale);
+            el.classList.add("is-raster");
+          } catch (err) {
+            el.innerHTML = vitrazhTileInnerHtml(t, hex);
+            console.warn("vitrazh raster failed", err);
+          }
+          el.removeAttribute("data-raster-pending");
+        }
+        await new Promise((r) => requestAnimationFrame(r));
+      }
+    })();
   }
 
   segmentHtml(s, level, g) {
@@ -92,7 +149,7 @@ class FlavorWheelVitrazh extends FlavorWheel {
     const t = asMainTile({ a0: s.a0, a1: s.a1, rIn: s.rIn, rOut: s.rOut, node: s.node });
     const focusD = petalPath(CX, CY, s.rIn, s.rOut, s.a0, s.a1, 13.25, 24);
 
-    return `<g class="seg" role="button" tabindex="0" aria-label="${this._esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-hex-raw="${this._esc(raw)}" data-a0="${s.a0}" data-a1="${s.a1}" data-rIn="${s.rIn}" data-rOut="${s.rOut}" data-slug="${this._esc(s.node.slug || "")}" style="--seg-hex:${raw}">` +
+    return `<g class="seg" role="button" tabindex="0" aria-label="${this._esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-hex-raw="${this._esc(raw)}" data-a0="${s.a0}" data-a1="${s.a1}" data-rin="${s.rIn}" data-rout="${s.rOut}" data-slug="${this._esc(s.node.slug || "")}" style="--seg-hex:${raw}">` +
       `<g class="tile-motion">` +
       `<g class="tile-levitate">` +
       `<g class="tile-parallax">` +
@@ -122,16 +179,18 @@ class FlavorWheelVitrazh extends FlavorWheel {
     const lit = selected || hot || pressed ? TILE_LIT_HOT : TILE_LIT_REST;
     const hex = this.vitrazhHex(raw, lit);
     const vit = seg.querySelector(".tile-vitrazh");
-    if (vit && vit.dataset.hexLit !== hex) {
+    if (vit && vit.getAttribute("data-hex-lit") !== hex) {
       const t = asMainTile({
-        a0: Number(seg.dataset.a0),
-        a1: Number(seg.dataset.a1),
-        rIn: Number(seg.dataset.rIn),
-        rOut: Number(seg.dataset.rOut),
-        node: { hex: raw, slug: seg.dataset.slug || seg.dataset.id },
+        a0: Number(seg.getAttribute("data-a0")),
+        a1: Number(seg.getAttribute("data-a1")),
+        rIn: Number(seg.getAttribute("data-rin")),
+        rOut: Number(seg.getAttribute("data-rout")),
+        node: { hex: raw, slug: seg.getAttribute("data-slug") || seg.dataset.id },
       });
-      vit.innerHTML = vitrazhTileInnerHtml(t, hex);
-      vit.dataset.hexLit = hex;
+      if ([t.a0, t.a1, t.rIn, t.rOut].every(Number.isFinite)) {
+        vit.innerHTML = vitrazhTileInnerHtml(t, hex);
+        vit.setAttribute("data-hex-lit", hex);
+      }
     }
     if (selected) {
       body?.setAttribute("filter", "url(#wheel-petal-shadow-selected)");

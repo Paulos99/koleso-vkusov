@@ -15,16 +15,32 @@ const edgeL = (t, r) => t.a0 + (t.gap / (2 * r)) * D;
 const edgeR = (t, r) => t.a1 - (t.gap / (2 * r)) * D;
 
 function band(d, W, W2, K, K2) {
-  const k = K2 / K;
-  if (d <= K) return d * k;
-  if (d >= W - K) return W2 - (W - d) * k;
-  return K2 + ((d - K) / (W - 2 * K)) * (W2 - 2 * K2);
+  const kIn = Math.max(K, 1e-6);
+  const kOut = Math.max(K2, 0);
+  const k = kOut / kIn;
+  const Ws = Math.max(W, 2 * kIn + 1e-6);
+  const W2s = Math.max(W2, 2 * kOut + 1e-6);
+  if (d <= kIn) return d * k;
+  if (d >= Ws - kIn) return W2s - (Ws - d) * k;
+  return kOut + ((d - kIn) / (Ws - 2 * kIn)) * (W2s - 2 * kOut);
+}
+
+function edgesSafe(t, r) {
+  let L = edgeL(t, r);
+  let R = edgeR(t, r);
+  if (!(R > L)) {
+    const mid = (t.a0 + t.a1) / 2;
+    const half = Math.max(0.2, Math.abs(t.a1 - t.a0) * 0.15);
+    L = mid - half;
+    R = mid + half;
+  }
+  return [L, R];
 }
 
 export function makeMapper(tgt, mode = "abs", K = 26) {
-  const H = REF.rOut - REF.rIn;
-  const H2 = tgt.rOut - tgt.rIn;
-  const kc = tgt.corner / REF.corner;
+  const H = Math.max(1e-6, REF.rOut - REF.rIn);
+  const H2 = Math.max(1e-6, tgt.rOut - tgt.rIn);
+  const kc = (tgt.corner || MAIN_RADIUS) / REF.corner;
   const Kr2 = Math.min(K * kc, 0.3 * H2);
   return ([x, y]) => {
     const [r, a0] = polarOf([x, y]);
@@ -34,18 +50,18 @@ export function makeMapper(tgt, mode = "abs", K = 26) {
     let r2;
     if (mode === "prop") r2 = tgt.rIn + ((r - REF.rIn) / H) * H2;
     else r2 = tgt.rIn + band(r - REF.rIn, H, H2, K, Kr2);
-    const L = edgeL(REF, r);
-    const R = edgeR(REF, r);
-    const L2 = edgeL(tgt, r2);
-    const R2 = edgeR(tgt, r2);
+    r2 = Math.max(1e-3, r2);
+    const [L, R] = edgesSafe(REF, Math.max(1e-3, r));
+    const [L2, R2] = edgesSafe(tgt, r2);
     let a2;
     if (mode === "prop") a2 = L2 + ((a - L) / (R - L)) * (R2 - L2);
     else {
-      const W = ((R - L) / D) * r;
-      const W2 = ((R2 - L2) / D) * r2;
-      const K2 = Math.min(K * kc, 0.3 * W2);
+      const W = Math.max(1e-6, ((R - L) / D) * r);
+      const W2 = Math.max(1e-6, ((R2 - L2) / D) * r2);
+      const K2 = Math.min(K * kc, 0.3 * W2, W2 * 0.45);
       a2 = L2 + (band(((a - L) / D) * r, W, W2, K, K2) / r2) * D;
     }
+    if (!Number.isFinite(r2) || !Number.isFinite(a2)) return cart(tgt.rIn + H2 * 0.5, (tgt.a0 + tgt.a1) / 2);
     return cart(r2, a2);
   };
 }
@@ -93,6 +109,7 @@ export function mapPathD(subs, map, tol = 0.08) {
   for (const sp of subs) {
     const out = [];
     for (const s of sp.segs) mapSeg(s, map, tol, out);
+    if (!out.length || !Number.isFinite(out[0][0][0])) continue;
     d += `M${f2(out[0][0][0])},${f2(out[0][0][1])}`;
     for (const c of out) {
       d += `C${f2(c[1][0])},${f2(c[1][1])} ${f2(c[2][0])},${f2(c[2][1])} ${f2(c[3][0])},${f2(c[3][1])}`;
@@ -180,33 +197,42 @@ function mapTolerance(t) {
   return 0.08;
 }
 
-/** Слить path с одинаковым fill в один элемент (меньше DOM). */
-function pathsToSvg(refPathsLocal, mapper, colorMap, tol = 0.08) {
+/** Слои {fill, d} после деформации и перекраски. */
+function pathsToLayers(refPathsLocal, mapper, colorMap, tol = 0.08) {
   const byFill = new Map();
   for (const p of refPathsLocal) {
     const d = mapPathD(p.subs, mapper, tol);
+    if (!d || d.includes("NaN")) continue;
     const fill = colorMap[p.fill];
     if (!byFill.has(fill)) byFill.set(fill, []);
     byFill.get(fill).push(d);
   }
+  return [...byFill].map(([fill, ds]) => ({ fill, d: ds.join(" ") }));
+}
+
+function layersToSvg(layers) {
   let html = "";
-  for (const [fill, ds] of byFill) {
-    html += `<path fill="${fill}" stroke="none" d="${ds.join(" ")}" />`;
+  for (const { fill, d } of layers) {
+    html += `<path fill="${fill}" stroke="none" d="${d}" />`;
   }
   return html;
 }
 
-export function vitrazhTilePathsHtml(t, targetHex, mode = "abs", K = 26) {
-  if (!refPaths) return "";
+export function vitrazhTileLayers(t, targetHex, mode = "abs", K = 26) {
+  if (!refPaths) return [];
   const tol = mapTolerance(t);
-  const key = `${tileSpec(t)}|${targetHex}|${mode}|${K}|${tol}`;
+  const key = `L|${tileSpec(t)}|${targetHex}|${mode}|${K}|${tol}`;
   let cached = pathCache.get(key);
   if (cached) return cached;
   const mapper = makeMapper(t, mode, K);
   const colorMap = recolorMap(targetHex);
-  cached = pathsToSvg(refPaths, mapper, colorMap, tol);
+  cached = pathsToLayers(refPaths, mapper, colorMap, tol);
   pathCache.set(key, cached);
   return cached;
+}
+
+export function vitrazhTilePathsHtml(t, targetHex, mode = "abs", K = 26) {
+  return layersToSvg(vitrazhTileLayers(t, targetHex, mode, K));
 }
 
 export function vitrazhTileInnerHtml(t, targetHex, mode = "abs", K = 26) {
@@ -229,6 +255,87 @@ export function previewToTile(p, g) {
   };
 }
 
+/** Масштаб пикселей viewBox→экран с учётом DPR (без мыла на ретине). */
+export function vitrazhPixelScale(wheelCssPx) {
+  const css = Math.max(200, Number(wheelCssPx) || 335);
+  const dpr = Math.min(3, Math.max(1, typeof devicePixelRatio === "number" ? devicePixelRatio : 1));
+  return (css / 800) * dpr;
+}
+
+export function preferRasterPreview(t) {
+  return Math.abs(t.a1 - t.a0) < 40 || (t.rOut - t.rIn) < 100;
+}
+
+const rasterCache = new Map();
+
+/** AABB плитки по полярным углам/радиусам — без getBBox (без гонок и DOM). */
+function tileBBox(t) {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  const steps = 12;
+  for (let i = 0; i <= steps; i++) {
+    const a = t.a0 + ((t.a1 - t.a0) * i) / steps;
+    const rad = ((a - 90) * Math.PI) / 180;
+    const c = Math.cos(rad);
+    const s = Math.sin(rad);
+    for (const r of [t.rIn, t.rOut]) {
+      const x = 400 + r * c;
+      const y = 400 + r * s;
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+    }
+  }
+  const pad = Math.max(4, t.corner || 12);
+  return {
+    x: minX - pad,
+    y: minY - pad,
+    width: maxX - minX + pad * 2,
+    height: maxY - minY + pad * 2,
+  };
+}
+
+/**
+ * Растеризация через Canvas Path2D (без SVG→Image — стабильнее и быстрее).
+ * Учитывает devicePixelRatio через scale. Кэш по геометрии+цвету+scale.
+ */
+export function vitrazhTileRasterHtml(t, targetHex, scale) {
+  const layers = vitrazhTileLayers(t, targetHex);
+  if (!layers.length) return "";
+  const sc = Math.max(0.4, Math.min(2.5, Number(scale) || 1));
+  const key = `${tileSpec(t)}|${targetHex}|r${sc.toFixed(3)}`;
+  let hit = rasterCache.get(key);
+  if (hit) return hit;
+
+  const bb = tileBBox(t);
+  const x = bb.x;
+  const y = bb.y;
+  const w = Math.max(1, bb.width);
+  const h = Math.max(1, bb.height);
+  if (![x, y, w, h, sc].every(Number.isFinite)) return layersToSvg(layers);
+  const cw = Math.max(2, Math.min(512, Math.round(w * sc)));
+  const ch = Math.max(2, Math.min(512, Math.round(h * sc)));
+  if (!Number.isFinite(cw) || !Number.isFinite(ch)) return layersToSvg(layers);
+  const canvas = document.createElement("canvas");
+  canvas.width = cw;
+  canvas.height = ch;
+  const ctx = canvas.getContext("2d", { alpha: true });
+  ctx.setTransform(cw / w, 0, 0, ch / h, -x * (cw / w), -y * (ch / h));
+  ctx.imageSmoothingEnabled = true;
+  for (const { fill, d } of layers) {
+    ctx.fillStyle = fill;
+    ctx.fill(new Path2D(d));
+  }
+  const url = canvas.toDataURL("image/png");
+  hit = `<image href="${url}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="none"></image>`;
+  rasterCache.set(key, hit);
+  return hit;
+}
+
 export function clearVitrazhCache() {
   pathCache.clear();
+  rasterCache.clear();
 }

@@ -1,11 +1,20 @@
 /**
- * Замер FPS на vitrazh: 375×667, CPU 4×, сценарий hover + drag.
+ * Замер FPS на vitrazh: 375×667, CPU 4×, вращение + hover.
+ * Экран: старт + все 5 экранов второго уровня.
  * Запуск: node scripts/vitrazh-perf.mjs [baseUrl]
  */
 import { chromium } from "playwright";
 
 const base = process.argv[2] || "http://127.0.0.1:8765";
 const url = `${base.replace(/\/$/, "")}/vitrazh/`;
+
+const L2 = [
+  { label: "l2-nutty-cocoa", part: "Ореховый" },
+  { label: "l2-sweet", part: "Сладкий" },
+  { label: "l2-floral-tea", part: "Цветочный" },
+  { label: "l2-fruity", part: "Фруктовый" },
+  { label: "l2-spicy-unique", part: "Пряный" },
+];
 
 async function measure(page, label) {
   const fps = await page.evaluate(async () => {
@@ -35,25 +44,47 @@ async function measure(page, label) {
         host.applyRotation();
         const x = cx + Math.cos(a) * r;
         const y = cy + Math.sin(a) * r;
-        svg.dispatchEvent(new PointerEvent("pointermove", { clientX: x, clientY: y, bubbles: true, pointerId: 1, pointerType: "mouse" }));
+        svg.dispatchEvent(new PointerEvent("pointermove", {
+          clientX: x, clientY: y, bubbles: true, pointerId: 1, pointerType: "mouse",
+        }));
       }, 16);
       setTimeout(() => clearInterval(id), dur);
     });
   });
-  console.log(JSON.stringify({ label, fps: fps?.error ? fps : fps }));
+  console.log(JSON.stringify({ label, fps }));
+  return fps;
 }
 
-async function waitPreviewRaster(page, minImages = 1) {
+async function waitReady(page) {
   await page.waitForFunction(
-    (min) => {
+    () => {
       const root = document.querySelector("flavor-wheel-vitrazh")?.shadowRoot;
-      const imgs = root?.querySelectorAll(".preview-vitrazh.is-raster image")?.length || 0;
-      const pending = root?.querySelectorAll(".preview-vitrazh[data-raster-pending='1']")?.length || 0;
-      return pending === 0 && imgs >= min;
+      if (!root?.querySelector(".seg")) return false;
+      const pending = root.querySelectorAll(".preview-vitrazh[data-raster-pending='1']").length;
+      return pending === 0;
     },
-    minImages,
-    { timeout: 90000 },
-  ).catch(() => {});
+    undefined,
+    { timeout: 120000 },
+  );
+}
+
+async function clickPart(page, part) {
+  await page.evaluate((p) => {
+    const w = document.querySelector("flavor-wheel-vitrazh");
+    const seg = [...w.shadowRoot.querySelectorAll(".seg")].find((s) =>
+      s.getAttribute("aria-label")?.includes(p),
+    );
+    if (!seg) throw new Error(`seg ${p}`);
+    seg.dispatchEvent(new PointerEvent("click", { bubbles: true }));
+  }, part);
+  await page.waitForTimeout(500);
+  await waitReady(page);
+}
+
+async function goStart(page) {
+  await page.evaluate(() => document.querySelector("flavor-wheel-vitrazh").jumpTo(0));
+  await page.waitForTimeout(400);
+  await waitReady(page);
 }
 
 const browser = await chromium.launch();
@@ -67,47 +98,19 @@ const page = await context.newPage();
 const cdp = await context.newCDPSession(page);
 await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
 await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 });
-await page.waitForSelector("flavor-wheel-vitrazh", { timeout: 30000 });
+await page.waitForSelector("flavor-wheel-vitrazh", { state: "attached", timeout: 60000 });
 await page.waitForFunction(
   () => document.querySelector("flavor-wheel-vitrazh")?.shadowRoot?.querySelector(".seg"),
   undefined,
   { timeout: 120000 },
 );
-
-await waitPreviewRaster(page, 15);
+await waitReady(page);
 await measure(page, "start");
 
-await page.evaluate(() => {
-  const w = document.querySelector("flavor-wheel-vitrazh");
-  const seg = [...w.shadowRoot.querySelectorAll(".seg")].find((s) => s.getAttribute("aria-label")?.includes("Сладкий"));
-  seg?.dispatchEvent(new PointerEvent("click", { bubbles: true }));
-});
-await page.waitForTimeout(800);
-
-await measure(page, "sweet");
-
-await page.evaluate(() => {
-  const w = document.querySelector("flavor-wheel-vitrazh");
-  const seg = [...w.shadowRoot.querySelectorAll(".seg")].find((s) => s.getAttribute("aria-label")?.includes("Карамельный"));
-  seg?.dispatchEvent(new PointerEvent("click", { bubbles: true }));
-});
-await page.waitForTimeout(800);
-
-await measure(page, "karamelnyy");
-
-await page.evaluate(() => {
-  const w = document.querySelector("flavor-wheel-vitrazh");
-  w.jumpTo(0);
-});
-await page.waitForTimeout(400);
-await page.evaluate(() => {
-  const w = document.querySelector("flavor-wheel-vitrazh");
-  const seg = [...w.shadowRoot.querySelectorAll(".seg")].find((s) => s.getAttribute("aria-label")?.includes("Фруктовый"));
-  seg?.dispatchEvent(new PointerEvent("click", { bubbles: true }));
-});
-await page.waitForTimeout(800);
-await waitPreviewRaster(page, 35);
-
-await measure(page, "fruity");
+for (const screen of L2) {
+  await goStart(page);
+  await clickPart(page, screen.part);
+  await measure(page, screen.label);
+}
 
 await browser.close();
