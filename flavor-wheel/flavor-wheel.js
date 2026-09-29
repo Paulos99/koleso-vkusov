@@ -75,7 +75,12 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion11";
+const DATA_CACHE_BUST = "motion12";
+
+/** Нормализованный непрозрачный hex из JSON — без mix/lighten. */
+function solidHex(hex) {
+  return toHex(parseRgb(hex));
+}
 /** Смена info-панели: контент + высота. */
 const PANEL_HEIGHT_MS = 560;
 const PANEL_OUT_MS = 280;
@@ -302,28 +307,73 @@ function cssText() {
 :host([data-layout="narrow"]) .panel.is-overflowing::after { opacity: 1; }
 .trail {
   position: absolute; top: 0; left: 0; right: 0;
+  z-index: 6;
   height: var(--fw-trail-slot);
   width: 100%; max-width: var(--fw-wheel-size); margin: 0 auto;
   display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;
-  overflow: hidden;
+  /* visible — премиальные тени чипов не обрезаются; горизонтальный overflow режется мягко */
+  overflow: visible;
+  pointer-events: none;
 }
 .trail:empty {
   visibility: hidden;
   pointer-events: none;
 }
 .trail-crumb {
+  pointer-events: auto;
+  flex: 0 1 auto;
+  min-width: 0;
   border: 0; border-radius: 999px; padding: 10px 14px;
   font: 600 13px/1 var(--fw-font-family); letter-spacing: -0.5px;
   color: #000000;
-  cursor: pointer; transition: filter .2s ease, transform .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+  /* Без filter/opacity — цвет строго из JSON */
+  transition: transform .2s ease, box-shadow .2s ease;
+  /* Премиальная объёмная тень: контакт + средняя + широкая + верхний блик */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    0 1px 2px rgba(0, 0, 0, 0.10),
+    0 6px 12px rgba(0, 0, 0, 0.10),
+    0 20px 36px rgba(0, 0, 0, 0.09);
 }
 :host([data-layout="narrow"]) .trail-crumb {
   padding: 8px 12px;
+  /* Чуть короче широкая тень на мобильных — не раздувает layout п.9 */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    0 1px 2px rgba(0, 0, 0, 0.10),
+    0 5px 10px rgba(0, 0, 0, 0.10),
+    0 14px 26px rgba(0, 0, 0, 0.08);
 }
-.trail-crumb:hover { filter: brightness(1.06); transform: scale(1.03); }
-.trail-crumb.is-current { cursor: default; box-shadow: 0 8px 20px rgba(0,0,0,.14); }
-.trail-crumb.is-current:hover { filter: none; transform: none; }
-.trail-sep { color: #000000; opacity: .35; font-size: 13px; font-weight: 600; }
+.trail-crumb:hover {
+  transform: scale(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    0 1px 2px rgba(0, 0, 0, 0.11),
+    0 8px 14px rgba(0, 0, 0, 0.12),
+    0 24px 40px rgba(0, 0, 0, 0.11);
+}
+.trail-crumb.is-current {
+  cursor: default;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 8px 14px rgba(0, 0, 0, 0.13),
+    0 24px 40px rgba(0, 0, 0, 0.12);
+}
+.trail-crumb.is-current:hover { transform: none; }
+:host([data-layout="narrow"]) .trail-crumb.is-current {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    0 1px 2px rgba(0, 0, 0, 0.11),
+    0 6px 12px rgba(0, 0, 0, 0.12),
+    0 16px 28px rgba(0, 0, 0, 0.10);
+}
+.trail-sep {
+  pointer-events: none;
+  color: #000000; opacity: .35; font-size: 13px; font-weight: 600;
+  flex: 0 0 auto;
+}
 .wheel-perspective {
   width: var(--fw-wheel-size);
   max-width: 100%;
@@ -1567,7 +1617,8 @@ class FlavorWheel extends HTMLElement {
   crumbBtn(level, node, current) {
     const cur = current ? " is-current" : "";
     const aria = current ? ` aria-current="true"` : "";
-    return `<button type="button" class="trail-crumb${cur}" data-trail-level="${level}" style="background:${mixHex(node.hex)};color:#000000"${aria}>${esc(node.name)}</button>`;
+    const hex = solidHex(node.hex);
+    return `<button type="button" class="trail-crumb${cur}" data-trail-level="${level}" data-hex="${esc(hex)}" style="background:${hex};color:#000000"${aria}>${esc(node.name)}</button>`;
   }
 
   renderTrail() {
