@@ -336,8 +336,16 @@ function cssText() {
     0 6px 12px rgba(0, 0, 0, 0.10),
     0 20px 36px rgba(0, 0, 0, 0.09);
 }
+:host([data-layout="narrow"]) .trail {
+  gap: 6px;
+}
 :host([data-layout="narrow"]) .trail-crumb {
-  padding: 8px 12px;
+  padding: 8px 10px;
+  font-size: 12px;
+  max-width: 38%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   /* Чуть короче широкая тень на мобильных — не раздувает layout п.9 */
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.36),
