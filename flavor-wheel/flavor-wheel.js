@@ -74,37 +74,20 @@ function tuneHex(hex, { sat = 1, light = 1 } = {}) {
   return toHex({ r: (r1 + m) * 255, g: (g1 + m) * 255, b: (b1 + m) * 255 });
 }
 
-const LEAD_COLOR = "#1a1a1a";
-const LEAD_WIDTH = 3.5;
-const PETAL_GAP = 0;
-const PETAL_RADIUS = 0;
-/** Общий угол «падения света» для всех стёкол (viewBox 800×800). */
-const GLASS_LIGHT = { x1: 240, y1: 210, x2: 560, y2: 590 };
+const MAIN_GAP = 12;
+const MAIN_RADIUS = 24;
+const PREVIEW_GAP = 6;
+const PREVIEW_RADIUS = 12;
+/** Лёгкий общий перелив для плиток (viewBox 800×800). */
+const TILE_LIGHT = { x1: 270, y1: 240, x2: 530, y2: 560 };
 
-function glassStops(hex, { outer = false } = {}) {
-  const base = hex;
-  const light = outer
-    ? tuneHex(hex, { sat: 1.14, light: 1.14 })
-    : tuneHex(hex, { sat: 1.06, light: 1.08 });
-  const deep = outer
-    ? tuneHex(hex, { sat: 1.1, light: 0.78 })
-    : tuneHex(hex, { sat: 1.04, light: 0.84 });
-  return { light, base, deep };
-}
-
-function glassGradientDefs(gid, eid, hex, { outer = false } = {}) {
-  const { light, base, deep } = glassStops(hex, { outer });
-  const { x1, y1, x2, y2 } = GLASS_LIGHT;
-  return `<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">` +
+function tileGradientDef(id, hex) {
+  const base = tuneHex(hex, { sat: 1.12, light: 1.06 });
+  const light = tuneHex(hex, { sat: 1.08, light: 1.1 });
+  const { x1, y1, x2, y2 } = TILE_LIGHT;
+  return `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">` +
     `<stop offset="0%" stop-color="${light}"></stop>` +
-    `<stop offset="52%" stop-color="${base}"></stop>` +
-    `<stop offset="100%" stop-color="${deep}"></stop>` +
-    `</linearGradient>` +
-    `<linearGradient id="${eid}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">` +
-    `<stop offset="0%" stop-color="#ffffff" stop-opacity="0"></stop>` +
-    `<stop offset="12%" stop-color="#ffffff" stop-opacity="0.34"></stop>` +
-    `<stop offset="16%" stop-color="#ffffff" stop-opacity="0"></stop>` +
-    `<stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>` +
+    `<stop offset="100%" stop-color="${base}"></stop>` +
     `</linearGradient>`;
 }
 
@@ -205,13 +188,8 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform-box: view-box; transform-origin: 400px 400px;
   transition: transform .2s ease;
 }
-.seg.is-hot { transform: scale(1.02); }
+.seg.is-hot { transform: scale(1.03); }
 .seg .glass-fill { transition: fill-opacity .2s ease; }
-.seg .glass-edge {
-  pointer-events: none; opacity: .72;
-  transition: opacity .24s ease;
-}
-.seg.is-hot .glass-edge { opacity: .95; }
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -227,13 +205,8 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .center-hit.is-back:hover, .center-hit.is-back:focus-visible { transform: scale(1.04); opacity: .92; }
 .center-hit circle.center-disc {
   fill: #ffffff;
-  stroke: #1a1a1a;
-  stroke-width: 3.5;
-}
-.wheel-frame circle {
-  fill: none;
-  stroke: #1a1a1a;
-  stroke-width: 3.5;
+  stroke: rgba(0,0,0,.08);
+  stroke-width: 1.2;
 }
 .sheet {
   border-radius: 28px; overflow: hidden;
@@ -296,7 +269,7 @@ span.chip { cursor: default; }
 .show-cta:disabled { opacity: .4; cursor: not-allowed; }
 .load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
-  .seg, .glass-fill, .glass-edge, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
+  .seg, .glass-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
   .seg.is-hot, .center-hit.is-back:hover { transform: none; }
 }
 `;
@@ -398,7 +371,6 @@ class FlavorWheel extends HTMLElement {
                   <title>Колесо вкусов</title>
                   <defs>${filters()}</defs>
                   <g class="rotor" transform="rotate(0 400 400)"></g>
-                  <g class="wheel-frame" pointer-events="none"></g>
                   <g class="center-layer"></g>
                 </svg>
               </div>
@@ -409,7 +381,6 @@ class FlavorWheel extends HTMLElement {
       </div>`;
     this.svg = this.shadowRoot.querySelector("svg.wheel");
     this.rotor = this.shadowRoot.querySelector(".rotor");
-    this.frameLayer = this.shadowRoot.querySelector(".wheel-frame");
     this.centerLayer = this.shadowRoot.querySelector(".center-layer");
     this.wheelBox = this.shadowRoot.querySelector(".wheel-box");
     this.panelEl = this.shadowRoot.querySelector(".panel");
@@ -694,16 +665,13 @@ class FlavorWheel extends HTMLElement {
     this.segmentCount = Math.max(1, model.main.length);
     const previewDefs = [];
     const previews = model.preview.map((p, i) => {
-      const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PETAL_GAP, PETAL_RADIUS);
-      const gid = `preview-glass-${level}-${i}`;
-      const eid = `preview-edge-${level}-${i}`;
-      previewDefs.push(glassGradientDefs(gid, eid, p.hex, { outer: true }));
-      return `<path class="preview-glass" d="${d}" fill="url(#${gid})" fill-opacity="1" stroke="${LEAD_COLOR}" stroke-width="${LEAD_WIDTH}" stroke-linejoin="miter"></path>` +
-        `<path class="preview-edge" d="${d}" fill="url(#${eid})" pointer-events="none"></path>`;
+      const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PREVIEW_GAP, PREVIEW_RADIUS);
+      const gid = `preview-tile-${level}-${i}`;
+      previewDefs.push(tileGradientDef(gid, p.hex));
+      return `<path d="${d}" fill="url(#${gid})" fill-opacity="1" stroke="rgba(255,255,255,.55)" stroke-width="1.1" stroke-linejoin="round"></path>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
-    this.rotor.innerHTML = `<defs>${previewDefs.join("")}</defs><g pointer-events="none">${previews}</g>${segs}`;
-    this.frameLayer.innerHTML = `<circle cx="${CX}" cy="${CY}" r="${g.outerR}"></circle>`;
+    this.rotor.innerHTML = `<defs>${previewDefs.join("")}</defs><g pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
@@ -758,22 +726,20 @@ class FlavorWheel extends HTMLElement {
   }
 
   segmentHtml(s, level, g) {
-    const d = petalPath(CX, CY, s.rIn, s.rOut, s.a0, s.a1, PETAL_GAP, PETAL_RADIUS);
+    const d = petalPath(CX, CY, s.rIn, s.rOut, s.a0, s.a1, MAIN_GAP, MAIN_RADIUS);
     const fitted = fitLabel(s.node.name, s.rIn, s.rOut, s.a0, s.a1, g.labelMaxFont(level));
     const place = labelPlacement(s.rIn, s.rOut, s.a0, s.a1, fitted.fontSize, fitted.lines.length);
-    const gid = `petal-glass-${level}-${s.node.id}`;
-    const eid = `petal-edge-${level}-${s.node.id}`;
+    const gid = `petal-tile-${level}-${s.node.id}`;
     const baseOp = 1;
     const tspans = fitted.lines.map((line, i) =>
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
     return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}">` +
-      `<defs>${glassGradientDefs(gid, eid, s.node.hex, { outer: level === 2 })}</defs>` +
-      `<g class="glass-body">` +
-      `<path class="glass-fill" d="${d}" fill="url(#${gid})" fill-opacity="${baseOp}" stroke="${LEAD_COLOR}" stroke-width="${LEAD_WIDTH}" stroke-linejoin="miter"></path>` +
+      `<defs>${tileGradientDef(gid, s.node.hex)}</defs>` +
+      `<g class="glass-body" filter="url(#wheel-petal-shadow-default)">` +
+      `<path class="glass-fill" d="${d}" fill="url(#${gid})" fill-opacity="${baseOp}" stroke="rgba(255,255,255,.55)" stroke-width="1.25" stroke-linejoin="round"></path>` +
       `</g>` +
-      `<path class="glass-edge" d="${d}" fill="url(#${eid})"></path>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `</g>`;
   }
@@ -797,16 +763,18 @@ class FlavorWheel extends HTMLElement {
     const texts = lines.map((t, i) =>
       `<text x="400" y="${startY + i * step}" text-anchor="middle" dominant-baseline="central" font-family="Mulish, sans-serif" font-weight="700" font-size="${fs}" letter-spacing="${canBack ? -1 : -1.2}" fill="${color}" stroke="none" pointer-events="none">${esc(t)}</text>`
     ).join("");
-    this.centerLayer.innerHTML = `<g class="${cls}"${aria}><circle class="center-disc" cx="400" cy="400" r="${r}"></circle>${texts}</g>`;
+    this.centerLayer.innerHTML = `<g class="${cls}"${aria} filter="url(#wheel-center-shadow)"><circle class="center-disc" cx="400" cy="400" r="${r}"></circle>${texts}</g>`;
   }
 
   paintSeg(seg) {
     const selected = seg.dataset.selected === "1";
     const hot = seg === this.hot || seg.matches(":focus-visible");
     seg.classList.toggle("is-hot", hot || selected);
+    const name = hot ? "hover" : selected ? "selected" : "default";
+    seg.querySelector(".glass-body")?.setAttribute("filter", `url(#wheel-petal-shadow-${name})`);
     const base = Number(seg.dataset.baseOp || 1);
     const fill = seg.querySelector(".glass-fill");
-    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.03 : 0))));
+    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.04 : 0))));
   }
 
   updateSelected() {
