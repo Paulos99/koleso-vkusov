@@ -78,117 +78,109 @@ const MAIN_GAP = 12;
 const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 6;
 const PREVIEW_RADIUS = 12;
-const TILE_FACE_OP = 0.54;
-const TILE_PREVIEW_OP = 0.5;
+const TILE_FACE_OP = 0.5;
+const TILE_PREVIEW_OP = 0.46;
+const CAST_OP = 0.34;
+const CAST_OP_HOT = 0.42;
 /** Свет сверху-слева (viewBox 800×800). */
 const SUN = { x1: 230, y1: 200, x2: 570, y2: 600 };
 
 function createGlassFilterRegistry() {
-  const map = new Map();
-  const blocks = [];
   return {
-    id(hex, hot, compact) {
-      const key = `${hex}|${hot ? 1 : 0}|${compact ? 1 : 0}`;
-      if (map.has(key)) return map.get(key);
-      const id = `glass-fx-${map.size}`;
-      blocks.push(acrylicShadowFilter(id, hex, compact, hot ? 0.1 : 0));
-      map.set(key, id);
-      return id;
+    blurId(hot, compact) {
+      if (compact) return hot ? "glass-blur-sm-hot" : "glass-blur-sm";
+      return hot ? "glass-blur-lg-hot" : "glass-blur-lg";
     },
-    defsHtml() { return blocks.join(""); },
+    defsHtml() {
+      return [
+        glassBlurFilterDef("glass-blur-sm", 1.1),
+        glassBlurFilterDef("glass-blur-sm-hot", 1.35),
+        glassBlurFilterDef("glass-blur-lg", 2),
+        glassBlurFilterDef("glass-blur-lg-hot", 2.4),
+      ].join("");
+    },
   };
+}
+
+function glassBlurFilterDef(id, dev) {
+  return `<filter id="${id}" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">` +
+    `<feGaussianBlur stdDeviation="${dev}"></feGaussianBlur></filter>`;
 }
 
 function acrylicTileFx(prefix, hex, rIn, rOut, a0, a1, { compact = false, filters = null } = {}) {
   const gl = glow(rIn, rOut, a0, a1);
   const base = hex;
-  const edge = tuneHex(hex, { sat: 1.24, light: 0.62 });
-  const slab = tuneHex(hex, { sat: 1.18, light: 0.48 });
+  const lit = tuneHex(hex, { sat: 1.12, light: 1.34 });
+  const mid = tuneHex(hex, { sat: 1.1, light: 1.2 });
+  const edge = tuneHex(hex, { sat: 1.16, light: 1.06 });
+  const cast = tuneHex(hex, { sat: 1.08, light: 1.28 });
   const fillId = `${prefix}-fill`;
-  const rimId = `${prefix}-rim`;
   const rimLightId = `${prefix}-rim-hi`;
+  const rimSatId = `${prefix}-rim-sat`;
   const clipId = `${prefix}-clip`;
-  const filterId = filters ? filters.id(base, false, compact) : `${prefix}-fx`;
-  const filterHotId = filters ? filters.id(base, true, compact) : `${prefix}-fx-hot`;
+  const filterId = filters ? filters.blurId(false, compact) : `${prefix}-blur`;
+  const filterHotId = filters ? filters.blurId(true, compact) : `${prefix}-blur-hot`;
   const defs =
-    `<radialGradient id="${fillId}" cx="${gl.cx}" cy="${gl.cy}" r="${Math.max(28, gl.r * 0.95)}" gradientUnits="userSpaceOnUse">` +
-    `<stop offset="0%" stop-color="${base}" stop-opacity="0.14"></stop>` +
-    `<stop offset="50%" stop-color="${base}" stop-opacity="0.38"></stop>` +
-    `<stop offset="82%" stop-color="${base}" stop-opacity="0.58"></stop>` +
-    `<stop offset="100%" stop-color="${edge}" stop-opacity="0.88"></stop>` +
+    `<radialGradient id="${fillId}" cx="${gl.cx}" cy="${gl.cy}" r="${Math.max(30, gl.r * 0.98)}" gradientUnits="userSpaceOnUse">` +
+    `<stop offset="0%" stop-color="${lit}" stop-opacity="0.56"></stop>` +
+    `<stop offset="52%" stop-color="${mid}" stop-opacity="0.46"></stop>` +
+    `<stop offset="88%" stop-color="${base}" stop-opacity="0.42"></stop>` +
+    `<stop offset="100%" stop-color="${edge}" stop-opacity="0.52"></stop>` +
     `</radialGradient>` +
-    `<linearGradient id="${rimId}" gradientUnits="userSpaceOnUse" x1="${SUN.x1}" y1="${SUN.y1}" x2="${SUN.x2}" y2="${SUN.y2}">` +
-    `<stop offset="0%" stop-color="${edge}" stop-opacity="0.98"></stop>` +
-    `<stop offset="42%" stop-color="${base}" stop-opacity="0.55"></stop>` +
-    `<stop offset="100%" stop-color="${mixBlack(base, 0.35)}" stop-opacity="0.95"></stop>` +
-    `</linearGradient>` +
     `<linearGradient id="${rimLightId}" gradientUnits="userSpaceOnUse" x1="${SUN.x1}" y1="${SUN.y1}" x2="${SUN.x2}" y2="${SUN.y2}">` +
-    `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.88"></stop>` +
-    `<stop offset="28%" stop-color="#ffffff" stop-opacity="0.22"></stop>` +
+    `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.96"></stop>` +
+    `<stop offset="32%" stop-color="#ffffff" stop-opacity="0.35"></stop>` +
     `<stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>` +
     `</linearGradient>` +
-    (filters ? "" : acrylicShadowFilter(filterId, base, compact, 0) + acrylicShadowFilter(filterHotId, base, compact, 0.1));
-  return { defs, fillId, rimId, rimLightId, clipId, slab, hex: base, filterId, filterHotId };
-}
-
-function acrylicShadowFilter(id, hex, compact, boost) {
-  const dx = compact ? 5 : 8;
-  const dy = compact ? 6 : 10;
-  const dev = compact ? 2.4 : 3.8;
-  const col = (0.62 + boost).toFixed(3);
-  const caustic = (0.44 + boost * 0.4).toFixed(3);
-  return `<filter id="${id}" x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">` +
-    `<feDropShadow dx="${dx}" dy="${dy}" stdDeviation="${dev}" flood-color="${hex}" flood-opacity="${col}"></feDropShadow>` +
-    `<feDropShadow dx="${(dx * 0.65).toFixed(1)}" dy="${(dy * 0.7).toFixed(1)}" stdDeviation="1" flood-color="${hex}" flood-opacity="${caustic}"></feDropShadow>` +
-    `</filter>`;
-}
-
-const GLASS_CONTACT_FILTER = "glass-contact-edge";
-
-function glassContactFilterDef() {
-  return `<filter id="${GLASS_CONTACT_FILTER}" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">` +
-    `<feDropShadow dx="1" dy="1.4" stdDeviation="0.4" flood-color="#121212" flood-opacity="0.17"></feDropShadow>` +
-    `</filter>`;
+    `<linearGradient id="${rimSatId}" gradientUnits="userSpaceOnUse" x1="${SUN.x2}" y1="${SUN.y2}" x2="${SUN.x1}" y2="${SUN.y1}">` +
+    `<stop offset="0%" stop-color="${edge}" stop-opacity="0.82"></stop>` +
+    `<stop offset="45%" stop-color="${base}" stop-opacity="0.28"></stop>` +
+    `<stop offset="100%" stop-color="${base}" stop-opacity="0"></stop>` +
+    `</linearGradient>`;
+  return { defs, fillId, rimLightId, rimSatId, clipId, hex: base, cast, filterId, filterHotId };
 }
 
 function glassTileDefs(d, fx) {
   return `<clipPath id="${fx.clipId}"><path d="${d}"></path></clipPath>${fx.defs}`;
 }
 
-function glassTileLayers(d, fx, baseOp, compact, hex) {
-  const slabDx = compact ? 1.6 : 2.6;
-  const slabDy = compact ? 2.2 : 3.4;
-  const castDx = compact ? 10 : 16;
-  const castDy = compact ? 12 : 18;
-  const rimW = compact ? 3.6 : 5.2;
-  const hiW = compact ? 1.15 : 1.55;
+function glassTileLayers(d, fx, baseOp, compact) {
+  const castDx = compact ? 7 : 14;
+  const castDy = compact ? 8 : 17;
+  const hiW = compact ? 1.05 : 1.35;
+  const satW = compact ? 0.95 : 1.15;
   return `<g class="glass-tile">` +
-    `<path class="glass-cast" d="${d}" fill="${hex}" fill-opacity="0.36" transform="translate(${castDx} ${castDy})" filter="url(#${fx.filterId})"></path>` +
-    `<g class="glass-body" filter="url(#${GLASS_CONTACT_FILTER})">` +
+    `<path class="glass-cast" d="${d}" fill="${fx.cast}" fill-opacity="${CAST_OP}" transform="translate(${castDx} ${castDy})" filter="url(#${fx.filterId})"></path>` +
+    `<g class="glass-body">` +
     `<g clip-path="url(#${fx.clipId})">` +
-    `<path class="glass-slab" d="${d}" fill="${fx.slab}" fill-opacity="0.58" transform="translate(${slabDx} ${slabDy})"></path>` +
     `<path class="glass-fill" d="${d}" fill="url(#${fx.fillId})" fill-opacity="${baseOp}"></path>` +
-    `<path class="glass-rim" d="${d}" fill="none" stroke="url(#${fx.rimId})" stroke-width="${rimW}" stroke-linejoin="round"></path>` +
+    `<path class="glass-rim-sat" d="${d}" fill="none" stroke="url(#${fx.rimSatId})" stroke-width="${satW}" stroke-linejoin="round"></path>` +
     `<path class="glass-rim-hi" d="${d}" fill="none" stroke="url(#${fx.rimLightId})" stroke-width="${hiW}" stroke-linejoin="round"></path>` +
+    `<path class="glass-contact" d="${d}" fill="none" stroke="#141414" stroke-opacity="0.07" stroke-width="0.55" stroke-linejoin="round"></path>` +
     `</g></g></g>`;
+}
+
+function glassSparkStar(x, y, arm, sw) {
+  return `<path d="M ${x} ${y - arm} L ${x} ${y + arm} M ${x - arm} ${y} L ${x + arm} ${y}" stroke="#ffffff" stroke-opacity="0.95" stroke-width="${sw}" stroke-linecap="round"></path>`;
 }
 
 function glassEdgeSparks(rIn, rOut, a0, a1, compact) {
   const span = a1 - a0;
-  const aOut = a0 + span * 0.17;
-  const aIn = a0 + span * 0.11;
+  const aOut = a0 + span * 0.16;
+  const aEdge = a0 + span * 0.28;
   const p0 = polar(CX, CY, rOut - 5, aOut);
-  const p1 = polar(CX, CY, rOut - 2, aOut + 2.2);
-  const sw = compact ? 0.7 : 1;
+  const p1 = polar(CX, CY, rOut - 2, aOut + 2.4);
+  const sw = compact ? 0.65 : 0.85;
+  const arm = compact ? 2.2 : 2.8;
   let html = `<g class="glass-spark" pointer-events="none">` +
-    `<line x1="${p0.x.toFixed(2)}" y1="${p0.y.toFixed(2)}" x2="${p1.x.toFixed(2)}" y2="${p1.y.toFixed(2)}" stroke="#ffffff" stroke-opacity="0.94" stroke-width="${sw}" stroke-linecap="round"></line>`;
-  const p2 = polar(CX, CY, rIn + (rOut - rIn) * 0.28, aIn);
-  html += `<line x1="${(p2.x - 1.8).toFixed(2)}" y1="${(p2.y + 0.6).toFixed(2)}" x2="${(p2.x + 2.2).toFixed(2)}" y2="${(p2.y - 1.4).toFixed(2)}" stroke="#ffffff" stroke-opacity="0.78" stroke-width="${compact ? 0.55 : 0.75}" stroke-linecap="round"></line>`;
-  if (!compact) {
-    const aEdge = a0 + span * 0.32;
-    const e0 = polar(CX, CY, rOut - 8, aEdge);
-    const e1 = polar(CX, CY, rOut - 5, aEdge + 3.5);
-    html += `<line x1="${e0.x.toFixed(2)}" y1="${e0.y.toFixed(2)}" x2="${e1.x.toFixed(2)}" y2="${e1.y.toFixed(2)}" stroke="#ffffff" stroke-opacity="0.55" stroke-width="0.65" stroke-linecap="round"></line>`;
+    `<line x1="${p0.x.toFixed(2)}" y1="${p0.y.toFixed(2)}" x2="${p1.x.toFixed(2)}" y2="${p1.y.toFixed(2)}" stroke="#ffffff" stroke-opacity="0.9" stroke-width="${sw}" stroke-linecap="round"></line>` +
+    glassSparkStar(p0.x, p0.y, arm, compact ? 0.55 : 0.7);
+  const e0 = polar(CX, CY, rOut - 7, aEdge);
+  const e1 = polar(CX, CY, rOut - 4, aEdge + 3.2);
+  html += `<line x1="${e0.x.toFixed(2)}" y1="${e0.y.toFixed(2)}" x2="${e1.x.toFixed(2)}" y2="${e1.y.toFixed(2)}" stroke="#ffffff" stroke-opacity="0.62" stroke-width="${compact ? 0.5 : 0.6}" stroke-linecap="round"></line>`;
+  if (!compact && span > 14) {
+    const s = polar(CX, CY, rIn + (rOut - rIn) * 0.22, a0 + span * 0.08);
+    html += glassSparkStar(s.x, s.y, 2, 0.55);
   }
   return `${html}</g>`;
 }
@@ -287,9 +279,19 @@ function cssText() {
   -webkit-tap-highlight-color: transparent;
   border-radius: 50%;
   background:
-    linear-gradient(128deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 38%),
-    linear-gradient(152deg, #f3f1ec 0%, #ebe8e2 55%, #e3dfd8 100%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    repeating-linear-gradient(
+      128deg,
+      transparent 0 46px,
+      rgba(0, 0, 0, 0.016) 46px 54px,
+      transparent 54px 104px
+    ),
+    repeating-linear-gradient(
+      128deg,
+      transparent 0 18px,
+      rgba(255, 255, 255, 0.35) 18px 26px,
+      transparent 26px 72px
+    ),
+    linear-gradient(145deg, #ffffff 0%, #fafaf8 58%, #f7f6f3 100%);
 }
 :host([data-layout="wide"]) .wheel-box { margin: 0; }
 svg.wheel {
@@ -858,12 +860,12 @@ class FlavorWheel extends HTMLElement {
       const fx = acrylicTileFx(prefix, p.hex, g.middleR + 12, g.outerR, p.a0, p.a1, { compact, filters: filterReg });
       previewParts.push(glassTileDefs(d, fx));
       return `<g pointer-events="none">` +
-        `${glassTileLayers(d, fx, TILE_PREVIEW_OP, compact, p.hex)}` +
+        `${glassTileLayers(d, fx, TILE_PREVIEW_OP, compact)}` +
         `${glassEdgeSparks(g.middleR + 12, g.outerR, p.a0, p.a1, compact)}` +
         `</g>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g, filterReg)).join("");
-    this.rotor.innerHTML = `<defs>${glassContactFilterDef()}${filterReg.defsHtml()}${previewParts.join("")}</defs><g pointer-events="none">${previews}</g>${segs}`;
+    this.rotor.innerHTML = `<defs>${filterReg.defsHtml()}${previewParts.join("")}</defs><g pointer-events="none">${previews}</g>${segs}`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
@@ -931,7 +933,7 @@ class FlavorWheel extends HTMLElement {
     const mid = (s.a0 + s.a1) / 2;
     return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}" data-filter-default="${fx.filterId}" data-filter-hot="${fx.filterHotId}">` +
       `<defs>${glassTileDefs(d, fx)}</defs>` +
-      `${glassTileLayers(d, fx, baseOp, compact, s.node.hex)}` +
+      `${glassTileLayers(d, fx, baseOp, compact)}` +
       `${glassEdgeSparks(s.rIn, s.rOut, s.a0, s.a1, compact)}` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
@@ -965,10 +967,14 @@ class FlavorWheel extends HTMLElement {
     const hot = seg === this.hot || seg.matches(":focus-visible");
     seg.classList.toggle("is-hot", hot || selected);
     const filterId = (hot || selected) ? seg.dataset.filterHot : seg.dataset.filterDefault;
-    if (filterId) seg.querySelector(".glass-cast")?.setAttribute("filter", `url(#${filterId})`);
+    const cast = seg.querySelector(".glass-cast");
+    if (cast) {
+      if (filterId) cast.setAttribute("filter", `url(#${filterId})`);
+      cast.setAttribute("fill-opacity", String(hot || selected ? CAST_OP_HOT : CAST_OP));
+    }
     const base = Number(seg.dataset.baseOp || TILE_FACE_OP);
     const fill = seg.querySelector(".glass-fill");
-    if (fill) fill.setAttribute("fill-opacity", String(Math.min(0.68, base + (hot || selected ? 0.06 : 0))));
+    if (fill) fill.setAttribute("fill-opacity", String(Math.min(0.62, base + (hot || selected ? 0.05 : 0))));
   }
 
   updateSelected() {
