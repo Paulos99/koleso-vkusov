@@ -1,0 +1,30 @@
+{
+  "_note": "Токены, извлечённые из CSS/JS coffeechoice.ru/koleso-vkusov (Tailwind v4). Цвета — hex как в исходнике.",
+  "colors": {
+    "ink": "#101010", "ink-soft": "#161616", "bg": "#fefefe", "muted": "#bbbbbb",
+    "surface": "#f0f0f0", "surface-soft": "#f8f8f8", "accent": "#ff6a03",
+    "wheelCenterDefault": "#638611",
+    "segmentTextDark": "#2a2a2a", "segmentTextLight": "#ffffff",
+    "panelTextDark": "#1a1a1a", "panelTextLight": "#fefefe",
+    "glassPanelBg": "rgba(16,16,16,0.4) + backdrop-filter: blur(16px)"
+  },
+  "font": { "family": "Mulish", "weights": [400, 500, 600, 700], "fallback": "Arial с size-adjust 105%, ascent 95.71%, descent 23.81%" },
+  "breakpoints": { "sm": 640, "md": 768, "lg": 1024, "xl": 1280, "2xl": 1536, "custom": [425, 1400, 1440] },
+  "svgFilters": {
+    "wheel-petal-shadow-default":  { "dx": 0, "dy": 4,  "stdDeviation": 7,  "color": "#000", "opacity": 0.18 },
+    "wheel-petal-shadow-selected": { "dx": 0, "dy": 6,  "stdDeviation": 11, "color": "#000", "opacity": 0.28 },
+    "wheel-petal-shadow-hover":    { "dx": 0, "dy": 10, "stdDeviation": 16, "color": "#000", "opacity": 0.38 },
+    "wheel-preview-shadow":        { "dx": 0, "dy": 2,  "stdDeviation": 4,  "color": "#000", "opacity": 0.12 },
+    "wheel-center-shadow":         { "dx": 0, "dy": 2,  "stdDeviation": 6,  "color": "#000", "opacity": 0.10 },
+    "_filterRegion": "x=-50% y=-50% width=200% height=200% color-interpolation-filters=sRGB"
+  },
+  "steps": [
+    { "number": 1, "bgOuter": "#df1d40", "bgInner": "#881429", "title": "Выберите категорию вкуса - фруктовый, ореховый, шоколадный. Просто вспомните, что вам нравится в еде." },
+    { "number": 2, "bgOuter": "#f68c38", "bgInner": "#bd6a28", "title": "Уточните направление - внутри категории откроются подкатегории: ягоды, цитрус, тропические фрукты" },
+    { "number": 3, "bgOuter": "#a2ce52", "bgInner": "#82a73f", "title": "Выберите конкретную ноту - или остановитесь на любом уровне. Чем шире сектор, тем больше результатов." },
+    { "number": 4, "bgOuter": "#1aabaf", "bgInner": "#168184", "title": "Смотрите результат - справа появится описание ноты, а внизу - подходящий кофе от обжарщиков." }
+  ],
+  "showButtonGradient": "radial-gradient(circle, #a1d81f 0%, #719911 100%)",
+  "roundButtonGradient": "radial-gradient(circle, #ffffff 0%, #efefef 100%)",
+  "accordionTransition": "block-size .4s cubic-bezier(.22,1,.36,1) (::details-content + interpolate-size: allow-keywords)"
+}

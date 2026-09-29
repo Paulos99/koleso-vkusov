@@ -1,0 +1,198 @@
+S	2	nutty-cocoa	Ореховый / Шоколадный
+U	3	kakao-shokolad	Какао / Шоколад	nutty-cocoa
+D	13	brauni	Брауни	nutty-cocoa	kakao-shokolad	0
+D	10	gorkiy-shokolad	Горький шоколад	nutty-cocoa	kakao-shokolad	0
+D	11	kakao	Какао	nutty-cocoa	kakao-shokolad	0
+D	16	molochnyy-shokolad	Молочный шоколад	nutty-cocoa	kakao-shokolad	0
+D	15	pudra-kakao	Пудра какао	nutty-cocoa	kakao-shokolad	0
+D	140	shokolad	Шоколад	nutty-cocoa	kakao-shokolad	1
+D	137	shokolad-s-izyumom	Шоколад с изюмом	nutty-cocoa	kakao-shokolad	1
+D	165	shokoladnyj-keks	Шоколадный кекс	nutty-cocoa	kakao-shokolad	1
+D	12	temnyy-shokolad	Тёмный шоколад	nutty-cocoa	kakao-shokolad	0
+D	14	tertoe-kakao	Тёртое какао	nutty-cocoa	kakao-shokolad	0
+U	2	orehovyy	Ореховый	nutty-cocoa
+D	2	arahis	Арахис	nutty-cocoa	orehovyy	0
+D	148	arahisovaya-pasta	Арахисовая паста	nutty-cocoa	orehovyy	1
+D	184	fistashka	Фисташка	nutty-cocoa	orehovyy	1
+D	4	funduk	Фундук	nutty-cocoa	orehovyy	0
+D	3	gretskiy-oreh	Грецкий орех	nutty-cocoa	orehovyy	0
+D	9	keshyu	Кешью	nutty-cocoa	orehovyy	0
+D	5	kokos	Кокос	nutty-cocoa	orehovyy	0
+D	191	lesnoj-oreh	Лесной орех	nutty-cocoa	orehovyy	1
+D	8	makadamiya	Макадамия	nutty-cocoa	orehovyy	0
+D	6	mindal	Миндаль	nutty-cocoa	orehovyy	0
+D	173	orehi	Орехи	nutty-cocoa	orehovyy	1
+D	212	orehovaya-pasta	Ореховая паста	nutty-cocoa	orehovyy	1
+D	7	pekan	Пекан	nutty-cocoa	orehovyy	0
+D	220	solod	Солод	nutty-cocoa	orehovyy	1
+D	152	zharenye-orehi	Жареные орехи	nutty-cocoa	orehovyy	1
+D	164	zharenyj-mindalь	Жареный миндаль	nutty-cocoa	orehovyy	1
+S	3	sweet	Сладкий
+U	6	dzhem-varene	Джем / Варенье	sweet
+D	37	abrikosovyy-dzhem	Абрикосовый джем	sweet	dzhem-varene	0
+D	39	apelsinovyy-dzhem	Апельсиновый джем	sweet	dzhem-varene	0
+D	33	chernichnyy-dzhem	Черничный джем	sweet	dzhem-varene	0
+D	205	ezhevichnyj-dzhem	Ежевичный джем	sweet	dzhem-varene	1
+D	38	klubnichnyy-dzhem	Клубничный джем	sweet	dzhem-varene	0
+D	36	klyukvennyy-dzhem	Клюквенный джем	sweet	dzhem-varene	0
+D	34	malinovyy-dzhem	Малиновый джем	sweet	dzhem-varene	0
+D	35	smorodinovyy-dzhem	Смородиновый джем	sweet	dzhem-varene	0
+D	174	yablochnyj-dzhem	Яблочный джем	sweet	dzhem-varene	1
+U	5	konditerskiy	Кондитерский	sweet
+D	30	dzhem	Джем	sweet	konditerskiy	0
+D	32	grilyazh	Грильяж	sweet	konditerskiy	0
+D	179	jogurt	Йогурт	sweet	konditerskiy	0
+D	31	martsipan	Марципан	sweet	konditerskiy	0
+D	25	nutella	Нутелла	sweet	konditerskiy	0
+D	29	pastila	Пастила	sweet	konditerskiy	0
+D	171	slivki	Сливки	sweet	konditerskiy	1
+D	26	tsukaty	Цукаты	sweet	konditerskiy	0
+D	27	vanil	Ваниль	sweet	konditerskiy	0
+U	4	karamelnyy	Карамельный	sweet
+D	21	iriska	Ириска	sweet	karamelnyy	0
+D	24	karamel	Карамель	sweet	karamelnyy	0
+D	18	klenovyy-sirop	Кленовый сироп	sweet	karamelnyy	0
+D	20	med	Мёд	sweet	karamelnyy	0
+D	22	melassa	Меласса	sweet	karamelnyy	0
+D	23	nuga	Нуга	sweet	karamelnyy	0
+D	172	sladkie-noty	Сладкие ноты	sweet	karamelnyy	1
+D	17	trostnikovyy-sahar	Тростниковый сахар	sweet	karamelnyy	0
+D	19	tsvetochnyy-med	Цветочный мёд	sweet	karamelnyy	0
+S	4	floral-tea	Цветочный / Чайный
+U	9	travyanoy	Травяной	floral-tea
+D	54	lemongrass	Лемонграсс	floral-tea	travyanoy	0
+D	57	myata	Мята	floral-tea	travyanoy	0
+D	56	raznotrave	Разнотравье	floral-tea	travyanoy	0
+D	55	shalfey	Шалфей	floral-tea	travyanoy	0
+D	189	sirop-tapinambura	Сироп тапинамбура	floral-tea	travyanoy	1
+D	53	smorodinovyy-list	Смородиновый лист	floral-tea	travyanoy	0
+U	8	tsvetochnyy	Цветочный	floral-tea
+D	46	akatsiya	Акация	floral-tea	tsvetochnyy	0
+D	138	cvetochnyj-chaj	Цветочный чай	floral-tea	tsvetochnyy	1
+D	248	cvetochnyy	Цветочный	floral-tea	tsvetochnyy	1
+D	176	cvety	Цветы	floral-tea	tsvetochnyy	1
+D	47	gibiskus	Гибискус	floral-tea	tsvetochnyy	0
+D	49	karkade	Каркаде	floral-tea	tsvetochnyy	0
+D	51	lavanda	Лаванда	floral-tea	tsvetochnyy	0
+D	52	romashka	Ромашка	floral-tea	tsvetochnyy	0
+D	50	roza	Роза	floral-tea	tsvetochnyy	0
+D	48	zhasmin	Жасмин	floral-tea	tsvetochnyy	0
+U	7	chaynyy	Чайный	floral-tea
+D	42	belyy-chay	Белый чай	floral-tea	chaynyy	0
+D	182	chajnoe-telo	Чайное тело	floral-tea	chaynyy	1
+D	45	chernyy-chay	Чёрный чай	floral-tea	chaynyy	0
+D	43	krasnyy-chay	Красный чай	floral-tea	chaynyy	0
+D	44	roybush	Ройбуш	floral-tea	chaynyy	0
+D	146	smorodinovyj-chaj	Смородиновый чай	floral-tea	chaynyy	1
+D	41	ulun	Улун	floral-tea	chaynyy	0
+D	40	zelenyy-chay	Зелёный чай	floral-tea	chaynyy	0
+S	5	fruity	Фруктовый
+U	15	sadovye	Садовые	fruity
+D	97	barbaris	Барбарис	fruity	sadovye	0
+D	95	chereshnya	Черешня	fruity	sadovye	0
+D	100	chernaya-smorodina	Чёрная смородина	fruity	sadovye	0
+D	96	kryzhovnik	Крыжовник	fruity	sadovye	0
+D	142	oblepiha	Облепиха	fruity	sadovye	1
+D	303	plodovye-frukty	Плодовые фрукты	fruity	sadovye	1
+D	246	reven	Ревень	fruity	sadovye	1
+D	99	sliva	Слива	fruity	sadovye	0
+D	190	smorodina	Смородина	fruity	sadovye	1
+D	98	zemlyanika	Земляника	fruity	sadovye	0
+U	14	tropicheskie	Тропические	fruity
+D	211	arbuz	Арбуз	fruity	tropicheskie	1
+D	91	dynya	Дыня	fruity	tropicheskie	0
+D	195	fejhoa	Фейхоа	fruity	tropicheskie	1
+D	198	grenadilla	Гренадилла	fruity	tropicheskie	1
+D	188	guava	Гуава	fruity	tropicheskie	1
+D	90	kivi	Киви	fruity	tropicheskie	0
+D	93	lichi	Личи	fruity	tropicheskie	0
+D	89	mango	Манго	fruity	tropicheskie	0
+D	94	marakuyya	Маракуйя	fruity	tropicheskie	0
+D	92	nektarin	Нектарин	fruity	tropicheskie	0
+D	88	papayya	Папайя	fruity	tropicheskie	0
+D	204	sladkij-fizalis	Сладкий физалис	fruity	tropicheskie	1
+D	149	tropicheskie-frukty	Тропические фрукты	fruity	tropicheskie	1
+D	147	zheltye-frukty	Желтые фрукты	fruity	tropicheskie	1
+U	13	tsitrusovye	Цитрусовые	fruity
+D	84	apelsin	Апельсин	fruity	tsitrusovye	0
+D	86	bergamot	Бергамот	fruity	tsitrusovye	0
+D	134	citrusy	Цитрусы	fruity	tsitrusovye	1
+D	82	greypfrut	Грейпфрут	fruity	tsitrusovye	0
+D	87	kumkvat	Кумкват	fruity	tsitrusovye	0
+D	85	laym	Лайм	fruity	tsitrusovye	0
+D	80	limon	Лимон	fruity	tsitrusovye	0
+D	83	mandarin	Мандарин	fruity	tsitrusovye	0
+D	81	pomelo	Помело	fruity	tsitrusovye	0
+U	12	kostochkovye-i-drugie	Косточковые и другие	fruity
+D	74	abrikos	Абрикос	fruity	kostochkovye-i-drugie	0
+D	73	ananas	Ананас	fruity	kostochkovye-i-drugie	0
+D	78	granat	Гранат	fruity	kostochkovye-i-drugie	0
+D	77	grusha	Груша	fruity	kostochkovye-i-drugie	0
+D	183	kostochkovye-frukty	Косточковые фрукты	fruity	kostochkovye-i-drugie	1
+D	79	persik	Персик	fruity	kostochkovye-i-drugie	0
+D	76	vinograd	Виноград	fruity	kostochkovye-i-drugie	0
+D	75	vishnya	Вишня	fruity	kostochkovye-i-drugie	0
+D	72	yabloko	Яблоко	fruity	kostochkovye-i-drugie	0
+U	11	suhofrukty	Сухофрукты	fruity
+D	69	chernosliv	Чернослив	fruity	suhofrukty	0
+D	71	finik	Финик	fruity	suhofrukty	0
+D	66	inzhir	Инжир	fruity	suhofrukty	0
+D	67	izyum	Изюм	fruity	suhofrukty	0
+D	68	kuraga	Курага	fruity	suhofrukty	0
+D	143	suhofrukty	Сухофрукты	fruity	suhofrukty	1
+D	153	vyalenaya-vishnya	Вяленая вишня	fruity	suhofrukty	1
+D	70	vyalenyy-banan	Вяленый банан	fruity	suhofrukty	0
+U	10	yagody	Ягоды	fruity
+D	63	brusnika	Брусника	fruity	yagody	0
+D	61	chernika	Черника	fruity	yagody	0
+D	64	ezhevika	Ежевика	fruity	yagody	0
+D	218	kalina	Калина	fruity	yagody	1
+D	62	klubnika	Клубника	fruity	yagody	0
+D	60	klyukva	Клюква	fruity	yagody	0
+D	65	krasnaya-smorodina	Красная смородина	fruity	yagody	0
+D	192	lesnye-yagody	Лесные ягоды	fruity	yagody	1
+D	58	malina	Малина	fruity	yagody	0
+D	141	ryabina	Рябина	fruity	yagody	1
+D	59	shipovnik	Шиповник	fruity	yagody	0
+D	150	temnye-yagody	Темные ягоды	fruity	yagody	1
+D	210	vyalenye-yagody	Вяленые ягоды	fruity	yagody	1
+D	269	yagody	Ягоды	fruity	yagody	1
+S	6	spicy-unique	Пряный / Особый
+U	19	teplye-pryanosti	Тёплые пряности	spicy-unique
+D	123	badyan	Бадьян	spicy-unique	teplye-pryanosti	0
+D	124	imbir	Имбирь	spicy-unique	teplye-pryanosti	0
+D	126	kardamon	Кардамон	spicy-unique	teplye-pryanosti	0
+D	125	kedr	Кедр	spicy-unique	teplye-pryanosti	0
+D	122	sladkie-spetsii	Сладкие специи	spicy-unique	teplye-pryanosti	0
+U	18	pryanosti	Пряности	spicy-unique
+D	119	anis	Анис	spicy-unique	pryanosti	0
+D	163	dubovoya-bochka	Дубовая бочка	spicy-unique	pryanosti	1
+D	120	gvozdika	Гвоздика	spicy-unique	pryanosti	0
+D	121	koritsa	Корица	spicy-unique	pryanosti	0
+D	117	muskatnyy-oreh	Мускатный орех	spicy-unique	pryanosti	0
+D	115	perets	Перец	spicy-unique	pryanosti	0
+D	118	pikantnyy	Пикантный	spicy-unique	pryanosti	0
+D	168	pryanosti	Пряности	spicy-unique	pryanosti	1
+D	177	specii	Специи	spicy-unique	pryanosti	1
+D	116	tabak	Табак	spicy-unique	pryanosti	0
+U	17	vypechka	Выпечка	spicy-unique
+D	110	biskvit	Бисквит	spicy-unique	vypechka	0
+D	113	kruassan	Круассан	spicy-unique	vypechka	0
+D	109	ovsyanoe-pechene	Овсяное печенье	spicy-unique	vypechka	0
+D	28	pechene	Печенье	spicy-unique	vypechka	0
+D	111	pirog	Пирог	spicy-unique	vypechka	0
+D	112	rzhanoy-hleb	Ржаной хлеб	spicy-unique	vypechka	0
+D	114	vypechka	Выпечка	spicy-unique	vypechka	0
+D	254	zharenye-zlaki	Жареные злаки	spicy-unique	vypechka	1
+U	16	alkogolnye	Алкогольные	spicy-unique
+D	281	alkogolnyj	Алкогольный	spicy-unique	alkogolnye	1
+D	106	beloe-vino	Белое вино	spicy-unique	alkogolnye	0
+D	102	heres	Херес	spicy-unique	alkogolnye	0
+D	103	konyak	Коньяк	spicy-unique	alkogolnye	0
+D	108	krasnoe-vino	Красное вино	spicy-unique	alkogolnye	0
+D	105	liker	Ликёр	spicy-unique	alkogolnye	0
+D	156	portvejn	Портвейн	spicy-unique	alkogolnye	0
+D	107	rom	Ром	spicy-unique	alkogolnye	0
+D	104	vermut	Вермут	spicy-unique	alkogolnye	0
+D	101	viski	Виски	spicy-unique	alkogolnye	0
+D	144	yablochnyj-sidr	Яблочный сидр	spicy-unique	alkogolnye	1

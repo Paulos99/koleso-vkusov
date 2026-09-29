@@ -1,0 +1,274 @@
+{
+ "level0@1440": {
+  "vb": "0 0 800 800",
+  "w": 700,
+  "h": 700,
+  "texts": [
+   {
+    "label": "ОреховыйШоколадный",
+    "fs": "25",
+    "ls": "-1.25",
+    "fill": "#fff",
+    "tr": "rotate(-54 513.149 244.264)",
+    "lines": 2
+   },
+   {
+    "label": "Сладкий",
+    "fs": "28",
+    "ls": "-1.4000000000000001",
+    "fill": "#2a2a2a",
+    "tr": "rotate(18 583.078 459.486)",
+    "lines": 1
+   },
+   {
+    "label": "ЦветочныйЧайный",
+    "fs": "28",
+    "ls": "-1.4000000000000001",
+    "fill": "#fff",
+    "tr": "rotate(90 400 592.5)",
+    "lines": 2
+   },
+   {
+    "label": "Фруктовый",
+    "fs": "28",
+    "ls": "-1.4000000000000001",
+    "fill": "#fff",
+    "tr": "rotate(342 216.922 459.486)",
+    "lines": 1
+   },
+   {
+    "label": "ПряныйОсобый",
+    "fs": "28",
+    "ls": "-1.4000000000000001",
+    "fill": "#fff",
+    "tr": "rotate(414 286.851 244.264)",
+    "lines": 2
+   }
+  ],
+  "center": [
+   {
+    "t": "Coffee",
+    "fs": "48",
+    "fill": "#638611",
+    "y": "378.5"
+   },
+   {
+    "t": "Choice",
+    "fs": "48",
+    "fill": "#638611",
+    "y": "421.5"
+   }
+  ]
+ },
+ "level1-spicy@1440": {
+  "vb": "0 0 800 800",
+  "w": 700,
+  "h": 700,
+  "texts": [
+   {
+    "label": "Тёплыепряности",
+    "fs": "28",
+    "ls": "-1.4000000000000001",
+    "fill": "#fff",
+    "tr": "rotate(-45 536.118 263.882)",
+    "lines": 2
+   },
+   {
+    "label": "Пряности",
+    "fs": "28",
+    "ls": "-1.4000000000000001",
+    "fill": "#fff",
+    "tr": "rotate(45 536.118 536.118)",
+    "lines": 1
+   },
+   {
+    "label": "Выпечка",
+    "fs": "28",
+    "ls": "-1.4000000000000001",
+    "fill": "#fff",
+    "tr": "rotate(315 263.882 536.118)",
+    "lines": 1
+   },
+   {
+    "label": "Алкогольные",
+    "fs": "23",
+    "ls": "-1.1500000000000001",
+    "fill": "#fff",
+    "tr": "rotate(405 263.882 263.882)",
+    "lines": 1
+   }
+  ],
+  "center": [
+   {
+    "t": "Coffee",
+    "fs": "48",
+    "fill": "#3E7D8C",
+    "y": "378.5"
+   },
+   {
+    "t": "Choice",
+    "fs": "48",
+    "fill": "#3E7D8C",
+    "y": "421.5"
+   }
+  ]
+ },
+ "level2-pryanosti-koritsa@1440": {
+  "vb": "0 0 800 800",
+  "w": 700,
+  "h": 700,
+  "texts": [
+   {
+    "label": "Анис",
+    "fs": "32",
+    "ls": "-1.6",
+    "fill": "#fff",
+    "tr": "rotate(-64.28571428571428 503.047 186.02)",
+    "lines": 1
+   },
+   {
+    "label": "Гвоздика",
+    "fs": "32",
+    "ls": "-1.6",
+    "fill": "#fff",
+    "tr": "rotate(-12.857142857142861 631.545 347.151)",
+    "lines": 1
+   },
+   {
+    "label": "Корица",
+    "fs": "32",
+    "ls": "-1.6",
+    "fill": "#fff",
+    "tr": "rotate(38.571428571428555 585.685 548.079)",
+    "lines": 1
+   },
+   {
+    "label": "Мускатныйорех",
+    "fs": "32",
+    "ls": "-1.6",
+    "fill": "#fff",
+    "tr": "rotate(90 400 637.5)",
+    "lines": 2
+   },
+   {
+    "label": "Перец",
+    "fs": "32",
+    "ls": "-1.6",
+    "fill": "#fff",
+    "tr": "rotate(321.42857142857144 214.315 548.079)",
+    "lines": 1
+   },
+   {
+    "label": "Пикантный",
+    "fs": "32",
+    "ls": "-1.6",
+    "fill": "#fff",
+    "tr": "rotate(372.8571428571429 168.455 347.151)",
+    "lines": 1
+   },
+   {
+    "label": "Табак",
+    "fs": "32",
+    "ls": "-1.6",
+    "fill": "#fff",
+    "tr": "rotate(424.2857142857143 296.953 186.02)",
+    "lines": 1
+   }
+  ],
+  "center": [
+   {
+    "t": "Coffee",
+    "fs": "48",
+    "fill": "#77573A",
+    "y": "378.5"
+   },
+   {
+    "t": "Choice",
+    "fs": "48",
+    "fill": "#77573A",
+    "y": "421.5"
+   }
+  ]
+ },
+ "url_after_chip_click": "https://coffeechoice.ru/koleso-vkusov?s=spicy-unique&sub=pryanosti",
+ "url_timeline_after_click_floral": [
+  [
+   0,
+   "https://coffeechoice.ru/koleso-vkusov"
+  ],
+  [
+   250,
+   "https://coffeechoice.ru/koleso-vkusov"
+  ],
+  [
+   500,
+   "https://coffeechoice.ru/koleso-vkusov"
+  ],
+  [
+   750,
+   "https://coffeechoice.ru/koleso-vkusov"
+  ],
+  [
+   1000,
+   "https://coffeechoice.ru/koleso-vkusov"
+  ],
+  [
+   1250,
+   "https://coffeechoice.ru/koleso-vkusov"
+  ],
+  [
+   1500,
+   "https://coffeechoice.ru/koleso-vkusov?s=floral-tea"
+  ],
+  [
+   1750,
+   "https://coffeechoice.ru/koleso-vkusov?s=floral-tea"
+  ],
+  [
+   2000,
+   "https://coffeechoice.ru/koleso-vkusov?s=floral-tea"
+  ],
+  [
+   2250,
+   "https://coffeechoice.ru/koleso-vkusov?s=floral-tea"
+  ],
+  [
+   2500,
+   "https://coffeechoice.ru/koleso-vkusov?s=floral-tea"
+  ],
+  [
+   2750,
+   "https://coffeechoice.ru/koleso-vkusov?s=floral-tea"
+  ]
+ ],
+ "level1@375": {
+  "vb": "21 21 758 758",
+  "svgW": 359,
+  "containerW": 359,
+  "paths": 3,
+  "center": [
+   "45",
+   "45"
+  ],
+  "labelFs": [
+   "31",
+   "31",
+   "31"
+  ]
+ },
+ "level1@768": {
+  "vb": "0 0 800 800",
+  "svgW": 600,
+  "containerW": 600,
+  "paths": 3,
+  "center": [
+   "48",
+   "48"
+  ],
+  "labelFs": [
+   "28",
+   "28",
+   "28"
+  ]
+ }
+}

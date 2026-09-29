@@ -1,0 +1,4365 @@
+[
+  {
+    "id": 2,
+    "slug": "nutty-cocoa",
+    "name": "Ореховый / Шоколадный",
+    "hex": "#A86932",
+    "description": "Тёплый и знакомый фундамент кофейного вкуса. Орехи и шоколад — те ноты, которые узнаёт даже человек, никогда не слышавший слова «спешелти»: они ассоциируются с классическим кофе, уютом и мягкой сладковатой горчинкой. Самая комфортная и предсказуемая категория колеса — с неё удобно начинать знакомство со вкусами.",
+    "howAppears": "Ореховые и шоколадные ноты приходят не из терруара, а из обжарки. Их создаёт реакция Майяра: при средней и средне-тёмной обжарке сахара и аминокислоты зерна превращаются в сотни ароматических соединений со вкусом ореха, какао и выпечки. Чем дольше зерно развивается в ростере, тем глубже профиль уходит от лёгкого ореха к тёмному шоколаду.",
+    "whereOccurs": "Чаще всего в кофе из Бразилии и Центральной Америки на средней и средне-тёмной обжарке, а также в основе классических эспрессо-смесей. Способ обработки здесь вторичен — решает именно степень обжарки.",
+    "subsectors": [
+      {
+        "id": 3,
+        "slug": "kakao-shokolad",
+        "name": "Какао / Шоколад",
+        "hex": "#8A4301",
+        "description": "Шоколадные ноты — от светлого молочного шоколада до горького какао. Главный фундамент вкуса в большинстве смесей: они дают телу плотность, сладковатую горчинку и долгое послевкусие.",
+        "howAppears": "Тоже продукт обжарки, но более позднего этапа, чем орехи. При средне-тёмном развитии реакция Майяра и начавшаяся карамелизация дают какао-тон. Передержать — и он уйдёт в жжёную горечь.",
+        "whereOccurs": "Бразилия, Колумбия, Центральная Америка на средне-тёмной обжарке. Почти все эспрессо-смеси строятся вокруг шоколадной базы.",
+        "descriptors": [
+          {
+            "id": 13,
+            "slug": "brauni",
+            "name": "Брауни",
+            "hex": "#9A6440",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладкая, плотная нота шоколадной выпечки — какао плюс карамелизованный сахар. Десертный край шоколадного подраздела.",
+            "howAppears": "Сочетание шоколадной реакции Майяра и карамелизации сахаров при средне-тёмной обжарке.",
+            "whereOccurs": "Натуральные бразильские лоты, средне-тёмная обжарка, десертные эспрессо."
+          },
+          {
+            "id": 10,
+            "slug": "gorkiy-shokolad",
+            "name": "Горький шоколад",
+            "hex": "#6B3A1F",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Насыщенная, выраженно горькая шоколадная нота с минимумом сладости. Для любителей крепкого тёмного вкуса.",
+            "howAppears": "Поздняя средне-тёмная обжарка, где какао-тон сдвигается в горечь.",
+            "whereOccurs": "Тёмная обжарка, бразильские натуралы, крепкие эспрессо-смеси."
+          },
+          {
+            "id": 11,
+            "slug": "kakao",
+            "name": "Какао",
+            "hex": "#B8753A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сухая, слегка горьковатая нота чистого какао-порошка без сахара. Даёт ощущение «настоящего» тёмного кофе.",
+            "howAppears": "Продукт средне-тёмной обжарки: реакция Майяра и лёгкая карамелизация формируют какао-тон.",
+            "whereOccurs": "Бразилия и Колумбия, средне-тёмная обжарка, основа эспрессо."
+          },
+          {
+            "id": 16,
+            "slug": "molochnyy-shokolad",
+            "name": "Молочный шоколад",
+            "hex": "#B8966E",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладкая, мягкая и сливочная шоколадная нота без горчинки. Любимый профиль для напитков с молоком.",
+            "howAppears": "Средняя обжарка плюс остаточная сладость зерна; развития меньше, чем у тёмного шоколада.",
+            "whereOccurs": "Бразилия и Колумбия, средняя обжарка, профили под капучино и латте.",
+            "children": [
+              {
+                "id": 132,
+                "slug": "shokoladnaya-pasta",
+                "name": "Шоколадная паста",
+                "hex": "#B8966E",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 15,
+            "slug": "pudra-kakao",
+            "name": "Пудра какао",
+            "hex": "#C8855A",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сухая, лёгкая и чуть пыльная какао-нота, как несладкий какао-порошок. Тоньше и суше тёмного шоколада.",
+            "howAppears": "Средне-тёмная обжарка; «сухой» вариант какао-тона без маслянистости.",
+            "whereOccurs": "Колумбия и Центральная Америка, средняя и средне-тёмная обжарка.",
+            "children": [
+              {
+                "id": 175,
+                "slug": "kakao-poroshok",
+                "name": "Какао-порошок",
+                "hex": "#C8855A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 140,
+            "slug": "shokolad",
+            "name": "Шоколад",
+            "hex": "#7A4A2A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 335,
+                "slug": "belgijskij-shokolad",
+                "name": "Бельгийский шоколад",
+                "hex": "#7A4A2A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 256,
+                "slug": "goryachij-shokolad",
+                "name": "Горячий шоколад",
+                "hex": "#8B5230",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 293,
+                "slug": "shokolad-bean-to-bar",
+                "name": "Шоколад bean-to-bar",
+                "hex": "#7A4A2A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 233,
+                "slug": "shokolad-so-spetsiyami",
+                "name": "Шоколад со специями",
+                "hex": "#7A4A2A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 336,
+                "slug": "shokoladnyj-fondan",
+                "name": "Шоколадный фондан",
+                "hex": "#9A6440",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 252,
+                "slug": "tryufel",
+                "name": "Трюфель",
+                "hex": "#7A4A2A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 137,
+            "slug": "shokolad-s-izyumom",
+            "name": "Шоколад с изюмом",
+            "hex": "#8A4301",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 165,
+            "slug": "shokoladnyj-keks",
+            "name": "Шоколадный кекс",
+            "hex": "#8A4301",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 12,
+            "slug": "temnyy-shokolad",
+            "name": "Тёмный шоколад",
+            "hex": "#7A4A2A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Глубокая горько-сладкая нота с плотным телом и долгим послевкусием. Одна из самых желанных в эспрессо.",
+            "howAppears": "Чуть более позднее развитие обжарки, чем у какао; даёт больше сладости и тела.",
+            "whereOccurs": "Бразилия, Колумбия, центральноамериканские натуралы, средне-тёмная обжарка."
+          },
+          {
+            "id": 14,
+            "slug": "tertoe-kakao",
+            "name": "Тёртое какао",
+            "hex": "#8B5230",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Насыщенная, чуть маслянистая нота тёртого какао — плотнее и «жирнее» какао-порошка.",
+            "howAppears": "Поздняя средняя обжарка плотного зерна; больше тела и маслянистости.",
+            "whereOccurs": "Бразильские и колумбийские натуралы, средне-тёмная обжарка."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "slug": "orehovyy",
+        "name": "Ореховый",
+        "hex": "#CB9848",
+        "description": "Сухие, маслянистые ноты разных орехов — от лёгкого арахиса до сливочной макадамии. Дают вкусу округлость и мягкость почти без кислотности, с характерным ореховым послевкусием, как у свежемолотой пасты.",
+        "howAppears": "Чистый продукт обжарки: при среднем развитии зерна реакция Майяра рождает те же соединения, что и при обжаривании настоящих орехов. Терруар почти не влияет, поэтому ореховый профиль такой стабильный и предсказуемый.",
+        "whereOccurs": "Бразильские натуралы и центральноамериканские мытые сорта на средней обжарке. Ореховый профиль — основа большинства эспрессо-смесей.",
+        "descriptors": [
+          {
+            "id": 2,
+            "slug": "arahis",
+            "name": "Арахис",
+            "hex": "#D2B48C",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Простая, чуть сладковатая ореховая нота, знакомая по жареному арахису. Частый фоновый вкус честного повседневного кофе.",
+            "howAppears": "Возникает при средней обжарке как один из самых ранних продуктов реакции Майяра; от сорта и региона почти не зависит.",
+            "whereOccurs": "Бразилия, робуста-компоненты смесей, средняя обжарка и эспрессо-бленды.",
+            "children": [
+              {
+                "id": 130,
+                "slug": "zharenyj-arahis",
+                "name": "Жареный арахис",
+                "hex": "#D2B48C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 148,
+            "slug": "arahisovaya-pasta",
+            "name": "Арахисовая паста",
+            "hex": "#CB9848",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 184,
+            "slug": "fistashka",
+            "name": "Фисташка",
+            "hex": "#B7C98B",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 4,
+            "slug": "funduk",
+            "name": "Фундук",
+            "hex": "#C4A35A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Мягкая, маслянистая и сладкая ореховая нота — одна из самых приятных в секторе. Часто идёт в связке с молочным шоколадом.",
+            "howAppears": "Маслянистость зерна и реакция Майяра при средней обжарке дают характерный лесной орех; развивается чуть позже арахиса.",
+            "whereOccurs": "Бразилия и Колумбия, средняя обжарка, молочно-шоколадные эспрессо-профили.",
+            "children": [
+              {
+                "id": 128,
+                "slug": "Jarenii-funduk",
+                "name": "Жареный фундук",
+                "hex": "#C4A35A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 155,
+                "slug": "funduchnaya-pasta",
+                "name": "фундучная паста",
+                "hex": "#C4A35A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 308,
+                "slug": "funduk-v-shokolade",
+                "name": "Фундук в шоколаде",
+                "hex": "#C4A35A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "slug": "gretskiy-oreh",
+            "name": "Грецкий орех",
+            "hex": "#A67B5B",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Более тёмная, чуть терпкая и горьковатая ореховая нота с сухим послевкусием. Зрелый, дальний край орехового профиля.",
+            "howAppears": "Проявляется ближе к средне-тёмной обжарке, когда орех уходит в горчинку; нота из описаний российских обжарщиков.",
+            "whereOccurs": "Средне-тёмная обжарка, бразильские натуралы, тёмные эспрессо-профили."
+          },
+          {
+            "id": 9,
+            "slug": "keshyu",
+            "name": "Кешью",
+            "hex": "#E6D2A8",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладковатая, мягкая и слегка кремовая ореховая нота. По характеру — между арахисом и макадамией.",
+            "howAppears": "Возникает при средней обжарке как часть орехового спектра реакции Майяра.",
+            "whereOccurs": "Бразилия и Азия, средняя обжарка, эспрессо-смеси.",
+            "children": [
+              {
+                "id": 349,
+                "slug": "zharenyy-keshyu",
+                "name": "Жареный кешью",
+                "hex": "#D2B48C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "slug": "kokos",
+            "name": "Кокос",
+            "hex": "#FFF8E7",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладкая сливочно-тропическая нота с лёгкой маслянистостью. Встречается реже арахиса и потому ценится в профиле.",
+            "howAppears": "Сочетание остаточной сладости зерна и мягкой обжарки; иногда усиливается хани-обработкой.",
+            "whereOccurs": "Натуральные и хани-лоты Центральной Америки и Азии (Индия, Суматра), средняя обжарка."
+          },
+          {
+            "id": 191,
+            "slug": "lesnoj-oreh",
+            "name": "Лесной орех",
+            "hex": "#C4A35A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 8,
+            "slug": "makadamiya",
+            "name": "Макадамия",
+            "hex": "#F5E6C8",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Очень мягкая, сливочно-маслянистая ореховая нота — мягче фундука и без горчинки. Даёт вкусу бархатистую гладкость.",
+            "howAppears": "Продукт аккуратной средней обжарки плотного зерна; терруар выражен слабо.",
+            "whereOccurs": "Редкая нота; чаще в мытых центральноамериканских лотах на средней обжарке."
+          },
+          {
+            "id": 6,
+            "slug": "mindal",
+            "name": "Миндаль",
+            "hex": "#E8D5B0",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сухая, слегка горьковатая ореховая нота с чистым послевкусием. Рядом со сладостью читается как марципан.",
+            "howAppears": "Появляется при средне-светлой и средней обжарке; это более «сухой» край орехового спектра, до маслянистости фундука.",
+            "whereOccurs": "Центральная Америка (Гватемала, Гондурас) мытой обработки, средне-светлая обжарка.",
+            "children": [
+              {
+                "id": 242,
+                "slug": "amaretto",
+                "name": "Амаретто",
+                "hex": "#E8D5B0",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 313,
+                "slug": "solenyj-mindal",
+                "name": "Солёный миндаль",
+                "hex": "#E8D5B0",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 173,
+            "slug": "orehi",
+            "name": "Орехи",
+            "hex": "#CB9848",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 255,
+                "slug": "kedrovyj-oreh",
+                "name": "Кедровый орех",
+                "hex": "#E8D5B0",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 374,
+                "slug": "praline",
+                "name": "Пралине",
+                "hex": "#C8A86C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 212,
+            "slug": "orehovaya-pasta",
+            "name": "Ореховая паста",
+            "hex": "#D2B48C",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 7,
+            "slug": "pekan",
+            "name": "Пекан",
+            "hex": "#8B6914",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Мягкая маслянистая ореховая нота, мягче и слаще грецкого ореха. Даёт ощущение уютного классического кофе.",
+            "howAppears": "Продукт реакции Майяра при средней обжарке — не из терруара, а из развития зерна в ростере.",
+            "whereOccurs": "Бразилия и Центральная Америка, средняя и средне-тёмная обжарка, классические эспрессо-смеси."
+          },
+          {
+            "id": 220,
+            "slug": "solod",
+            "name": "Солод",
+            "hex": "#C4A35A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": "Сладковатая, слегка ореховая нота проросшего зерна, похожая на солодовый экстракт или молочный шоколад с хлебным оттенком.",
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 234,
+                "slug": "tyomnoe-pivo",
+                "name": "Тёмное пиво",
+                "hex": "#C4A35A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 152,
+            "slug": "zharenye-orehi",
+            "name": "Жареные орехи",
+            "hex": "#CB9848",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 258,
+                "slug": "zharenye-semechki",
+                "name": "Жареные семечки",
+                "hex": "#C4A35A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 164,
+            "slug": "zharenyj-mindalь",
+            "name": "Жареный миндаль",
+            "hex": "#E8D5B0",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "sweet",
+    "name": "Сладкий",
+    "hex": "#F0A81E",
+    "description": "Сахарная, кондитерская и медовая сладость — от карамели до варенья. Этот сектор отвечает за десертную сторону кофе: ощущение сладости без единого грамма добавленного сахара. Чем выше воспринимаемая сладость лота, тем дороже он обычно ценится.",
+    "howAppears": "Сладость рождается дважды. Сначала в зерне: спелые плоды накапливают природные сахара, и чем аккуратнее собран и обработан урожай, тем их больше. Потом в ростере: при обжарке сахара карамелизуются и дают ноты карамели, мёда и выпечки. Пережог эту сладость сжигает в горечь.",
+    "whereOccurs": "Чаще всего в зёрнах honey- и натуральной обработки, где сахара мякоти переходят в зерно. Степень обжарки — средне-светлая и средняя: карамелизация уже включилась, но ещё не ушла в горечь. Сильна у кофе из Бразилии, Колумбии и Центральной Америки.",
+    "subsectors": [
+      {
+        "id": 6,
+        "slug": "dzhem-varene",
+        "name": "Джем / Варенье",
+        "hex": "#E4576A",
+        "description": "Сладость с конкретным фруктово-ягодным лицом — варенье из клубники, малины, черники. Сочетает густую сахарность сладкого сектора с узнаваемым фруктом.",
+        "howAppears": "Натуральная обработка сохраняет и сахара, и фруктовые кислоты мякоти, а светлая обжарка не перекрывает их карамелизацией — получается «вареньевый» вкус.",
+        "whereOccurs": "Натуральные лоты Эфиопии и Латинской Америки, светлая обжарка.",
+        "descriptors": [
+          {
+            "id": 37,
+            "slug": "abrikosovyy-dzhem",
+            "name": "Абрикосовый джем",
+            "hex": "#FBCEB1",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Мягкая сладость варёного абрикоса с медовым оттенком. Косточковый, тёплый профиль.",
+            "howAppears": "Сахара и мягкие кислоты косточковых, сохранённые хани- и натуральной обработкой при светлой обжарке.",
+            "whereOccurs": "Хани-лоты Центральной Америки и эфиопские натуралы, светлая обжарка."
+          },
+          {
+            "id": 39,
+            "slug": "apelsinovyy-dzhem",
+            "name": "Апельсиновый джем",
+            "hex": "#FF8C00",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладко-горьковатая цитрусовая нота, как апельсиновый конфитюр. Мостик к цитрусовым.",
+            "howAppears": "Цитрусовые кислоты и эфирные масла зерна плюс остаточная сладость при светлой обжарке.",
+            "whereOccurs": "Мытые и хани-лоты Кении и Центральной Америки, светлая обжарка."
+          },
+          {
+            "id": 33,
+            "slug": "chernichnyy-dzhem",
+            "name": "Черничный джем",
+            "hex": "#8473C2",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Глубокая тёмно-ягодная сладость с «джемовым» телом. Один из самых ценимых профилей.",
+            "howAppears": "Концентрированные антоцианы и сахара тёмных ягод при натуральной сушке в ягоде и светлой обжарке.",
+            "whereOccurs": "Натуральные эфиопские лоты (Иргачиф), светлая обжарка."
+          },
+          {
+            "id": 205,
+            "slug": "ezhevichnyj-dzhem",
+            "name": "Ежевичный джем",
+            "hex": "#3B1F3F",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 38,
+            "slug": "klubnichnyy-dzhem",
+            "name": "Клубничный джем",
+            "hex": "#FF6B6B",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Густая сладкая нота варёной клубники с мягкой кислинкой. Десертная версия клубничной ноты.",
+            "howAppears": "Остаточные сахара и кислоты клубничного профиля, сохранённые натуральной обработкой при светлой обжарке.",
+            "whereOccurs": "Натуральные эфиопские лоты, светлая обжарка."
+          },
+          {
+            "id": 36,
+            "slug": "klyukvennyy-dzhem",
+            "name": "Клюквенный джем",
+            "hex": "#C84A55",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Кисло-сладкая терпкая нота варёной клюквы с ярким верхом. Самый кислый в подразделе.",
+            "howAppears": "Высокая кислотность и сахара при натуральной обработке плотного зерна и светлой обжарке.",
+            "whereOccurs": "Кенийские и эфиопские натуралы, светлая обжарка."
+          },
+          {
+            "id": 34,
+            "slug": "malinovyy-dzhem",
+            "name": "Малиновый джем",
+            "hex": "#E30B5C",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Яркая сладко-кислая нота варёной малины с насыщенным ароматом. Чуть кислее клубничного.",
+            "howAppears": "Фруктовые кислоты и сахара при натуральной обработке и светлой обжарке зерна высоких высот.",
+            "whereOccurs": "Натуральные лоты Эфиопии и Кении, светлая обжарка."
+          },
+          {
+            "id": 35,
+            "slug": "smorodinovyy-dzhem",
+            "name": "Смородиновый джем",
+            "hex": "#9E3D60",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Густая тёмно-ягодная сладость чёрной смородины с терпкостью. Насыщенный «винный» профиль.",
+            "howAppears": "Антоцианы и кислоты тёмных ягод при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Натуральные кенийские и эфиопские лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 295,
+                "slug": "dzhem-iz-krasnoy-smorodiny",
+                "name": "Джем из красной смородины",
+                "hex": "#9E3D60",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 174,
+            "slug": "yablochnyj-dzhem",
+            "name": "Яблочный джем",
+            "hex": "#6DC066",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "slug": "konditerskiy",
+        "name": "Кондитерский",
+        "hex": "#F7CE96",
+        "description": "Сладость готовых десертов — ваниль, марципан, печенье, шоколадно-ореховые пасты. Самый уютный подраздел: ассоциации с домашней выпечкой и кондитерской.",
+        "howAppears": "Сочетание карамелизации сахаров и реакции Майяра при средней обжарке: вместе они дают сложные «приготовленные» ноты, похожие на десерты.",
+        "whereOccurs": "Бразилия и Колумбия на средней обжарке, натуральная обработка; частый профиль эспрессо-смесей.",
+        "descriptors": [
+          {
+            "id": 30,
+            "slug": "dzhem",
+            "name": "Джем",
+            "hex": "#C41E3A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Густая фруктово-сахарная сладость варенья без привязки к конкретной ягоде. Сладкий мостик к фруктовому сектору.",
+            "howAppears": "Сочетание остаточных сахаров и фруктовых кислот, сохранённых натуральной обработкой и светлой обжаркой.",
+            "whereOccurs": "Натуральные эфиопские лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 296,
+                "slug": "marmelad",
+                "name": "Мармелад",
+                "hex": "#C41E3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 231,
+                "slug": "tsitrusovyi-dzhem",
+                "name": "Цитрусовый джем",
+                "hex": "#C41E3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 270,
+                "slug": "yagodnyj-dzhem",
+                "name": "Ягодный джем",
+                "hex": "#DAA520",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 32,
+            "slug": "grilyazh",
+            "name": "Грильяж",
+            "hex": "#C4A35A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Хрустящая жжёно-сладкая нота карамелизованного ореха в сахаре. Плотнее марципана, с горчинкой.",
+            "howAppears": "Глубокая карамелизация сахаров плюс ореховый Майяр при средне-тёмной обжарке.",
+            "whereOccurs": "Бразильские натуралы, средне-тёмная обжарка, эспрессо."
+          },
+          {
+            "id": 179,
+            "slug": "jogurt",
+            "name": "Йогурт",
+            "hex": "#F1E8D8",
+            "source": "custom",
+            "hideFromWheel": false,
+            "description": "Мягкая сливочно-кислая молочная нота с лёгкой сладостью. Округлая, лактическая.",
+            "howAppears": "Молочная (лактическая) кислотность зерна при светлой обжарке.",
+            "whereOccurs": "В единичных лотах — Колумбия, Перу.",
+            "children": [
+              {
+                "id": 193,
+                "slug": "chernichnyj-jogurt",
+                "name": "Черничный йогурт",
+                "hex": "#8473C2",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 31,
+            "slug": "martsipan",
+            "name": "Марципан",
+            "hex": "#F5DEB3",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладкая миндально-сахарная нота, как марципановая масса. Стык орехового и кондитерского.",
+            "howAppears": "Ореховый Майяр плюс остаточная сладость при средне-светлой обжарке.",
+            "whereOccurs": "Центральная Америка мытой обработки, средне-светлая обжарка."
+          },
+          {
+            "id": 25,
+            "slug": "nutella",
+            "name": "Нутелла",
+            "hex": "#9A6440",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладкая шоколадно-ореховая нота, как одноимённая паста. Стык сладкого и шоколадно-орехового секторов.",
+            "howAppears": "Шоколадный и ореховый Майяр вместе с карамелизацией сахаров при средней обжарке.",
+            "whereOccurs": "Бразильские натуралы, средняя обжарка, десертные эспрессо."
+          },
+          {
+            "id": 29,
+            "slug": "pastila",
+            "name": "Пастила",
+            "hex": "#FFB6C1",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Лёгкая воздушная фруктово-сливочная сладость с мягкой кислинкой. Деликатная и нежная нота.",
+            "howAppears": "Тонкая остаточная сладость и мягкие кислоты при светлой обжарке высокогорного зерна.",
+            "whereOccurs": "Мытые лоты Эфиопии и Кении, светлая обжарка.",
+            "children": [
+              {
+                "id": 292,
+                "slug": "yablochnaya-pastila",
+                "name": "Яблочная пастила",
+                "hex": "#FFB6C1",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 323,
+                "slug": "yagodnaya-pastila",
+                "name": "Ягодная пастила",
+                "hex": "#FFB6C1",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 171,
+            "slug": "slivki",
+            "name": "Сливки",
+            "hex": "#F7CE96",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 26,
+            "slug": "tsukaty",
+            "name": "Цукаты",
+            "hex": "#FF8C00",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Яркая нота засахаренных фруктов — сладкая, с цитрусово-фруктовым верхом. Кондитерский край фруктовой сладости.",
+            "howAppears": "Концентрированные сахара и фруктовые кислоты зерна при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Натуральные лоты Эфиопии и Центральной Америки, светлая обжарка.",
+            "children": [
+              {
+                "id": 287,
+                "slug": "tsukaty-apelsina",
+                "name": "Цукаты апельсина",
+                "hex": "#F5A623",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 27,
+            "slug": "vanil",
+            "name": "Ваниль",
+            "hex": "#F3E5AB",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Мягкая сливочно-сладкая нота с тёплым ароматом. Сглаживает вкус и добавляет десертности.",
+            "howAppears": "Ароматические соединения, близкие к ванилину, образуются при аккуратной средней обжарке; усиливаются остаточной сладостью зерна.",
+            "whereOccurs": "Колумбия и Центральная Америка, средняя обжарка, профили с молоком.",
+            "children": [
+              {
+                "id": 317,
+                "slug": "boby-tonka",
+                "name": "Бобы тонка",
+                "hex": "#AE7838",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 135,
+                "slug": "struchkovaya-vanil",
+                "name": "Стручковая ваниль",
+                "hex": "#F3E5AB",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "slug": "karamelnyy",
+        "name": "Карамельный",
+        "hex": "#BE7818",
+        "description": "Самый тёплый вид сладости — карамель, мёд, патока, тростниковый сахар. Даёт вкусу густое, тягучее ощущение и долгое сладкое послевкусие.",
+        "howAppears": "Прямой продукт карамелизации сахаров при средней обжарке: молекулы сахара распадаются и пересобираются в сотни ароматических соединений со вкусом карамели и мёда.",
+        "whereOccurs": "Бразилия и Центральная Америка, натуральная и honey-обработка, средняя обжарка.",
+        "descriptors": [
+          {
+            "id": 21,
+            "slug": "iriska",
+            "name": "Ириска",
+            "hex": "#B5651D",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Тягучая молочно-карамельная сладость с лёгкой солоноватостью. Плотнее карамели.",
+            "howAppears": "Карамелизация сахаров с уклоном в молочный тон при средней и средне-тёмной обжарке.",
+            "whereOccurs": "Бразилия и Колумбия, средне-тёмная обжарка, эспрессо с молоком."
+          },
+          {
+            "id": 24,
+            "slug": "karamel",
+            "name": "Карамель",
+            "hex": "#DAA520",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Классическая золотистая нота варёного сахара — сладкая, тёплая, с лёгкой сливочностью. Один из самых частых дескрипторов в кофе.",
+            "howAppears": "Прямая карамелизация сахаров при средней обжарке — момент, когда зерно набрало сладость, но ещё не ушло в горечь.",
+            "whereOccurs": "Бразилия, Колумбия, Центральная Америка, средняя обжарка, основа эспрессо.",
+            "children": [
+              {
+                "id": 217,
+                "slug": "karamelnye-ledentsy",
+                "name": "Карамельные леденцы",
+                "hex": "#DAA520",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 236,
+                "slug": "karamelnyi-popkorn",
+                "name": "Карамельный попкорн",
+                "hex": "#DAA520",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 206,
+                "slug": "slivochnaya-karamel",
+                "name": "Сливочная карамель",
+                "hex": "#C9873A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 312,
+                "slug": "solenaya-karamel",
+                "name": "Солёная карамель",
+                "hex": "#C9873A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 315,
+                "slug": "svetlaya-karamel",
+                "name": "Светлая карамель",
+                "hex": "#DAA520",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 235,
+                "slug": "tyomnaya-karamel",
+                "name": "Тёмная карамель",
+                "hex": "#DAA520",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 316,
+                "slug": "zhzhenaya-karamel",
+                "name": "Жжёная карамель",
+                "hex": "#8B5230",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 18,
+            "slug": "klenovyy-sirop",
+            "name": "Кленовый сироп",
+            "hex": "#C68E17",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Мягкая тягучая сладость с древесным оттенком. Деликатнее карамели и без горчинки.",
+            "howAppears": "Карамелизация сахаров плотного зерна при средней обжарке; нота из описаний обжарщиков.",
+            "whereOccurs": "Центральная Америка и Колумбия, хани-обработка, средняя обжарка."
+          },
+          {
+            "id": 20,
+            "slug": "med",
+            "name": "Мёд",
+            "hex": "#EB9605",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Густая цветочно-сахарная сладость с лёгкой кислинкой. Часто маркер хани-обработки.",
+            "howAppears": "Сочетание остаточных сахаров и кислот зерна; ярче всего проявляется при хани-обработке и средне-светлой обжарке.",
+            "whereOccurs": "Хани-лоты Коста-Рики и Центральной Америки, средне-светлая обжарка.",
+            "children": [
+              {
+                "id": 197,
+                "slug": "grechishnyj-med",
+                "name": "Гречишный мед",
+                "hex": "#6F4518",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 162,
+                "slug": "medovyj-pryanik",
+                "name": "Медовый пряник",
+                "hex": "#EB9605",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 290,
+                "slug": "temnyy-med",
+                "name": "Тёмный мёд",
+                "hex": "#EB9605",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 22,
+            "slug": "melassa",
+            "name": "Меласса",
+            "hex": "#8B5A1E",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Тёмная густая нота чёрной патоки — горьковато-сладкая, с минеральным оттенком. Самый тёмный край карамельного подраздела.",
+            "howAppears": "Глубокая карамелизация сахаров при средне-тёмной обжарке, когда сладость начинает уходить в горчинку.",
+            "whereOccurs": "Бразильские натуралы, средне-тёмная обжарка, плотные эспрессо."
+          },
+          {
+            "id": 23,
+            "slug": "nuga",
+            "name": "Нуга",
+            "hex": "#C8A86C",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Мягкая сливочно-ореховая сладость, как кондитерская нуга — сахар плюс орех. Нота из описаний обжарщиков.",
+            "howAppears": "Сочетание карамелизации сахаров и орехового Майяра при средней обжарке.",
+            "whereOccurs": "Бразильские натуралы, средняя обжарка, десертные эспрессо.",
+            "children": [
+              {
+                "id": 259,
+                "slug": "karamelnaya-nuga",
+                "name": "Карамельная нуга",
+                "hex": "#C8A86C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 250,
+                "slug": "orehovaya-nuga",
+                "name": "Ореховая нуга",
+                "hex": "#C8A86C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 172,
+            "slug": "sladkie-noty",
+            "name": "Сладкие ноты",
+            "hex": "#F0A81E",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 17,
+            "slug": "trostnikovyy-sahar",
+            "name": "Тростниковый сахар",
+            "hex": "#E8D08C",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Чистая светлая нерафинированная сладость без посторонних оттенков. Эталон «сладкого» кофе.",
+            "howAppears": "Остаточные сахара зерна, проявленные средне-светлой обжаркой до старта сильной карамелизации.",
+            "whereOccurs": "Мытые и хани-лоты Центральной Америки, средне-светлая обжарка.",
+            "children": [
+              {
+                "id": 239,
+                "slug": "korichnevyi-sakhar",
+                "name": "Коричневый сахар",
+                "hex": "#E8D08C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 321,
+                "slug": "sahar-muskovado",
+                "name": "Сахар мусковадо",
+                "hex": "#E8D08C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 19,
+            "slug": "tsvetochnyy-med",
+            "name": "Цветочный мёд",
+            "hex": "#F0C040",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Более тонкая и ароматная медовая нота с цветочным верхом. Деликатнее простого мёда.",
+            "howAppears": "Остаточные сахара плюс цветочная ароматика высокогорного зерна при светлой обжарке.",
+            "whereOccurs": "Эфиопские мытые и хани-лоты высоких высот, светлая обжарка."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "floral-tea",
+    "name": "Цветочный / Чайный",
+    "hex": "#9064C8",
+    "description": "Тонкие, ароматные и лёгкие ноты — цветы, чай, свежие травы. Самая деликатная категория колеса: её вкусы не бьют в лоб, а раскрываются ароматом и долгим чистым послевкусием. Частый маркер кофе высокого класса.",
+    "howAppears": "Это ароматика, а не «вкус» в прямом смысле — летучие эфирные соединения, которые зерно накапливает на больших высотах при медленном созревании. Сохранить их может только бережная мытая обработка и светлая обжарка: при пережоге цветочные и чайные ноты уходят первыми.",
+    "whereOccurs": "Прежде всего высокогорная Эфиопия (washed) и Кения. Почти всегда — светлая обжарка и мытая обработка. Это профиль чистого фильтр-кофе, а не эспрессо.",
+    "subsectors": [
+      {
+        "id": 9,
+        "slug": "travyanoy",
+        "name": "Травяной",
+        "hex": "#6F9E3C",
+        "description": "Свежие зелёные ноты трав — мята, лемонграсс, разнотравье. Прохладный «луговой» край сектора: меньше цветка, больше зелени и свежести.",
+        "howAppears": "Травянисто-зелёная ароматика зерна, которую сохраняет светлая обжарка. В отличие от дефектной травянистости недозрелого кофе, здесь это чистая, приятная зелень спелого высокогорного зерна.",
+        "whereOccurs": "Высокогорные washed Эфиопии и Центральной Америки, светлая обжарка. Подраздел добавлен по данным российских обжарщиков.",
+        "descriptors": [
+          {
+            "id": 54,
+            "slug": "lemongrass",
+            "name": "Лемонграсс",
+            "hex": "#BDB76B",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Свежая лимонно-травяная нота с цитрусовым верхом и зелёным телом. Бодрая и ароматная.",
+            "howAppears": "Цитрусовая и травяная ароматика зерна, сохранённая мытой обработкой и светлой обжаркой.",
+            "whereOccurs": "Высокогорные мытые Эфиопии и Центральной Америки, светлая обжарка."
+          },
+          {
+            "id": 57,
+            "slug": "myata",
+            "name": "Мята",
+            "hex": "#98FF98",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Прохладная свежая нота с ментоловым оттенком. Редкая и узнаваемая, даёт холодок в послевкусии.",
+            "howAppears": "Летучие соединения высокогорного зерна; держатся только на светлой обжарке.",
+            "whereOccurs": "Эфиопские и кенийские мытые высоких высот, светлая обжарка."
+          },
+          {
+            "id": 56,
+            "slug": "raznotrave",
+            "name": "Разнотравье",
+            "hex": "#6B8E23",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сложная луговая нота смеси свежих трав, без одного доминирующего тона. «Сенокосная» свежесть.",
+            "howAppears": "Совокупность травянисто-зелёных летучих соединений зерна при светлой обжарке.",
+            "whereOccurs": "Высокогорные мытые лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 166,
+                "slug": "koriandr",
+                "name": "Кориандр",
+                "hex": "#6B8E23",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 372,
+                "slug": "rozmarin",
+                "name": "Розмарин",
+                "hex": "#6B8E23",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 55,
+            "slug": "shalfey",
+            "name": "Шалфей",
+            "hex": "#87AE73",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сухая, чуть пряно-горьковатая травяная нота. Самый пряный край травяного подраздела.",
+            "howAppears": "Травянисто-пряная ароматика зерна при светлой обжарке; нота из описаний обжарщиков.",
+            "whereOccurs": "Мытые лоты Эфиопии и Центральной Америки, светлая обжарка."
+          },
+          {
+            "id": 189,
+            "slug": "sirop-tapinambura",
+            "name": "Сироп тапинамбура",
+            "hex": "#B9783A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 53,
+            "slug": "smorodinovyy-list",
+            "name": "Смородиновый лист",
+            "hex": "#556B2F",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Зелёно-терпкая нота свежего листа смородины с ягодным намёком. Между травой и тёмной ягодой.",
+            "howAppears": "Травянисто-ягодная ароматика зерна при мытой обработке и светлой обжарке.",
+            "whereOccurs": "Кенийские мытые, светлая обжарка."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "slug": "tsvetochnyy",
+        "name": "Цветочный",
+        "hex": "#D26CAF",
+        "description": "Ароматы цветов — от нежной ромашки до парфюмерного жасмина. Самые ароматные ноты колеса: чувствуются больше носом, чем языком, и дают эффект духов в чашке.",
+        "howAppears": "Летучие эфирные соединения, которые высокогорное зерно накапливает при медленном созревании. Сохраняются только при мытой обработке и очень светлой обжарке.",
+        "whereOccurs": "Эфиопия (особенно washed Иргачиф) и Кения, светлая обжарка, фильтр.",
+        "descriptors": [
+          {
+            "id": 46,
+            "slug": "akatsiya",
+            "name": "Акация",
+            "hex": "#DBDB70",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Нежная медово-цветочная нота с лёгкой сладостью. Деликатная, близка к цветочному мёду.",
+            "howAppears": "Сочетание цветочной ароматики и остаточной сладости при светлой обжарке.",
+            "whereOccurs": "Высокогорные мытые и хани-лоты, светлая обжарка."
+          },
+          {
+            "id": 138,
+            "slug": "cvetochnyj-chaj",
+            "name": "Цветочный чай",
+            "hex": "#D26CAF",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 248,
+            "slug": "cvetochnyy",
+            "name": "Цветочный",
+            "hex": "#F8DE7E",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": "Обобщённая цветочная нота: мягкий аромат садовых и полевых цветов без привязки к конкретному виду. Появляется в мытых и натуральных лотах высокогорной Африки (Эфиопия, Руанда) и придаёт чашке лёгкость и ароматическую сложность.",
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 176,
+            "slug": "cvety",
+            "name": "Цветы",
+            "hex": "#D26CAF",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 265,
+                "slug": "belye-cvety",
+                "name": "Белые цветы",
+                "hex": "#7B5EA7",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 200,
+                "slug": "fialka",
+                "name": "Фиалка",
+                "hex": "#6F4A8E",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 359,
+                "slug": "sakura",
+                "name": "Сакура",
+                "hex": "#D26CAF",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 47,
+            "slug": "gibiskus",
+            "name": "Гибискус",
+            "hex": "#D26896",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Кисло-цветочная яркая нота с ягодным верхом. Сочетает цветок и фруктовую кислинку.",
+            "howAppears": "Цветочная ароматика плюс фруктовые кислоты зерна при светлой обжарке.",
+            "whereOccurs": "Кенийские и эфиопские мытые, светлая обжарка."
+          },
+          {
+            "id": 49,
+            "slug": "karkade",
+            "name": "Каркаде",
+            "hex": "#BA3D78",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Кисло-сладкая ярко-красная нота суданской розы с ягодным телом. Кислее гибискуса.",
+            "howAppears": "Фруктовые кислоты и цветочная ароматика при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Натуральные эфиопские и кенийские лоты, светлая обжарка."
+          },
+          {
+            "id": 51,
+            "slug": "lavanda",
+            "name": "Лаванда",
+            "hex": "#9370DB",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Парфюмерно-травяная цветочная нота с прохладным оттенком. Тонкая, чуть «мыльная» в хорошем смысле.",
+            "howAppears": "Летучие эфирные соединения высокогорного зерна; держатся только на очень светлой обжарке.",
+            "whereOccurs": "Мытая Эфиопия, сорт гейша, очень светлая обжарка."
+          },
+          {
+            "id": 52,
+            "slug": "romashka",
+            "name": "Ромашка",
+            "hex": "#FFFACD",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Нежная травянисто-цветочная нота с лёгкой сладостью, как ромашковый чай. Мягкая и спокойная.",
+            "howAppears": "Лёгкая цветочная ароматика, сохранённая мытой обработкой и светлой обжаркой.",
+            "whereOccurs": "Высокогорные мытые Эфиопии, светлая обжарка."
+          },
+          {
+            "id": 50,
+            "slug": "roza",
+            "name": "Роза",
+            "hex": "#FF007F",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Яркая парфюмерно-цветочная нота с лёгкой сладостью. Один из самых узнаваемых цветочных дескрипторов.",
+            "howAppears": "Эфирные соединения высокогорного зерна; чувствительны к обжарке, держатся только на светлой.",
+            "whereOccurs": "Мытые лоты Эфиопии и сорта гейша, светлая обжарка.",
+            "children": [
+              {
+                "id": 232,
+                "slug": "chai-s-rozoi",
+                "name": "Чай с розой",
+                "hex": "#FF007F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 178,
+                "slug": "chajnaya-roza",
+                "name": "Чайная роза",
+                "hex": "#FF007F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 341,
+                "slug": "rozovaya-voda",
+                "name": "Розовая вода",
+                "hex": "#FFB6C1",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 48,
+            "slug": "zhasmin",
+            "name": "Жасмин",
+            "hex": "#F8DE7E",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Интенсивная сладко-цветочная нота, классический маркер высокогорной Эфиопии. Бьёт ароматом в нос.",
+            "howAppears": "Летучая цветочная ароматика, накопленная при медленном созревании на высоте; сохраняется мытой обработкой и светлой обжаркой.",
+            "whereOccurs": "Мытая Эфиопия (Иргачиф), сорт гейша, светлая обжарка.",
+            "children": [
+              {
+                "id": 196,
+                "slug": "zhasminovyj-chaj",
+                "name": "Жасминовый чай",
+                "hex": "#8A7A2F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "slug": "chaynyy",
+        "name": "Чайный",
+        "hex": "#C57555",
+        "description": "Ноты разных сортов чая — от танинного чёрного до свежего зелёного. Дают вкусу лёгкость, сухое послевкусие и ощущение настоя вместо «кофейной» плотности.",
+        "howAppears": "Сочетание мягких полифенолов (танинов) и цветочной ароматики высокогорного зерна, сохранённое мытой обработкой и светлой обжаркой.",
+        "whereOccurs": "Эфиопские и кенийские washed, светлая обжарка; классика фильтр-методов.",
+        "descriptors": [
+          {
+            "id": 42,
+            "slug": "belyy-chay",
+            "name": "Белый чай",
+            "hex": "#F5F5DC",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Самая тонкая чайная нота — почти прозрачная, цветочно-сладкая, без терпкости.",
+            "howAppears": "Лёгкая цветочная ароматика высокогорного зерна при очень светлой обжарке.",
+            "whereOccurs": "Высокогорные мытые Эфиопии, очень светлая обжарка."
+          },
+          {
+            "id": 182,
+            "slug": "chajnoe-telo",
+            "name": "Чайное тело",
+            "hex": "#C57555",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 45,
+            "slug": "chernyy-chay",
+            "name": "Чёрный чай",
+            "hex": "#B8723F",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Танинная, чуть терпкая нота с сухим послевкусием, как крепкий чёрный чай. Даёт структуру и «настойность».",
+            "howAppears": "Полифенолы зерна, проявленные мытой обработкой и светло-средней обжаркой.",
+            "whereOccurs": "Кенийские и эфиопские мытые, светлая обжарка.",
+            "children": [
+              {
+                "id": 304,
+                "slug": "asam",
+                "name": "Асам",
+                "hex": "#B8723F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 346,
+                "slug": "ceylonskiy-chay",
+                "name": "Цейлонский чай",
+                "hex": "#B8723F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 343,
+                "slug": "chaj-assam",
+                "name": "Чай Ассам",
+                "hex": "#A52A2A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 133,
+                "slug": "chaj-s-bergamotom",
+                "name": "Чай с бергамотом",
+                "hex": "#C57555",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 299,
+                "slug": "chernyy-chay-s-limonom",
+                "name": "Чёрный чай с лимоном",
+                "hex": "#B8723F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 342,
+                "slug": "kombucha",
+                "name": "Комбуча",
+                "hex": "#DB8B45",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 358,
+                "slug": "persikovyy-chay",
+                "name": "Персиковый чай",
+                "hex": "#B8723F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 43,
+            "slug": "krasnyy-chay",
+            "name": "Красный чай",
+            "hex": "#A52A2A",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Тёплая, чуть сладковатая нота с ягодным оттенком, как красный (сильно окисленный) чай. Плотнее чёрного.",
+            "howAppears": "Танины и остаточная сладость зерна при светло-средней обжарке.",
+            "whereOccurs": "Эфиопские натуралы и мытые, светло-средняя обжарка."
+          },
+          {
+            "id": 44,
+            "slug": "roybush",
+            "name": "Ройбуш",
+            "hex": "#DB8B45",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Тёплая древесно-сладкая нота красного африканского куста с лёгкой ореховостью.",
+            "howAppears": "Сочетание древесных и сладких тонов зерна при светло-средней обжарке; нота из описаний обжарщиков.",
+            "whereOccurs": "Африканские натуралы, светло-средняя обжарка."
+          },
+          {
+            "id": 146,
+            "slug": "smorodinovyj-chaj",
+            "name": "Смородиновый чай",
+            "hex": "#C57555",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 41,
+            "slug": "ulun",
+            "name": "Улун",
+            "hex": "#9B8E4E",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сложная нота между зелёным и чёрным чаем — полуокисленная, с медово-цветочным верхом.",
+            "howAppears": "Сочетание цветочной ароматики и мягких танинов при светлой обжарке высокогорного зерна.",
+            "whereOccurs": "Мытые лоты Эфиопии и Кении, светлая обжарка."
+          },
+          {
+            "id": 40,
+            "slug": "zelenyy-chay",
+            "name": "Зелёный чай",
+            "hex": "#8FBC8F",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Свежая травянисто-растительная нота с лёгкой сладостью. Деликатная и «зелёная».",
+            "howAppears": "Хлорофилльно-травяная ароматика, сохранённая очень светлой обжаркой; легко теряется при пережоге.",
+            "whereOccurs": "Высокогорные мытые Эфиопии, очень светлая обжарка."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "fruity",
+    "name": "Фруктовый",
+    "hex": "#DA2C33",
+    "description": "Самая яркая и разнообразная группа вкусовых нот в кофе. Фруктовые оттенки — это то, что чаще всего удивляет людей, впервые пробующих спешелти-кофе: вы делаете глоток и отчётливо чувствуете ягоды, цитрус или тропические фрукты. Это не ароматизатор, а естественный вкус, заложенный в зерне от природы.",
+    "howAppears": "Фруктовый вкус рождается ещё на плантации: его дают сахара и фруктовые кислоты, которые зерно накапливает внутри кофейной ягоды. Чем выше растёт кофе и чем медленнее зреет плод, тем плотнее фруктовый профиль. Дальше всё решает обработка — натуральная сушка прямо в ягоде и светлая обжарка сохраняют эту кислотность и отдают её в чашку. Тёмная обжарка фруктовые ноты выжигает до горечи.",
+    "whereOccurs": "Чаще всего фруктовый кофе приходит из Эфиопии и Кении, а также из зёрен натуральной и honey-обработки. Обязательное условие — светлая или средне-светлая обжарка: на тёмной фрукт превращается в дым и горечь. Если на пачке указаны «ягоды» или «цитрус», ищите рядом пометку natural или washed.",
+    "subsectors": [
+      {
+        "id": 15,
+        "slug": "sadovye",
+        "name": "Садовые",
+        "hex": "#9E4585",
+        "description": "Привычные ноты из сада средней полосы — слива, чёрная смородина, крыжовник, черешня. Близкий российскому вкусу подраздел: фрукты, знакомые с дачи, а не из тропиков.",
+        "howAppears": "Сочетание сахаров и яблочно-лимонной кислоты мякоти, сохранённое натуральной и мытой обработкой при светлой обжарке. Тёмные садовые (смородина, слива) дают винное тело, светлые (крыжовник, черешня) — звонкую свежесть.",
+        "whereOccurs": "Натуральные и мытые лоты Кении и Эфиопии; светлая обжарка. Подраздел добавлен по данным российских обжарщиков.",
+        "descriptors": [
+          {
+            "id": 97,
+            "slug": "barbaris",
+            "name": "Барбарис",
+            "hex": "#DE5050",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Яркая кисло-сладкая нота с леденцовым верхом. Звонкая и узнаваемая.",
+            "howAppears": "Высокая кислотность зерна при натуральной обработке и светлой обжарке; нота из описаний обжарщиков.",
+            "whereOccurs": "Натуральные эфиопские и кенийские лоты, светлая обжарка."
+          },
+          {
+            "id": 95,
+            "slug": "chereshnya",
+            "name": "Черешня",
+            "hex": "#B83A3A",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладкая сочная нота спелой черешни без кислой резкости вишни. Мягкая и десертная.",
+            "howAppears": "Сахара мякоти и мягкая кислота косточковых при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Натуральные лоты Эфиопии, светлая обжарка.",
+            "children": [
+              {
+                "id": 275,
+                "slug": "zhyoltaya-chereshnya",
+                "name": "Жёлтая черешня",
+                "hex": "#F0C040",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 100,
+            "slug": "chernaya-smorodina",
+            "name": "Чёрная смородина",
+            "hex": "#70489B",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Насыщенная тёмно-ягодная нота с терпкостью и винным ароматом. Один из самых выразительных садовых вкусов.",
+            "howAppears": "Антоцианы и кислоты тёмных ягод, сохранённые натуральной обработкой и светлой обжаркой.",
+            "whereOccurs": "Кенийские натуралы и мытые, светлая обжарка."
+          },
+          {
+            "id": 96,
+            "slug": "kryzhovnik",
+            "name": "Крыжовник",
+            "hex": "#8DB600",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Зелёно-кислая сочная нота с лёгкой сладостью. Свежий «садовый» профиль.",
+            "howAppears": "Яблочная кислота и зелёные эфиры зерна при мытой обработке и светлой обжарке.",
+            "whereOccurs": "Высокогорные мытые Кении, светлая обжарка.",
+            "children": [
+              {
+                "id": 216,
+                "slug": "krasnyy-kryzhovnik",
+                "name": "Красный крыжовник",
+                "hex": "#8DB600",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 142,
+            "slug": "oblepiha",
+            "name": "Облепиха",
+            "hex": "#9E4585",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 303,
+            "slug": "plodovye-frukty",
+            "name": "Плодовые фрукты",
+            "hex": "#6DC066",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 246,
+            "slug": "reven",
+            "name": "Ревень",
+            "hex": "#DA5F75",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": "Кисло-свежая нота садового ревеня: резкая яблочно-щавелевая кислотность с травянистым оттенком и лёгкой вяжущей терпкостью. В кофе появляется в мытых лотах Восточной Африки с высокой яркой кислотностью, чаще в послевкусии.",
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 99,
+            "slug": "sliva",
+            "name": "Слива",
+            "hex": "#A55A66",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сочная сладкая нота спелой сливы с винным телом и лёгкой терпкостью кожицы.",
+            "howAppears": "Сахара и кислоты косточковых, концентрированные натуральной обработкой при светлой обжарке.",
+            "whereOccurs": "Натуральные эфиопские и кенийские лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 243,
+                "slug": "alycha",
+                "name": "Алыча",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 274,
+                "slug": "belaya-sliva",
+                "name": "Белая слива",
+                "hex": "#E8F48C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 333,
+                "slug": "krasnaya-sliva",
+                "name": "Красная слива",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 276,
+                "slug": "sliva-mirabel",
+                "name": "Слива Мирабель",
+                "hex": "#F0C040",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 311,
+                "slug": "slivovoe-varenie",
+                "name": "Сливовое варенье",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 332,
+                "slug": "slivovoe-vino",
+                "name": "Сливовое вино",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 314,
+                "slug": "spelaya-sliva",
+                "name": "Спелая слива",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 222,
+                "slug": "temnaya-sliva",
+                "name": "Тёмная слива",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 169,
+                "slug": "zhyoltaya-sliva",
+                "name": "Жёлтая слива",
+                "hex": "#FBCEB1",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 190,
+            "slug": "smorodina",
+            "name": "Смородина",
+            "hex": "#70489B",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 237,
+                "slug": "belaya-smorodina",
+                "name": "Белая смородина",
+                "hex": "#70489B",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 280,
+                "slug": "tyomnaya-smorodina",
+                "name": "Тёмная смородина",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 98,
+            "slug": "zemlyanika",
+            "name": "Земляника",
+            "hex": "#FC5A8D",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Нежная сладко-ароматная нота лесной земляники, тоньше и ароматнее садовой клубники.",
+            "howAppears": "Остаточные сахара и цветочно-ягодные эфиры при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Высокогорные натуральные лоты Эфиопии, светлая обжарка.",
+            "children": [
+              {
+                "id": 251,
+                "slug": "zemlyanichnyj-dzhem",
+                "name": "Земляничный джем",
+                "hex": "#FC5A8D",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "slug": "tropicheskie",
+        "name": "Тропические",
+        "hex": "#FB8E58",
+        "description": "Сочные экзотические ноты — манго, маракуйя, личи, папайя. Самый «солнечный» подраздел: сочетает высокую сладость и яркую кислотность, часто маркер модных обработок.",
+        "howAppears": "Тропические ноты дают сложные эфиры, которые образуются при ферментации мякоти. Натуральная и анаэробная обработка усиливают их, а светлая обжарка сохраняет. Поэтому тропики так часто звучат в современных экспериментальных лотах.",
+        "whereOccurs": "Натуральные и анаэробные лоты Эфиопии, Колумбии, Коста-Рики; светлая обжарка. Подраздел добавлен по данным российских обжарщиков.",
+        "descriptors": [
+          {
+            "id": 211,
+            "slug": "arbuz",
+            "name": "Арбуз",
+            "hex": "#FF6B6B",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 91,
+            "slug": "dynya",
+            "name": "Дыня",
+            "hex": "#F0E68C",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Лёгкая водянисто-сладкая нота спелой дыни с медовым верхом. Мягкая и освежающая.",
+            "howAppears": "Мягкие сахара и эфиры мякоти при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Натуральные лоты Центральной Америки и Эфиопии, светлая обжарка.",
+            "children": [
+              {
+                "id": 127,
+                "slug": "sushenaya-dinya",
+                "name": "Сушеная дыня",
+                "hex": "#F0E68C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 195,
+            "slug": "fejhoa",
+            "name": "Фейхоа",
+            "hex": "#A6C94F",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 198,
+            "slug": "grenadilla",
+            "name": "Гренадилла",
+            "hex": "#B65A1C",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 188,
+            "slug": "guava",
+            "name": "Гуава",
+            "hex": "#F47C7C",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 90,
+            "slug": "kivi",
+            "name": "Киви",
+            "hex": "#8DB600",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Зелёно-тропическая сочно-кислая нота с лёгкой терпкостью. Свежая и «зелёная».",
+            "howAppears": "Лимонная и яблочная кислота плюс зелёные эфиры зерна при мытой обработке и светлой обжарке.",
+            "whereOccurs": "Высокогорные мытые лоты, светлая обжарка."
+          },
+          {
+            "id": 93,
+            "slug": "lichi",
+            "name": "Личи",
+            "hex": "#FFB3BA",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Нежная сладко-цветочная тропическая нота с парфюмерным верхом. Деликатная и редкая.",
+            "howAppears": "Сочетание сахаров и цветочных эфиров мякоти при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Высокогорные натуралы Эфиопии и сорта гейша, светлая обжарка."
+          },
+          {
+            "id": 89,
+            "slug": "mango",
+            "name": "Манго",
+            "hex": "#FF8243",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сочная сладкая тропическая нота с медовым телом и мягкой кислинкой. Один из самых узнаваемых тропиков.",
+            "howAppears": "Сахара и эфиры мякоти, концентрированные натуральной обработкой при светлой обжарке.",
+            "whereOccurs": "Натуральные лоты Эфиопии и Колумбии, светлая обжарка."
+          },
+          {
+            "id": 94,
+            "slug": "marakuyya",
+            "name": "Маракуйя",
+            "hex": "#9B59B6",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Яркая кисло-сладкая тропическая нота с интенсивным ароматом. Звонкая и «модная».",
+            "howAppears": "Сложные эфиры и высокая кислотность, усиленные анаэробной и натуральной обработкой при светлой обжарке.",
+            "whereOccurs": "Анаэробные и натуральные лоты Колумбии и Коста-Рики, светлая обжарка.",
+            "children": [
+              {
+                "id": 325,
+                "slug": "dragonfrut",
+                "name": "Драгонфрут",
+                "hex": "#FC5A8D",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 92,
+            "slug": "nektarin",
+            "name": "Нектарин",
+            "hex": "#FF6347",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сочная сладко-кислая нота между персиком и сливой, с гладким телом. Свежий косточковый тропик.",
+            "howAppears": "Сбалансированные сахара и кислоты косточковых при хани- и натуральной обработке, светлая обжарка.",
+            "whereOccurs": "Хани-лоты Центральной Америки, светлая обжарка."
+          },
+          {
+            "id": 88,
+            "slug": "papayya",
+            "name": "Папайя",
+            "hex": "#FFEFD5",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Мягкая сладкая тропическая нота с кремовым телом и лёгкой дынной свежестью.",
+            "howAppears": "Сахара мякоти и лёгкие эфиры при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Натуральные лоты Центральной Америки, светлая обжарка."
+          },
+          {
+            "id": 204,
+            "slug": "sladkij-fizalis",
+            "name": "Сладкий физалис",
+            "hex": "#B8731A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 149,
+            "slug": "tropicheskie-frukty",
+            "name": "Тропические фрукты",
+            "hex": "#FB8E58",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 351,
+                "slug": "zheltye-tropicheskie-frukty",
+                "name": "Жёлтые тропические фрукты",
+                "hex": "#FFD700",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 147,
+            "slug": "zheltye-frukty",
+            "name": "Желтые фрукты",
+            "hex": "#FB8E58",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "slug": "tsitrusovye",
+        "name": "Цитрусовые",
+        "hex": "#D6B514",
+        "description": "Свежие кислые ноты цитрусов — лимон, апельсин, грейпфрут, бергамот. Самый бодрящий подраздел: даёт яркую кислотность и ощущение свежести, которое будит вкус.",
+        "howAppears": "В основе — лимонная кислота, которую высокогорное зерно накапливает при медленном созревании. Мытая обработка сохраняет её в чистом виде, а светлая обжарка не даёт уйти в карамель. Цитрус — почти всегда признак washed-кофе.",
+        "whereOccurs": "Кения и высокогорная Эфиопия (washed), мытые лоты Латинской Америки; светлая обжарка.",
+        "descriptors": [
+          {
+            "id": 84,
+            "slug": "apelsin",
+            "name": "Апельсин",
+            "hex": "#FF8C00",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладко-кислая сочная цитрусовая нота с мягким верхом. Самый «дружелюбный» цитрус.",
+            "howAppears": "Баланс лимонной кислоты и сахаров зерна при мытой и хани-обработке, светлая обжарка.",
+            "whereOccurs": "Колумбия, Центральная Америка, мытая Кения, светлая обжарка.",
+            "children": [
+              {
+                "id": 228,
+                "slug": "apelsinovyi-pirog",
+                "name": "Апельсиновый пирог",
+                "hex": "#FF8C00",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 353,
+                "slug": "bambl",
+                "name": "Бамбл",
+                "hex": "#FF8C00",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 181,
+                "slug": "krasnyj-apelsin",
+                "name": "Красный апельсин",
+                "hex": "#FF8C00",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 214,
+                "slug": "tsedra-apelsina",
+                "name": "Цедра апельсина",
+                "hex": "#FF8C00",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 86,
+            "slug": "bergamot",
+            "name": "Бергамот",
+            "hex": "#C5E17A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Парфюмерный цитрус с горчинкой, знакомый по чаю Эрл Грей. Маркер высококлассного мытого кофе.",
+            "howAppears": "Сложные эфирные масла и лимонная кислота, которые проявляет аккуратная мытая обработка и очень светлая обжарка.",
+            "whereOccurs": "Кения и эфиопские мытые высоких высот; почти исключительно светлая обжарка."
+          },
+          {
+            "id": 134,
+            "slug": "citrusy",
+            "name": "Цитрусы",
+            "hex": "#D6B514",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 249,
+                "slug": "cedra-citrusov",
+                "name": "Цедра цитрусов",
+                "hex": "#D6B514",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 253,
+                "slug": "citrusovyj-marmelad",
+                "name": "Цитрусовый мармелад",
+                "hex": "#FF8C00",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 82,
+            "slug": "greypfrut",
+            "name": "Грейпфрут",
+            "hex": "#FF6347",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Яркая кисло-горьковатая цитрусовая нота с освежающим верхом. Сложнее простого лимона.",
+            "howAppears": "Лимонная кислота и горьковатые флавоноиды зерна, сохранённые мытой обработкой и светлой обжаркой.",
+            "whereOccurs": "Кенийские мытые, светлая обжарка.",
+            "children": [
+              {
+                "id": 305,
+                "slug": "cedra-grejpfruta",
+                "name": "Цедра грейпфрута",
+                "hex": "#FF8C00",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 338,
+                "slug": "krasnyj-grejpfrut",
+                "name": "Красный грейпфрут",
+                "hex": "#DE5050",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 87,
+            "slug": "kumkvat",
+            "name": "Кумкват",
+            "hex": "#FFA500",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Яркая нота цельного миниатюрного цитруса — кислая мякоть плюс сладкая цедра. Сложный цитрусовый профиль.",
+            "howAppears": "Сочетание лимонной кислоты и эфирных масел цедры зерна при мытой обработке и светлой обжарке.",
+            "whereOccurs": "Кенийские и эфиопские мытые, светлая обжарка."
+          },
+          {
+            "id": 85,
+            "slug": "laym",
+            "name": "Лайм",
+            "hex": "#32CD32",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Острая зелёно-цитрусовая кислая нота с тропическим верхом. Резче лимона.",
+            "howAppears": "Лимонная кислота и зелёная ароматика зерна при мытой обработке и светлой обжарке.",
+            "whereOccurs": "Кенийские и центральноамериканские мытые, светлая обжарка.",
+            "children": [
+              {
+                "id": 301,
+                "slug": "tsedra-layma",
+                "name": "Цедра лайма",
+                "hex": "#32CD32",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 80,
+            "slug": "limon",
+            "name": "Лимон",
+            "hex": "#FFF44F",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Чистая яркая кислая нота с резким свежим верхом. Эталон цитрусовой кислотности.",
+            "howAppears": "Высокая лимонная кислотность высокогорного зерна, проявленная мытой обработкой и очень светлой обжаркой.",
+            "whereOccurs": "Высокогорные мытые Кении и Эфиопии, светлая обжарка.",
+            "children": [
+              {
+                "id": 229,
+                "slug": "limonnaya-merenga",
+                "name": "Лимонная меренга",
+                "hex": "#FFF44F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 240,
+                "slug": "limonnaya-vaflya",
+                "name": "Лимонная вафля",
+                "hex": "#FFF44F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 268,
+                "slug": "spelyj-limon",
+                "name": "Спелый лимон",
+                "hex": "#FFF44F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 225,
+                "slug": "tsedra-limona",
+                "name": "Цедра лимона",
+                "hex": "#FFF44F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 83,
+            "slug": "mandarin",
+            "name": "Мандарин",
+            "hex": "#FF7F00",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладкая мягкая цитрусовая нота с низкой кислотностью. Деликатнее апельсина.",
+            "howAppears": "Сахара и мягкая лимонная кислота зерна при хани- и мытой обработке, светлая обжарка.",
+            "whereOccurs": "Хани-лоты Центральной Америки, светлая обжарка."
+          },
+          {
+            "id": 81,
+            "slug": "pomelo",
+            "name": "Помело",
+            "hex": "#E8F48C",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Лёгкая свежая цитрусовая нота с мягкой горчинкой и водянистым телом. Тоньше грейпфрута.",
+            "howAppears": "Мягкая лимонная кислота и флавоноиды зерна при мытой обработке и светлой обжарке.",
+            "whereOccurs": "Высокогорные мытые Эфиопии, светлая обжарка.",
+            "children": [
+              {
+                "id": 327,
+                "slug": "sviti",
+                "name": "Свити",
+                "hex": "#E8F48C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "slug": "kostochkovye-i-drugie",
+        "name": "Косточковые и другие",
+        "hex": "#DC5F0D",
+        "description": "Сочные ноты косточковых и садовых фруктов — вишня, персик, яблоко, виноград. Средний по яркости подраздел: фрукт читается чётко, но мягче, чем ягоды или цитрус.",
+        "howAppears": "Сбалансированные сахара и яблочная кислота мякоти, сохранённые мытой и honey-обработкой при светло-средней обжарке. Дают сочность без резкой кислотности.",
+        "whereOccurs": "Колумбия, Центральная Америка, Эфиопия; мытая и honey-обработка, светло-средняя обжарка.",
+        "descriptors": [
+          {
+            "id": 74,
+            "slug": "abrikos",
+            "name": "Абрикос",
+            "hex": "#FBCEB1",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладко-сочная медовая нота свежего абрикоса с лёгкой кислинкой. Тёплый косточковый профиль.",
+            "howAppears": "Сахара и мягкие кислоты косточковых при хани- и мытой обработке, светлая обжарка.",
+            "whereOccurs": "Хани-лоты Центральной Америки, эфиопские мытые, светлая обжарка.",
+            "children": [
+              {
+                "id": 257,
+                "slug": "abrikosovaya-kostochka",
+                "name": "Абрикосовая косточка",
+                "hex": "#FBCEB1",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 73,
+            "slug": "ananas",
+            "name": "Ананас",
+            "hex": "#FFD700",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Яркая тропическо-кислая сочная нота с высокой кислотностью. Мостик к тропическому подразделу.",
+            "howAppears": "Высокая лимонная кислотность и сахара, проявленные мытой обработкой и очень светлой обжаркой.",
+            "whereOccurs": "Высокогорные мытые Кении и Эфиопии, светлая обжарка.",
+            "children": [
+              {
+                "id": 180,
+                "slug": "ananasovyj-sirop",
+                "name": "Ананасовый сироп",
+                "hex": "#FFD700",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 337,
+                "slug": "konservirovannyj-ananas",
+                "name": "Консервированный ананас",
+                "hex": "#FFD700",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 368,
+                "slug": "vyalenyy-ananas",
+                "name": "Вяленый ананас",
+                "hex": "#FFD700",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 78,
+            "slug": "granat",
+            "name": "Гранат",
+            "hex": "#DA5F75",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Кисло-сладкая терпкая нота с винным телом. Сочетает сочность и танинную терпкость.",
+            "howAppears": "Кислоты и полифенолы зерна при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Кенийские натуралы и мытые, светлая обжарка."
+          },
+          {
+            "id": 77,
+            "slug": "grusha",
+            "name": "Груша",
+            "hex": "#D1E231",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Лёгкая сочно-сладкая нота спелой груши с водянистой свежестью. Деликатнее яблока.",
+            "howAppears": "Мягкие сахара и кислоты зерна при мытой обработке и светлой обжарке.",
+            "whereOccurs": "Мытые лоты Колумбии и Эфиопии, светлая обжарка.",
+            "children": [
+              {
+                "id": 223,
+                "slug": "grushevyi-kompot",
+                "name": "Грушевый компот",
+                "hex": "#D1E231",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 279,
+                "slug": "sushyonaya-grusha",
+                "name": "Сушёная груша",
+                "hex": "#B5651D",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 183,
+            "slug": "kostochkovye-frukty",
+            "name": "Косточковые фрукты",
+            "hex": "#DC5F0D",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 291,
+                "slug": "zheltye-kostochkovye-frukty",
+                "name": "Жёлтые косточковые фрукты",
+                "hex": "#DC5F0D",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 79,
+            "slug": "persik",
+            "name": "Персик",
+            "hex": "#FFDAB9",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Мягкая сладко-сочная нота спелого персика с медовым телом. Нежная и округлая.",
+            "howAppears": "Сбалансированные сахара и мягкие кислоты косточковых при хани-обработке и светлой обжарке.",
+            "whereOccurs": "Хани-лоты Центральной Америки и эфиопские мытые, светлая обжарка.",
+            "children": [
+              {
+                "id": 326,
+                "slug": "belyj-persik",
+                "name": "Белый персик",
+                "hex": "#FFDAB9",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 215,
+                "slug": "persikovyy-yogurt",
+                "name": "Персиковый йогурт",
+                "hex": "#FFDAB9",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 76,
+            "slug": "vinograd",
+            "name": "Виноград",
+            "hex": "#6F4685",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладкая нота спелого винограда с лёгкой винностью. Сочная и округлая.",
+            "howAppears": "Сахара мякоти и продукты лёгкой ферментации при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Натуральные и анаэробные лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 227,
+                "slug": "belyi-vinograd",
+                "name": "Белый виноград",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 203,
+                "slug": "belyj-vinograd",
+                "name": "Белый виноград",
+                "hex": "#7D8F3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 187,
+                "slug": "krasnyj-vinograd",
+                "name": "Красный виноград",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 264,
+                "slug": "molodoj-vinograd",
+                "name": "Молодой виноград",
+                "hex": "#6DC066",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 360,
+                "slug": "sovinyon-blan",
+                "name": "Совиньон блан",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 221,
+                "slug": "temnyi-vinograd",
+                "name": "Тёмный виноград",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 366,
+                "slug": "vinograd-izabella",
+                "name": "Виноград Изабелла",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 263,
+                "slug": "vinograd-traminer",
+                "name": "Виноград Траминер",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 208,
+                "slug": "vinogradnyj-limonad",
+                "name": "Виноградный лимонад",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 361,
+                "slug": "vinogradnyy-pirog",
+                "name": "Виноградный пирог",
+                "hex": "#6F4685",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 75,
+            "slug": "vishnya",
+            "name": "Вишня",
+            "hex": "#B83A3A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сочная сладко-кислая нота спелой вишни с лёгкой косточковой горчинкой. Яркая и узнаваемая.",
+            "howAppears": "Сахара и яблочная кислота мякоти, сохранённые натуральной обработкой и светлой обжаркой.",
+            "whereOccurs": "Натуральные эфиопские и кенийские лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 370,
+                "slug": "chernaya-vishnya",
+                "name": "Чёрная вишня",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 158,
+                "slug": "rozovaya-vishnya",
+                "name": "Розовая вишня",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 367,
+                "slug": "vishnevaya-kola",
+                "name": "Вишнёвая кола",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 298,
+                "slug": "vishnevaya-kostochka",
+                "name": "Вишнёвая косточка",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 324,
+                "slug": "vishnevyj-konfityur",
+                "name": "Вишнёвый конфитюр",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 151,
+                "slug": "vishnevyj-ledenec",
+                "name": "Вишневый леденец",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 136,
+                "slug": "vishnevyj-pirog",
+                "name": "Вишневый пирог",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 340,
+                "slug": "vishnevyj-sidr",
+                "name": "Вишнёвый сидр",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 154,
+                "slug": "vishnya-v-shokolade",
+                "name": "Вишня в шоколаде",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 72,
+            "slug": "yabloko",
+            "name": "Яблоко",
+            "hex": "#6DC066",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Свежая сочно-кислая нота зелёного или красного яблока. Чистая и хрустящая.",
+            "howAppears": "Яблочная кислота зерна — буквально та же, что в яблоке — при мытой обработке и светло-средней обжарке.",
+            "whereOccurs": "Мытые лоты Колумбии и Центральной Америки, светло-средняя обжарка.",
+            "children": [
+              {
+                "id": 160,
+                "slug": "krasnoe-yabloko",
+                "name": "Красное яблоко",
+                "hex": "#6DC066",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 213,
+                "slug": "sushyonoe-yabloko",
+                "name": "Сушёное яблоко",
+                "hex": "#9B5B33",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 244,
+                "slug": "yablochnyi-marmelad",
+                "name": "Яблочный мармелад",
+                "hex": "#6DC066",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 159,
+                "slug": "yabloko-v-karameli",
+                "name": "Яблоко в карамели",
+                "hex": "#6DC066",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 170,
+                "slug": "zelyonoe-yabloko",
+                "name": "Зелёное яблоко",
+                "hex": "#6DC066",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 161,
+                "slug": "zheltoe-yabloko",
+                "name": "Желтое яблоко",
+                "hex": "#6DC066",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "slug": "suhofrukty",
+        "name": "Сухофрукты",
+        "hex": "#9B5B33",
+        "description": "Тёмные концентрированные ноты сушёных фруктов — изюм, чернослив, инжир, финик. Густая тёмно-сладкая сторона фруктового сектора, без яркой кислотности.",
+        "howAppears": "Это «вызревшая» сладость: натуральная обработка и более долгая выдержка концентрируют сахара, а средняя обжарка добавляет тёмно-карамельный тон. Часто признак выдержанных или плотных натуралов.",
+        "whereOccurs": "Натуральные лоты Бразилии и Эфиопии, индонезийские зёрна; средняя и средне-тёмная обжарка.",
+        "descriptors": [
+          {
+            "id": 69,
+            "slug": "chernosliv",
+            "name": "Чернослив",
+            "hex": "#6E3389",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Густая тёмная нота сушёной сливы с лёгкой винностью. Плотнее изюма.",
+            "howAppears": "Концентрированные сахара и кислоты косточковых при натуральной обработке и средне-тёмной обжарке.",
+            "whereOccurs": "Натуральные лоты Бразилии и Индонезии, средне-тёмная обжарка."
+          },
+          {
+            "id": 71,
+            "slug": "finik",
+            "name": "Финик",
+            "hex": "#AE7838",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Очень сладкая, почти карамельная нота сушёного финика. Самая сахарная в подразделе.",
+            "howAppears": "Максимально концентрированные сахара при натуральной обработке и средней обжарке.",
+            "whereOccurs": "Натуральные лоты Бразилии и Эфиопии, средняя обжарка."
+          },
+          {
+            "id": 66,
+            "slug": "inzhir",
+            "name": "Инжир",
+            "hex": "#A0785A",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Густая медово-сладкая нота сушёного инжира с зернистым телом. Тёплая и насыщенная.",
+            "howAppears": "Концентрированные сахара мякоти при натуральной обработке и средней обжарке.",
+            "whereOccurs": "Эфиопские и бразильские натуралы, средняя обжарка."
+          },
+          {
+            "id": 67,
+            "slug": "izyum",
+            "name": "Изюм",
+            "hex": "#9C6A5C",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Тёмно-сладкая нота сушёного винограда с винным оттенком. Классика натуральной обработки.",
+            "howAppears": "Концентрированные сахара мякоти при натуральной сушке в ягоде и средней обжарке.",
+            "whereOccurs": "Бразильские и эфиопские натуралы, средняя обжарка.",
+            "children": [
+              {
+                "id": 261,
+                "slug": "belyj-izyum",
+                "name": "Белый изюм",
+                "hex": "#9C6A5C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 348,
+                "slug": "temnyy-izyum",
+                "name": "Тёмный изюм",
+                "hex": "#9C6A5C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 68,
+            "slug": "kuraga",
+            "name": "Курага",
+            "hex": "#FFBF00",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладкая нота сушёного абрикоса с медовым телом и мягкой кислинкой. Светлее чернослива.",
+            "howAppears": "Концентрированные сахара косточковых при хани- и натуральной обработке, средняя обжарка.",
+            "whereOccurs": "Хани-лоты Центральной Америки, средняя обжарка."
+          },
+          {
+            "id": 143,
+            "slug": "suhofrukty",
+            "name": "Сухофрукты",
+            "hex": "#9B5B33",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 355,
+                "slug": "kaskara",
+                "name": "Каскара",
+                "hex": "#9B5B33",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 272,
+                "slug": "vyalenye-frukty",
+                "name": "Вяленые фрукты",
+                "hex": "#C0392B",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 153,
+            "slug": "vyalenaya-vishnya",
+            "name": "Вяленая вишня",
+            "hex": "#9C6A5C",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 70,
+            "slug": "vyalenyy-banan",
+            "name": "Вяленый банан",
+            "hex": "#DAB86F",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладкая тропическо-десертная нота вяленого банана с лёгкой бродильной нотой. Маркер анаэробных натуралов.",
+            "howAppears": "Сахара и продукты ферментации при натуральной и анаэробной обработке, средняя обжарка.",
+            "whereOccurs": "Анаэробные и натуральные лоты Колумбии и Бразилии, средняя обжарка."
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "slug": "yagody",
+        "name": "Ягоды",
+        "hex": "#E1467F",
+        "description": "Ягодные ноты — от спелой клубники до тёмной ежевики, самый «нарядный» подраздел фруктового сектора. Именно за ягоды люди влюбляются в спешелти. Внутри делятся на красные (клубника, малина, брусника) и тёмные (черника, ежевика, смородина).",
+        "howAppears": "Ягодная кислотность — это в основном яблочная и лимонная кислоты плюс остаточные сахара мякоти. Их сохраняет натуральная обработка: зерно сушат прямо в плоде, и ягода успевает «отдать» сладость и аромат зерну. Светлая обжарка фиксирует результат, не перекрывая его карамелизацией.",
+        "whereOccurs": "Ягоды — визитная карточка натуральных эфиопских лотов (Иргачиф, Гедео) и кенийских washed. Почти всегда светлая обжарка. Тёмные ягоды чаще дают натуралы, красные — мытые сорта с более чистым профилем.",
+        "descriptors": [
+          {
+            "id": 63,
+            "slug": "brusnika",
+            "name": "Брусника",
+            "hex": "#C26060",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Кисло-терпкая северная ягодная нота с лёгкой горчинкой. Свежая и «дикая».",
+            "howAppears": "Высокая кислотность плотного зерна, сохранённая натуральной обработкой и светлой обжаркой.",
+            "whereOccurs": "Кенийские натуралы и мытые, светлая обжарка."
+          },
+          {
+            "id": 61,
+            "slug": "chernika",
+            "name": "Черника",
+            "hex": "#8473C2",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Глубокая сладко-кислая нота тёмных ягод, одна из самых желанных в спешелти. Узнаётся по «джемовому» послевкусию без приторности.",
+            "howAppears": "Появляется при натуральной обработке зерна высокой плотности — антоцианы и яблочная кислота мякоти переходят в зерно при сушке в ягоде.",
+            "whereOccurs": "Классика натуральных эфиопских лотов (Иргачиф) на светлой обжарке; реже — в выдержанных кенийских зёрнах."
+          },
+          {
+            "id": 64,
+            "slug": "ezhevika",
+            "name": "Ежевика",
+            "hex": "#6E3389",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Глубокая тёмно-ягодная нота с винной сладостью и лёгкой терпкостью. Один из самых «солидных» ягодных вкусов.",
+            "howAppears": "Антоцианы и кислоты тёмных ягод, концентрированные натуральной сушкой в ягоде.",
+            "whereOccurs": "Натуральные эфиопские лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 247,
+                "slug": "ezhevichnoe-vino",
+                "name": "Ежевичное вино",
+                "hex": "#6E3389",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 194,
+                "slug": "ezhevichnyj-ledenec",
+                "name": "Ежевичный леденец",
+                "hex": "#6E3389",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 347,
+                "slug": "shelkovica",
+                "name": "Шелковица",
+                "hex": "#6E3389",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 218,
+            "slug": "kalina",
+            "name": "Калина",
+            "hex": "#DA5F75",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": "Терпкая, слегка горчащая нота красной ягоды калины, знакомая по домашнему варенью.",
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 62,
+            "slug": "klubnika",
+            "name": "Клубника",
+            "hex": "#FF6B6B",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Лёгкая, сладкая и узнаваемая нота красных ягод — частый «вход» в мир фруктового кофе для новичка.",
+            "howAppears": "Дают остаточные сахара и мягкая кислотность, сохранённые натуральной или хани-обработкой при бережной светлой обжарке.",
+            "whereOccurs": "Эфиопия и Латинская Америка (Колумбия, натуральные лоты) на светлой обжарке."
+          },
+          {
+            "id": 60,
+            "slug": "klyukva",
+            "name": "Клюква",
+            "hex": "#C84A55",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Яркая кисло-терпкая нота с резким верхом. Самая кислая из красных ягод.",
+            "howAppears": "Высокая яблочная и лимонная кислотность зерна при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Кенийские мытые и эфиопские натуралы, светлая обжарка.",
+            "children": [
+              {
+                "id": 371,
+                "slug": "klyukva-v-sahare",
+                "name": "Клюква в сахаре",
+                "hex": "#C84A55",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 319,
+                "slug": "vyalenaya-klyukva",
+                "name": "Вяленая клюква",
+                "hex": "#9C6A5C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 65,
+            "slug": "krasnaya-smorodina",
+            "name": "Красная смородина",
+            "hex": "#DA5F75",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Звонкая кисло-сладкая нота с прозрачным ягодным телом. Чистая и освежающая.",
+            "howAppears": "Яркая кислотность зерна, сохранённая мытой обработкой и светлой обжаркой.",
+            "whereOccurs": "Кенийские мытые, светлая обжарка.",
+            "children": [
+              {
+                "id": 145,
+                "slug": "krasnye-yagody",
+                "name": "Красные ягоды",
+                "hex": "#DA5F75",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 192,
+            "slug": "lesnye-yagody",
+            "name": "Лесные ягоды",
+            "hex": "#E1467F",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 58,
+            "slug": "malina",
+            "name": "Малина",
+            "hex": "#EE5588",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Яркая сладко-кислая нота с насыщенным ароматом. Звонкая и узнаваемая.",
+            "howAppears": "Высокая яблочная кислотность и сахара, сохранённые натуральной обработкой и светлой обжаркой.",
+            "whereOccurs": "Натуральные лоты Эфиопии и Кении, светлая обжарка.",
+            "children": [
+              {
+                "id": 357,
+                "slug": "malinovyy-yogurt",
+                "name": "Малиновый йогурт",
+                "hex": "#EE5588",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 224,
+                "slug": "sushenaya-malina",
+                "name": "Сушёная малина",
+                "hex": "#EE5588",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 141,
+            "slug": "ryabina",
+            "name": "Рябина",
+            "hex": "#DE5050",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 288,
+                "slug": "chernoplodnaya-ryabina",
+                "name": "Черноплодная рябина",
+                "hex": "#6B2D5B",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 59,
+            "slug": "shipovnik",
+            "name": "Шиповник",
+            "hex": "#EE8458",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладко-терпкая нота с цветочно-ягодным верхом, как чай из шиповника. Мягче клюквы.",
+            "howAppears": "Сочетание мягких кислот и цветочной ароматики при натуральной обработке и светлой обжарке.",
+            "whereOccurs": "Эфиопские натуралы, светлая обжарка.",
+            "children": [
+              {
+                "id": 310,
+                "slug": "otvar-shipovnika",
+                "name": "Отвар шиповника",
+                "hex": "#EE8458",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 262,
+                "slug": "tomat",
+                "name": "Томат",
+                "hex": "#C64B3C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 150,
+            "slug": "temnye-yagody",
+            "name": "Темные ягоды",
+            "hex": "#6E3389",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 339,
+                "slug": "cheryomuha",
+                "name": "Черёмуха",
+                "hex": "#6E3389",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 167,
+                "slug": "golubika",
+                "name": "Голубика",
+                "hex": "#6E3389",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 300,
+                "slug": "temnye-frukty",
+                "name": "Тёмные фрукты",
+                "hex": "#6E3389",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 210,
+            "slug": "vyalenye-yagody",
+            "name": "Вяленые ягоды",
+            "hex": "#6E3389",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 269,
+            "slug": "yagody",
+            "name": "Ягоды",
+            "hex": "#C0392B",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "spicy-unique",
+    "name": "Пряный / Особый",
+    "hex": "#3E7D8C",
+    "description": "Самая характерная и «взрослая» категория колеса — пряности, выпечка, выдержанный алкоголь, табак. Сюда попадают сложные насыщенные ноты, которые ценят опытные дегустаторы: они придают кофе индивидуальность и глубину.",
+    "howAppears": "Истоки разные. Пряности и выпечка — продукт обжарки и реакции Майяра. Алкогольные и винные ноты — результат ферментации мякоти при натуральной и анаэробной обработке. Объединяет их одно: это характерные вкусы, которые появляются, когда зерно и обработка дают что-то сложнее простого фрукта или ореха.",
+    "whereOccurs": "Алкогольные ноты — у анаэробных и выдержанных натуралов; пряности и выпечка — на средней и средне-тёмной обжарке. Регионы — от Эфиопии (винные натуралы) до Индии и Индонезии (пряные профили).",
+    "subsectors": [
+      {
+        "id": 19,
+        "slug": "teplye-pryanosti",
+        "name": "Тёплые пряности",
+        "hex": "#7A8142",
+        "description": "Мягкие, ароматные согревающие специи — кардамон, имбирь, бадьян. Менее острые, чем основные пряности: дают тепло и сладко-пряный аромат, как глинтвейн или масала-чай.",
+        "howAppears": "Сочетание пряной ароматики зерна и сладких тонов обжарки. Эти ноты мягче «острых» специй и чаще идут в связке со сладким или шоколадным телом.",
+        "whereOccurs": "Индия, Эфиопия, выдержанные натуралы; средняя обжарка. Подраздел добавлен по данным российских обжарщиков.",
+        "descriptors": [
+          {
+            "id": 123,
+            "slug": "badyan",
+            "name": "Бадьян",
+            "hex": "#5C3317",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сладко-пряная нота звёздчатого аниса с лакрично-древесным телом. Глубокая и тёплая.",
+            "howAppears": "Пряные эфирные соединения зерна при средней и средне-тёмной обжарке.",
+            "whereOccurs": "Индонезийские лоты и выдержанные натуралы, средне-тёмная обжарка."
+          },
+          {
+            "id": 124,
+            "slug": "imbir",
+            "name": "Имбирь",
+            "hex": "#E0C068",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Тёплая остро-сладкая пряная нота с пощипывающим верхом. Бодрая и согревающая.",
+            "howAppears": "Пряные соединения зерна плюс сладкие тона обжарки при средней обжарке.",
+            "whereOccurs": "Индийские и индонезийские лоты, средняя обжарка.",
+            "children": [
+              {
+                "id": 345,
+                "slug": "imbirnyj-el",
+                "name": "Имбирный эль",
+                "hex": "#E0C068",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 126,
+            "slug": "kardamon",
+            "name": "Кардамон",
+            "hex": "#8DB600",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Свежая сладко-пряная нота с цитрусово-эвкалиптовым верхом. Ароматная и узнаваемая, как в масала-чае.",
+            "howAppears": "Пряные эфирные соединения зерна, сохранённые средне-светлой обжаркой.",
+            "whereOccurs": "Индийские лоты и эфиопские натуралы, средне-светлая обжарка."
+          },
+          {
+            "id": 125,
+            "slug": "kedr",
+            "name": "Кедр",
+            "hex": "#5D6D3B",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сухая древесно-смолистая нота с хвойным верхом. Прохладная и «деревянная».",
+            "howAppears": "Древесно-смолистые соединения зерна при средней обжарке; нота из описаний обжарщиков.",
+            "whereOccurs": "Выдержанные натуралы и индийские лоты, средняя обжарка."
+          },
+          {
+            "id": 122,
+            "slug": "sladkie-spetsii",
+            "name": "Сладкие специи",
+            "hex": "#B8860B",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Общая тёплая нота смеси согревающих специй — корица, мускат и гвоздика вместе, как в имбирном прянике. Уютный «новогодний» профиль.",
+            "howAppears": "Совокупность пряных соединений зерна и карамелизации сахаров при средней обжарке.",
+            "whereOccurs": "Натуральные лоты Индии и Эфиопии, средняя обжарка."
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "slug": "pryanosti",
+        "name": "Пряности",
+        "hex": "#77573A",
+        "description": "Острые и тёплые ноты специй — корица, гвоздика, мускат, перец. Придают кофе характер и сложность, часто на фоне шоколадного или сухофруктового тела.",
+        "howAppears": "Часть пряных соединений рождается при обжарке (реакция Майяра), часть — особенность сорта и терруара. Чаще проявляются на средней и средне-тёмной обжарке.",
+        "whereOccurs": "Индия, Индонезия (Суматра), выдержанные натуралы; средняя и средне-тёмная обжарка.",
+        "descriptors": [
+          {
+            "id": 119,
+            "slug": "anis",
+            "name": "Анис",
+            "hex": "#3B5323",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладко-пряная нота с лакричным верхом. Холодноватая и характерная.",
+            "howAppears": "Пряные эфирные соединения зерна, проявленные средней обжаркой.",
+            "whereOccurs": "Индонезийские лоты и выдержанные натуралы, средняя обжарка.",
+            "children": [
+              {
+                "id": 129,
+                "slug": "Lacrichnaya-konfeta",
+                "name": "Лакричная конфета",
+                "hex": "#3B5323",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 163,
+            "slug": "dubovoya-bochka",
+            "name": "Дубовая бочка",
+            "hex": "#77573A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 306,
+                "slug": "drevesnye-ottenki",
+                "name": "Древесные оттенки",
+                "hex": "#77573A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 307,
+                "slug": "dubovye-noty",
+                "name": "Дубовые ноты",
+                "hex": "#77573A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 120,
+            "slug": "gvozdika",
+            "name": "Гвоздика",
+            "hex": "#9A6440",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Тёплая остро-пряная нота с лёгкой древесной горчинкой. Интенсивная и узнаваемая.",
+            "howAppears": "Пряные фенольные соединения зерна, проявленные средне-тёмной обжаркой.",
+            "whereOccurs": "Индонезийские и индийские лоты, средне-тёмная обжарка."
+          },
+          {
+            "id": 121,
+            "slug": "koritsa",
+            "name": "Корица",
+            "hex": "#D2691E",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладко-пряная тёплая нота, одна из самых приятных специй в кофе. Часто рядом с шоколадом и выпечкой.",
+            "howAppears": "Пряные соединения зерна плюс реакция Майяра при средней обжарке.",
+            "whereOccurs": "Колумбия, Центральная Америка, Индия, средняя обжарка.",
+            "children": [
+              {
+                "id": 241,
+                "slug": "bulochka-s-koricey",
+                "name": "Булочка с корицей",
+                "hex": "#D2691E",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 230,
+                "slug": "sinnabon",
+                "name": "Синнабон",
+                "hex": "#D2691E",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 117,
+            "slug": "muskatnyy-oreh",
+            "name": "Мускатный орех",
+            "hex": "#A0785A",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Тёплая древесно-пряная нота с лёгкой сладостью. Деликатнее гвоздики.",
+            "howAppears": "Пряная ароматика зерна при средней и средне-тёмной обжарке.",
+            "whereOccurs": "Индийские и индонезийские лоты, средне-тёмная обжарка."
+          },
+          {
+            "id": 115,
+            "slug": "perets",
+            "name": "Перец",
+            "hex": "#3D3D3D",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Острая сухо-пряная нота чёрного перца с лёгким покалыванием. Добавляет остроты послевкусию.",
+            "howAppears": "Пряные фенолы зерна, характерные для некоторых сортов, на средне-тёмной обжарке.",
+            "whereOccurs": "Индонезийская Суматра, индийские лоты, средне-тёмная обжарка.",
+            "children": [
+              {
+                "id": 267,
+                "slug": "rozovyj-perec",
+                "name": "Розовый перец",
+                "hex": "#FF6B6B",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 118,
+            "slug": "pikantnyy",
+            "name": "Пикантный",
+            "hex": "#B8723F",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Общая остро-пряная нота без одной доминирующей специи. Характерный вкус с лёгкой остротой.",
+            "howAppears": "Совокупность пряных соединений зерна и обжарки при средне-тёмной обжарке.",
+            "whereOccurs": "Индонезийские и индийские лоты, средне-тёмная обжарка."
+          },
+          {
+            "id": 168,
+            "slug": "pryanosti",
+            "name": "Пряности",
+            "hex": "#77573A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 177,
+            "slug": "specii",
+            "name": "Специи",
+            "hex": "#3E7D8C",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null,
+            "children": [
+              {
+                "id": 309,
+                "slug": "indijskie-specii",
+                "name": "Индийские специи",
+                "hex": "#3E7D8C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 302,
+                "slug": "teplye-spetsii",
+                "name": "Тёплые специи",
+                "hex": "#3E7D8C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 116,
+            "slug": "tabak",
+            "name": "Табак",
+            "hex": "#9C7350",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сухая древесно-сладковатая нота выдержанного табачного листа. Сложный «взрослый» дескриптор, ценимый в выдержанных лотах.",
+            "howAppears": "Древесно-пряные соединения зерна при выдержке и средне-тёмной обжарке.",
+            "whereOccurs": "Выдержанные индийские и индонезийские лоты, средне-тёмная обжарка.",
+            "children": [
+              {
+                "id": 289,
+                "slug": "sladkiy-tabak",
+                "name": "Сладкий табак",
+                "hex": "#9C7350",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 260,
+                "slug": "trubochnyj-tabak",
+                "name": "Трубочный табак",
+                "hex": "#8B7355",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "slug": "vypechka",
+        "name": "Выпечка",
+        "hex": "#A99980",
+        "description": "Тёплые «печёные» ноты — свежий хлеб, круассан, бисквит, печенье. Уютная зерновая сторона сектора: ассоциации с пекарней и сдобой.",
+        "howAppears": "Чистый продукт реакции Майяра при средней обжарке: крахмалы и сахара зерна дают «выпеченные» ароматы, как корочка свежего хлеба.",
+        "whereOccurs": "Бразилия и Колумбия, средняя обжарка; частый фон эспрессо-смесей.",
+        "descriptors": [
+          {
+            "id": 110,
+            "slug": "biskvit",
+            "name": "Бисквит",
+            "hex": "#FFE4B5",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Лёгкая сладко-выпеченная нота воздушного теста. Деликатная и сухая.",
+            "howAppears": "Майяр в сахарах зерна при средне-светлой обжарке даёт «бисквитный» тон.",
+            "whereOccurs": "Мытые лоты Центральной Америки, средне-светлая обжарка.",
+            "children": [
+              {
+                "id": 322,
+                "slug": "shokoladnyj-biskvit",
+                "name": "Шоколадный бисквит",
+                "hex": "#DEB887",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 113,
+            "slug": "kruassan",
+            "name": "Круассан",
+            "hex": "#F5DEB3",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сдобно-масляная выпечная нота с лёгкой сладостью. Мягче простого хлеба.",
+            "howAppears": "Сочетание выпеченного Майяра и остаточной сладости при средней обжарке.",
+            "whereOccurs": "Колумбия и Центральная Америка, средняя обжарка.",
+            "children": [
+              {
+                "id": 131,
+                "slug": "slivochnyj-kruassan",
+                "name": "Сливочный круассан",
+                "hex": "#F5DEB3",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 109,
+            "slug": "ovsyanoe-pechene",
+            "name": "Овсяное печенье",
+            "hex": "#C8AD7F",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Зерново-сладкая нота с ореховым оттенком, как овсяное печенье. Сухая и уютная.",
+            "howAppears": "Майяр в крахмалах и сахарах плюс ореховые тона при средней обжарке.",
+            "whereOccurs": "Бразилия и Колумбия, средняя обжарка."
+          },
+          {
+            "id": 28,
+            "slug": "pechene",
+            "name": "Печенье",
+            "hex": "#DEB887",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сухая сладко-выпеченная нота с зерновым оттенком, как песочное печенье. Уютный «домашний» дескриптор.",
+            "howAppears": "Реакция Майяра в крахмалах и сахарах зерна при средней обжарке даёт выпеченный тон.",
+            "whereOccurs": "Бразилия и Колумбия, средняя обжарка, эспрессо-смеси.",
+            "children": [
+              {
+                "id": 245,
+                "slug": "shokoladnoe-pechenye",
+                "name": "Шоколадное печенье",
+                "hex": "#DEB887",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 273,
+                "slug": "zemlyanichnoe-pechene",
+                "name": "Земляничное печенье",
+                "hex": "#DAA520",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 111,
+            "slug": "pirog",
+            "name": "Пирог",
+            "hex": "#D2B48C",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Тёплая сладко-выпеченная нота сдобного теста с фруктовой начинкой. Десертный профиль.",
+            "howAppears": "Сочетание выпеченного Майяра и фруктово-сладких тонов при средней обжарке.",
+            "whereOccurs": "Натуральные лоты Бразилии, средняя обжарка.",
+            "children": [
+              {
+                "id": 278,
+                "slug": "limonnyj-pirog",
+                "name": "Лимонный пирог",
+                "hex": "#FFF44F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 112,
+            "slug": "rzhanoy-hleb",
+            "name": "Ржаной хлеб",
+            "hex": "#8B7355",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Плотная зерново-кислая нота тёмного хлеба с лёгкой солодовостью. Самая тёмная в подразделе.",
+            "howAppears": "Майяр в зерне при средне-тёмной обжарке с уклоном в солодово-кислый тон.",
+            "whereOccurs": "Средне-тёмная обжарка, бразильские натуралы.",
+            "children": [
+              {
+                "id": 354,
+                "slug": "borodinskiy-hleb",
+                "name": "Бородинский хлеб",
+                "hex": "#8B5A2B",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 356,
+                "slug": "kvas",
+                "name": "Квас",
+                "hex": "#8B7355",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 285,
+                "slug": "rizhskiy-hleb",
+                "name": "Рижский хлеб",
+                "hex": "#8B5A2B",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 114,
+            "slug": "vypechka",
+            "name": "Выпечка",
+            "hex": "#DEB887",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Общая тёплая нота свежей сдобы — хлеб, булки, корочка. Уютный зерновой фон вкуса.",
+            "howAppears": "Реакция Майяра в крахмалах и сахарах зерна при средней обжарке.",
+            "whereOccurs": "Бразилия и Колумбия, средняя обжарка, эспрессо-смеси.",
+            "children": [
+              {
+                "id": 201,
+                "slug": "briosh",
+                "name": "Бриошь",
+                "hex": "#9B6A2F",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 238,
+                "slug": "maffin",
+                "name": "Маффин",
+                "hex": "#DEB887",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 157,
+                "slug": "sladkaya-vypechka",
+                "name": "Сладкая выпечка",
+                "hex": "#DEB887",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 254,
+            "slug": "zharenye-zlaki",
+            "name": "Жареные злаки",
+            "hex": "#C4A35A",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "slug": "alkogolnye",
+        "name": "Алкогольные",
+        "hex": "#976065",
+        "description": "Ферментированные ноты выдержанного алкоголя — вино, виски, ром, коньяк. Не про крепость, а про сложный «бродильный» аромат и винное тело. Маркер модных анаэробных обработок.",
+        "howAppears": "Продукты ферментации, которые образуются, когда мякоть кофейной ягоды бродит в контролируемых условиях (анаэробная обработка, carbonic maceration). Спирты и эфиры этого брожения дают винно-алкогольный профиль.",
+        "whereOccurs": "Анаэробные и натуральные лоты Колумбии, Коста-Рики, Эфиопии; светлая и средне-светлая обжарка.",
+        "descriptors": [
+          {
+            "id": 281,
+            "slug": "alkogolnyj",
+            "name": "Алкогольный",
+            "hex": "#5D6D7E",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          },
+          {
+            "id": 106,
+            "slug": "beloe-vino",
+            "name": "Белое вино",
+            "hex": "#F5E6C8",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Лёгкая кисло-ферментированная нота с цветочно-фруктовым верхом. Деликатнее красного вина.",
+            "howAppears": "Лёгкие эфиры брожения и кислоты при мытой и анаэробной обработке, светлая обжарка.",
+            "whereOccurs": "Анаэробные мытые лоты, светлая обжарка.",
+            "children": [
+              {
+                "id": 226,
+                "slug": "risling",
+                "name": "Рислинг",
+                "hex": "#F5E6C8",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 373,
+                "slug": "zelenoe-vino",
+                "name": "Зелёное вино",
+                "hex": "#7D8F3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 102,
+            "slug": "heres",
+            "name": "Херес",
+            "hex": "#C68E17",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Окисленная орехово-винная нота со сладким телом, как креплёное вино. Редкая и сложная.",
+            "howAppears": "Продукты окислительной ферментации при выдержке зерна и натуральной обработке, средняя обжарка.",
+            "whereOccurs": "Выдержанные и анаэробные лоты, средняя обжарка."
+          },
+          {
+            "id": 103,
+            "slug": "konyak",
+            "name": "Коньяк",
+            "hex": "#C8732B",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Насыщенная фруктово-древесная нота выдержанного бренди с медовым телом. Глубокая и тёплая.",
+            "howAppears": "Сложные эфиры выдержки и ферментации при натуральной обработке и средне-светлой обжарке.",
+            "whereOccurs": "Выдержанные натуралы Эфиопии, средне-светлая обжарка.",
+            "children": [
+              {
+                "id": 209,
+                "slug": "brendi",
+                "name": "Бренди",
+                "hex": "#C8732B",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 202,
+                "slug": "konьyachnaya-konfeta",
+                "name": "Коньячная конфета",
+                "hex": "#8A4A1C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 108,
+            "slug": "krasnoe-vino",
+            "name": "Красное вино",
+            "hex": "#A55A66",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Насыщенная винно-ягодная нота с танинной терпкостью и тёмными фруктами. Один из самых частых «алкогольных» дескрипторов.",
+            "howAppears": "Продукты ферментации мякоти при анаэробной и натуральной обработке, сохранённые светлой обжаркой.",
+            "whereOccurs": "Анаэробные натуралы Эфиопии и Колумбии, светлая обжарка.",
+            "children": [
+              {
+                "id": 297,
+                "slug": "krasnoe-suhoe-vino",
+                "name": "Красное сухое вино",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 186,
+                "slug": "molodoe-vino",
+                "name": "молодое вино",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 139,
+                "slug": "rozovoe-vino",
+                "name": "Розовое вино",
+                "hex": "#A55A66",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 271,
+                "slug": "yagodnoe-vino",
+                "name": "Ягодное вино",
+                "hex": "#B83A3A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 105,
+            "slug": "liker",
+            "name": "Ликёр",
+            "hex": "#BA3D78",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Сладко-ферментированная нота с ягодно-травяным ароматом, как фруктовый ликёр.",
+            "howAppears": "Сладкие продукты брожения мякоти при натуральной и анаэробной обработке, светлая обжарка.",
+            "whereOccurs": "Анаэробные лоты Колумбии и Коста-Рики, светлая обжарка.",
+            "children": [
+              {
+                "id": 328,
+                "slug": "apelsinovyj-liker",
+                "name": "Апельсиновый ликёр",
+                "hex": "#FF8C00",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 294,
+                "slug": "aperol",
+                "name": "Апероль",
+                "hex": "#BA3D78",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 330,
+                "slug": "citrusovyj-liker",
+                "name": "Цитрусовый ликёр",
+                "hex": "#FFA500",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 199,
+                "slug": "klubnichnyj-liker",
+                "name": "Клубничный ликер",
+                "hex": "#A32638",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 185,
+                "slug": "likernaya-konfeta",
+                "name": "Ликерная конфета",
+                "hex": "#BA3D78",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 329,
+                "slug": "shokoladnyj-liker",
+                "name": "Шоколадный ликёр",
+                "hex": "#7A4A2A",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 331,
+                "slug": "slivochnyj-liker",
+                "name": "Сливочный ликёр",
+                "hex": "#E8D5B0",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 318,
+                "slug": "vishnevyj-liker",
+                "name": "Вишнёвый ликёр",
+                "hex": "#BA3D78",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 369,
+                "slug": "yagodnyy-liker",
+                "name": "Ягодный ликёр",
+                "hex": "#BA3D78",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 156,
+            "slug": "portvejn",
+            "name": "Портвейн",
+            "hex": "#976065",
+            "source": "custom",
+            "hideFromWheel": false,
+            "description": "Насыщенная сладко-винная нота креплёного вина: тёмная ягода, сухофрукты, лёгкая карамель. Плотная и согревающая.",
+            "howAppears": "Концентрированные ферментационные сахара и эфиры зерна при средне-светлой обжарке.",
+            "whereOccurs": "Преимущественно Эфиопия, реже Индонезия, Сальвадор."
+          },
+          {
+            "id": 107,
+            "slug": "rom",
+            "name": "Ром",
+            "hex": "#9C6A5C",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Тёмная сладко-ферментированная нота с тростниковым и карамельным телом. Тёплая и густая.",
+            "howAppears": "Продукты ферментации плюс карамелизация сахаров при натуральной обработке и средней обжарке.",
+            "whereOccurs": "Натуральные и анаэробные лоты, средняя обжарка.",
+            "children": [
+              {
+                "id": 364,
+                "slug": "rom-so-speciyami",
+                "name": "Ром со специями",
+                "hex": "#9C6A5C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 363,
+                "slug": "temnyy-rom",
+                "name": "Тёмный ром",
+                "hex": "#9C6A5C",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 104,
+            "slug": "vermut",
+            "name": "Вермут",
+            "hex": "#808000",
+            "source": "scaPlus",
+            "hideFromWheel": false,
+            "description": "Сложная горько-травяная ферментированная нота с пряным верхом. Самая травяная в подразделе.",
+            "howAppears": "Продукты брожения плюс травяно-пряная ароматика зерна при светлой обжарке.",
+            "whereOccurs": "Анаэробные лоты с длительной ферментацией, светлая обжарка.",
+            "children": [
+              {
+                "id": 334,
+                "slug": "belyj-vermut",
+                "name": "Белый вермут",
+                "hex": "#F5E6C8",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              },
+              {
+                "id": 365,
+                "slug": "krasnyy-vermut",
+                "name": "Красный вермут",
+                "hex": "#A63A50",
+                "source": null,
+                "hideFromWheel": null,
+                "description": null,
+                "howAppears": null,
+                "whereOccurs": null
+              }
+            ]
+          },
+          {
+            "id": 101,
+            "slug": "viski",
+            "name": "Виски",
+            "hex": "#D2691E",
+            "source": "sca",
+            "hideFromWheel": false,
+            "description": "Тёплая древесно-дымная нота выдержанного алкоголя с карамельным телом. Сложная и «взрослая».",
+            "howAppears": "Сочетание продуктов ферментации и древесно-карамельных тонов средней обжарки.",
+            "whereOccurs": "Выдержанные натуралы и анаэробные лоты, средне-светлая обжарка."
+          },
+          {
+            "id": 144,
+            "slug": "yablochnyj-sidr",
+            "name": "Яблочный сидр",
+            "hex": "#976065",
+            "source": "custom",
+            "hideFromWheel": true,
+            "description": null,
+            "howAppears": null,
+            "whereOccurs": null
+          }
+        ]
+      }
+    ]
+  }
+]

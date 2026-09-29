@@ -1,0 +1,2486 @@
+[
+ {
+  "id": 2,
+  "slug": "nutty-cocoa",
+  "name": "Ореховый / Шоколадный",
+  "hex": "#A86932",
+  "subsectors": [
+   {
+    "id": 3,
+    "slug": "kakao-shokolad",
+    "name": "Какао / Шоколад",
+    "hex": "#8A4301",
+    "descriptors": [
+     {
+      "id": 13,
+      "slug": "brauni",
+      "name": "Брауни",
+      "hex": "#9A6440",
+      "hideFromWheel": false
+     },
+     {
+      "id": 10,
+      "slug": "gorkiy-shokolad",
+      "name": "Горький шоколад",
+      "hex": "#6B3A1F",
+      "hideFromWheel": false
+     },
+     {
+      "id": 11,
+      "slug": "kakao",
+      "name": "Какао",
+      "hex": "#B8753A",
+      "hideFromWheel": false
+     },
+     {
+      "id": 16,
+      "slug": "molochnyy-shokolad",
+      "name": "Молочный шоколад",
+      "hex": "#B8966E",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "shokoladnaya-pasta",
+        "name": "Шоколадная паста",
+        "hex": "#B8966E"
+       }
+      ]
+     },
+     {
+      "id": 15,
+      "slug": "pudra-kakao",
+      "name": "Пудра какао",
+      "hex": "#C8855A",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "kakao-poroshok",
+        "name": "Какао-порошок",
+        "hex": "#C8855A"
+       }
+      ]
+     },
+     {
+      "id": 140,
+      "slug": "shokolad",
+      "name": "Шоколад",
+      "hex": "#7A4A2A",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "belgijskij-shokolad",
+        "name": "Бельгийский шоколад",
+        "hex": "#7A4A2A"
+       },
+       {
+        "slug": "goryachij-shokolad",
+        "name": "Горячий шоколад",
+        "hex": "#8B5230"
+       },
+       {
+        "slug": "shokolad-bean-to-bar",
+        "name": "Шоколад bean-to-bar",
+        "hex": "#7A4A2A"
+       },
+       {
+        "slug": "shokolad-so-spetsiyami",
+        "name": "Шоколад со специями",
+        "hex": "#7A4A2A"
+       },
+       {
+        "slug": "shokoladnyj-fondan",
+        "name": "Шоколадный фондан",
+        "hex": "#9A6440"
+       },
+       {
+        "slug": "tryufel",
+        "name": "Трюфель",
+        "hex": "#7A4A2A"
+       }
+      ]
+     },
+     {
+      "id": 137,
+      "slug": "shokolad-s-izyumom",
+      "name": "Шоколад с изюмом",
+      "hex": "#8A4301",
+      "hideFromWheel": true
+     },
+     {
+      "id": 165,
+      "slug": "shokoladnyj-keks",
+      "name": "Шоколадный кекс",
+      "hex": "#8A4301",
+      "hideFromWheel": true
+     },
+     {
+      "id": 12,
+      "slug": "temnyy-shokolad",
+      "name": "Тёмный шоколад",
+      "hex": "#7A4A2A",
+      "hideFromWheel": false
+     },
+     {
+      "id": 14,
+      "slug": "tertoe-kakao",
+      "name": "Тёртое какао",
+      "hex": "#8B5230",
+      "hideFromWheel": false
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "slug": "orehovyy",
+    "name": "Ореховый",
+    "hex": "#CB9848",
+    "descriptors": [
+     {
+      "id": 2,
+      "slug": "arahis",
+      "name": "Арахис",
+      "hex": "#D2B48C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "zharenyj-arahis",
+        "name": "Жареный арахис",
+        "hex": "#D2B48C"
+       }
+      ]
+     },
+     {
+      "id": 148,
+      "slug": "arahisovaya-pasta",
+      "name": "Арахисовая паста",
+      "hex": "#CB9848",
+      "hideFromWheel": true
+     },
+     {
+      "id": 184,
+      "slug": "fistashka",
+      "name": "Фисташка",
+      "hex": "#B7C98B",
+      "hideFromWheel": true
+     },
+     {
+      "id": 4,
+      "slug": "funduk",
+      "name": "Фундук",
+      "hex": "#C4A35A",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "Jarenii-funduk",
+        "name": "Жареный фундук",
+        "hex": "#C4A35A"
+       },
+       {
+        "slug": "funduchnaya-pasta",
+        "name": "фундучная паста",
+        "hex": "#C4A35A"
+       },
+       {
+        "slug": "funduk-v-shokolade",
+        "name": "Фундук в шоколаде",
+        "hex": "#C4A35A"
+       }
+      ]
+     },
+     {
+      "id": 3,
+      "slug": "gretskiy-oreh",
+      "name": "Грецкий орех",
+      "hex": "#A67B5B",
+      "hideFromWheel": false
+     },
+     {
+      "id": 9,
+      "slug": "keshyu",
+      "name": "Кешью",
+      "hex": "#E6D2A8",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "zharenyy-keshyu",
+        "name": "Жареный кешью",
+        "hex": "#D2B48C"
+       }
+      ]
+     },
+     {
+      "id": 5,
+      "slug": "kokos",
+      "name": "Кокос",
+      "hex": "#FFF8E7",
+      "hideFromWheel": false
+     },
+     {
+      "id": 191,
+      "slug": "lesnoj-oreh",
+      "name": "Лесной орех",
+      "hex": "#C4A35A",
+      "hideFromWheel": true
+     },
+     {
+      "id": 8,
+      "slug": "makadamiya",
+      "name": "Макадамия",
+      "hex": "#F5E6C8",
+      "hideFromWheel": false
+     },
+     {
+      "id": 6,
+      "slug": "mindal",
+      "name": "Миндаль",
+      "hex": "#E8D5B0",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "amaretto",
+        "name": "Амаретто",
+        "hex": "#E8D5B0"
+       },
+       {
+        "slug": "solenyj-mindal",
+        "name": "Солёный миндаль",
+        "hex": "#E8D5B0"
+       }
+      ]
+     },
+     {
+      "id": 173,
+      "slug": "orehi",
+      "name": "Орехи",
+      "hex": "#CB9848",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "kedrovyj-oreh",
+        "name": "Кедровый орех",
+        "hex": "#E8D5B0"
+       },
+       {
+        "slug": "praline",
+        "name": "Пралине",
+        "hex": "#C8A86C"
+       }
+      ]
+     },
+     {
+      "id": 212,
+      "slug": "orehovaya-pasta",
+      "name": "Ореховая паста",
+      "hex": "#D2B48C",
+      "hideFromWheel": true
+     },
+     {
+      "id": 7,
+      "slug": "pekan",
+      "name": "Пекан",
+      "hex": "#8B6914",
+      "hideFromWheel": false
+     },
+     {
+      "id": 220,
+      "slug": "solod",
+      "name": "Солод",
+      "hex": "#C4A35A",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "tyomnoe-pivo",
+        "name": "Тёмное пиво",
+        "hex": "#C4A35A"
+       }
+      ]
+     },
+     {
+      "id": 152,
+      "slug": "zharenye-orehi",
+      "name": "Жареные орехи",
+      "hex": "#CB9848",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "zharenye-semechki",
+        "name": "Жареные семечки",
+        "hex": "#C4A35A"
+       }
+      ]
+     },
+     {
+      "id": 164,
+      "slug": "zharenyj-mindalь",
+      "name": "Жареный миндаль",
+      "hex": "#E8D5B0",
+      "hideFromWheel": true
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 3,
+  "slug": "sweet",
+  "name": "Сладкий",
+  "hex": "#F0A81E",
+  "subsectors": [
+   {
+    "id": 6,
+    "slug": "dzhem-varene",
+    "name": "Джем / Варенье",
+    "hex": "#E4576A",
+    "descriptors": [
+     {
+      "id": 37,
+      "slug": "abrikosovyy-dzhem",
+      "name": "Абрикосовый джем",
+      "hex": "#FBCEB1",
+      "hideFromWheel": false
+     },
+     {
+      "id": 39,
+      "slug": "apelsinovyy-dzhem",
+      "name": "Апельсиновый джем",
+      "hex": "#FF8C00",
+      "hideFromWheel": false
+     },
+     {
+      "id": 33,
+      "slug": "chernichnyy-dzhem",
+      "name": "Черничный джем",
+      "hex": "#8473C2",
+      "hideFromWheel": false
+     },
+     {
+      "id": 205,
+      "slug": "ezhevichnyj-dzhem",
+      "name": "Ежевичный джем",
+      "hex": "#3B1F3F",
+      "hideFromWheel": true
+     },
+     {
+      "id": 38,
+      "slug": "klubnichnyy-dzhem",
+      "name": "Клубничный джем",
+      "hex": "#FF6B6B",
+      "hideFromWheel": false
+     },
+     {
+      "id": 36,
+      "slug": "klyukvennyy-dzhem",
+      "name": "Клюквенный джем",
+      "hex": "#C84A55",
+      "hideFromWheel": false
+     },
+     {
+      "id": 34,
+      "slug": "malinovyy-dzhem",
+      "name": "Малиновый джем",
+      "hex": "#E30B5C",
+      "hideFromWheel": false
+     },
+     {
+      "id": 35,
+      "slug": "smorodinovyy-dzhem",
+      "name": "Смородиновый джем",
+      "hex": "#9E3D60",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "dzhem-iz-krasnoy-smorodiny",
+        "name": "Джем из красной смородины",
+        "hex": "#9E3D60"
+       }
+      ]
+     },
+     {
+      "id": 174,
+      "slug": "yablochnyj-dzhem",
+      "name": "Яблочный джем",
+      "hex": "#6DC066",
+      "hideFromWheel": true
+     }
+    ]
+   },
+   {
+    "id": 5,
+    "slug": "konditerskiy",
+    "name": "Кондитерский",
+    "hex": "#F7CE96",
+    "descriptors": [
+     {
+      "id": 30,
+      "slug": "dzhem",
+      "name": "Джем",
+      "hex": "#C41E3A",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "marmelad",
+        "name": "Мармелад",
+        "hex": "#C41E3A"
+       },
+       {
+        "slug": "tsitrusovyi-dzhem",
+        "name": "Цитрусовый джем",
+        "hex": "#C41E3A"
+       },
+       {
+        "slug": "yagodnyj-dzhem",
+        "name": "Ягодный джем",
+        "hex": "#DAA520"
+       }
+      ]
+     },
+     {
+      "id": 32,
+      "slug": "grilyazh",
+      "name": "Грильяж",
+      "hex": "#C4A35A",
+      "hideFromWheel": false
+     },
+     {
+      "id": 179,
+      "slug": "jogurt",
+      "name": "Йогурт",
+      "hex": "#F1E8D8",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "chernichnyj-jogurt",
+        "name": "Черничный йогурт",
+        "hex": "#8473C2"
+       }
+      ]
+     },
+     {
+      "id": 31,
+      "slug": "martsipan",
+      "name": "Марципан",
+      "hex": "#F5DEB3",
+      "hideFromWheel": false
+     },
+     {
+      "id": 25,
+      "slug": "nutella",
+      "name": "Нутелла",
+      "hex": "#9A6440",
+      "hideFromWheel": false
+     },
+     {
+      "id": 29,
+      "slug": "pastila",
+      "name": "Пастила",
+      "hex": "#FFB6C1",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "yablochnaya-pastila",
+        "name": "Яблочная пастила",
+        "hex": "#FFB6C1"
+       },
+       {
+        "slug": "yagodnaya-pastila",
+        "name": "Ягодная пастила",
+        "hex": "#FFB6C1"
+       }
+      ]
+     },
+     {
+      "id": 171,
+      "slug": "slivki",
+      "name": "Сливки",
+      "hex": "#F7CE96",
+      "hideFromWheel": true
+     },
+     {
+      "id": 26,
+      "slug": "tsukaty",
+      "name": "Цукаты",
+      "hex": "#FF8C00",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "tsukaty-apelsina",
+        "name": "Цукаты апельсина",
+        "hex": "#F5A623"
+       }
+      ]
+     },
+     {
+      "id": 27,
+      "slug": "vanil",
+      "name": "Ваниль",
+      "hex": "#F3E5AB",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "boby-tonka",
+        "name": "Бобы тонка",
+        "hex": "#AE7838"
+       },
+       {
+        "slug": "struchkovaya-vanil",
+        "name": "Стручковая ваниль",
+        "hex": "#F3E5AB"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": 4,
+    "slug": "karamelnyy",
+    "name": "Карамельный",
+    "hex": "#BE7818",
+    "descriptors": [
+     {
+      "id": 21,
+      "slug": "iriska",
+      "name": "Ириска",
+      "hex": "#B5651D",
+      "hideFromWheel": false
+     },
+     {
+      "id": 24,
+      "slug": "karamel",
+      "name": "Карамель",
+      "hex": "#DAA520",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "karamelnye-ledentsy",
+        "name": "Карамельные леденцы",
+        "hex": "#DAA520"
+       },
+       {
+        "slug": "karamelnyi-popkorn",
+        "name": "Карамельный попкорн",
+        "hex": "#DAA520"
+       },
+       {
+        "slug": "slivochnaya-karamel",
+        "name": "Сливочная карамель",
+        "hex": "#C9873A"
+       },
+       {
+        "slug": "solenaya-karamel",
+        "name": "Солёная карамель",
+        "hex": "#C9873A"
+       },
+       {
+        "slug": "svetlaya-karamel",
+        "name": "Светлая карамель",
+        "hex": "#DAA520"
+       },
+       {
+        "slug": "tyomnaya-karamel",
+        "name": "Тёмная карамель",
+        "hex": "#DAA520"
+       },
+       {
+        "slug": "zhzhenaya-karamel",
+        "name": "Жжёная карамель",
+        "hex": "#8B5230"
+       }
+      ]
+     },
+     {
+      "id": 18,
+      "slug": "klenovyy-sirop",
+      "name": "Кленовый сироп",
+      "hex": "#C68E17",
+      "hideFromWheel": false
+     },
+     {
+      "id": 20,
+      "slug": "med",
+      "name": "Мёд",
+      "hex": "#EB9605",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "grechishnyj-med",
+        "name": "Гречишный мед",
+        "hex": "#6F4518"
+       },
+       {
+        "slug": "medovyj-pryanik",
+        "name": "Медовый пряник",
+        "hex": "#EB9605"
+       },
+       {
+        "slug": "temnyy-med",
+        "name": "Тёмный мёд",
+        "hex": "#EB9605"
+       }
+      ]
+     },
+     {
+      "id": 22,
+      "slug": "melassa",
+      "name": "Меласса",
+      "hex": "#8B5A1E",
+      "hideFromWheel": false
+     },
+     {
+      "id": 23,
+      "slug": "nuga",
+      "name": "Нуга",
+      "hex": "#C8A86C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "karamelnaya-nuga",
+        "name": "Карамельная нуга",
+        "hex": "#C8A86C"
+       },
+       {
+        "slug": "orehovaya-nuga",
+        "name": "Ореховая нуга",
+        "hex": "#C8A86C"
+       }
+      ]
+     },
+     {
+      "id": 172,
+      "slug": "sladkie-noty",
+      "name": "Сладкие ноты",
+      "hex": "#F0A81E",
+      "hideFromWheel": true
+     },
+     {
+      "id": 17,
+      "slug": "trostnikovyy-sahar",
+      "name": "Тростниковый сахар",
+      "hex": "#E8D08C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "korichnevyi-sakhar",
+        "name": "Коричневый сахар",
+        "hex": "#E8D08C"
+       },
+       {
+        "slug": "sahar-muskovado",
+        "name": "Сахар мусковадо",
+        "hex": "#E8D08C"
+       }
+      ]
+     },
+     {
+      "id": 19,
+      "slug": "tsvetochnyy-med",
+      "name": "Цветочный мёд",
+      "hex": "#F0C040",
+      "hideFromWheel": false
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 4,
+  "slug": "floral-tea",
+  "name": "Цветочный / Чайный",
+  "hex": "#9064C8",
+  "subsectors": [
+   {
+    "id": 9,
+    "slug": "travyanoy",
+    "name": "Травяной",
+    "hex": "#6F9E3C",
+    "descriptors": [
+     {
+      "id": 54,
+      "slug": "lemongrass",
+      "name": "Лемонграсс",
+      "hex": "#BDB76B",
+      "hideFromWheel": false
+     },
+     {
+      "id": 57,
+      "slug": "myata",
+      "name": "Мята",
+      "hex": "#98FF98",
+      "hideFromWheel": false
+     },
+     {
+      "id": 56,
+      "slug": "raznotrave",
+      "name": "Разнотравье",
+      "hex": "#6B8E23",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "koriandr",
+        "name": "Кориандр",
+        "hex": "#6B8E23"
+       },
+       {
+        "slug": "rozmarin",
+        "name": "Розмарин",
+        "hex": "#6B8E23"
+       }
+      ]
+     },
+     {
+      "id": 55,
+      "slug": "shalfey",
+      "name": "Шалфей",
+      "hex": "#87AE73",
+      "hideFromWheel": false
+     },
+     {
+      "id": 189,
+      "slug": "sirop-tapinambura",
+      "name": "Сироп тапинамбура",
+      "hex": "#B9783A",
+      "hideFromWheel": true
+     },
+     {
+      "id": 53,
+      "slug": "smorodinovyy-list",
+      "name": "Смородиновый лист",
+      "hex": "#556B2F",
+      "hideFromWheel": false
+     }
+    ]
+   },
+   {
+    "id": 8,
+    "slug": "tsvetochnyy",
+    "name": "Цветочный",
+    "hex": "#D26CAF",
+    "descriptors": [
+     {
+      "id": 46,
+      "slug": "akatsiya",
+      "name": "Акация",
+      "hex": "#DBDB70",
+      "hideFromWheel": false
+     },
+     {
+      "id": 138,
+      "slug": "cvetochnyj-chaj",
+      "name": "Цветочный чай",
+      "hex": "#D26CAF",
+      "hideFromWheel": true
+     },
+     {
+      "id": 248,
+      "slug": "cvetochnyy",
+      "name": "Цветочный",
+      "hex": "#F8DE7E",
+      "hideFromWheel": true
+     },
+     {
+      "id": 176,
+      "slug": "cvety",
+      "name": "Цветы",
+      "hex": "#D26CAF",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "belye-cvety",
+        "name": "Белые цветы",
+        "hex": "#7B5EA7"
+       },
+       {
+        "slug": "fialka",
+        "name": "Фиалка",
+        "hex": "#6F4A8E"
+       },
+       {
+        "slug": "sakura",
+        "name": "Сакура",
+        "hex": "#D26CAF"
+       }
+      ]
+     },
+     {
+      "id": 47,
+      "slug": "gibiskus",
+      "name": "Гибискус",
+      "hex": "#D26896",
+      "hideFromWheel": false
+     },
+     {
+      "id": 49,
+      "slug": "karkade",
+      "name": "Каркаде",
+      "hex": "#BA3D78",
+      "hideFromWheel": false
+     },
+     {
+      "id": 51,
+      "slug": "lavanda",
+      "name": "Лаванда",
+      "hex": "#9370DB",
+      "hideFromWheel": false
+     },
+     {
+      "id": 52,
+      "slug": "romashka",
+      "name": "Ромашка",
+      "hex": "#FFFACD",
+      "hideFromWheel": false
+     },
+     {
+      "id": 50,
+      "slug": "roza",
+      "name": "Роза",
+      "hex": "#FF007F",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "chai-s-rozoi",
+        "name": "Чай с розой",
+        "hex": "#FF007F"
+       },
+       {
+        "slug": "chajnaya-roza",
+        "name": "Чайная роза",
+        "hex": "#FF007F"
+       },
+       {
+        "slug": "rozovaya-voda",
+        "name": "Розовая вода",
+        "hex": "#FFB6C1"
+       }
+      ]
+     },
+     {
+      "id": 48,
+      "slug": "zhasmin",
+      "name": "Жасмин",
+      "hex": "#F8DE7E",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "zhasminovyj-chaj",
+        "name": "Жасминовый чай",
+        "hex": "#8A7A2F"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": 7,
+    "slug": "chaynyy",
+    "name": "Чайный",
+    "hex": "#C57555",
+    "descriptors": [
+     {
+      "id": 42,
+      "slug": "belyy-chay",
+      "name": "Белый чай",
+      "hex": "#F5F5DC",
+      "hideFromWheel": false
+     },
+     {
+      "id": 182,
+      "slug": "chajnoe-telo",
+      "name": "Чайное тело",
+      "hex": "#C57555",
+      "hideFromWheel": true
+     },
+     {
+      "id": 45,
+      "slug": "chernyy-chay",
+      "name": "Чёрный чай",
+      "hex": "#B8723F",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "asam",
+        "name": "Асам",
+        "hex": "#B8723F"
+       },
+       {
+        "slug": "ceylonskiy-chay",
+        "name": "Цейлонский чай",
+        "hex": "#B8723F"
+       },
+       {
+        "slug": "chaj-assam",
+        "name": "Чай Ассам",
+        "hex": "#A52A2A"
+       },
+       {
+        "slug": "chaj-s-bergamotom",
+        "name": "Чай с бергамотом",
+        "hex": "#C57555"
+       },
+       {
+        "slug": "chernyy-chay-s-limonom",
+        "name": "Чёрный чай с лимоном",
+        "hex": "#B8723F"
+       },
+       {
+        "slug": "kombucha",
+        "name": "Комбуча",
+        "hex": "#DB8B45"
+       },
+       {
+        "slug": "persikovyy-chay",
+        "name": "Персиковый чай",
+        "hex": "#B8723F"
+       }
+      ]
+     },
+     {
+      "id": 43,
+      "slug": "krasnyy-chay",
+      "name": "Красный чай",
+      "hex": "#A52A2A",
+      "hideFromWheel": false
+     },
+     {
+      "id": 44,
+      "slug": "roybush",
+      "name": "Ройбуш",
+      "hex": "#DB8B45",
+      "hideFromWheel": false
+     },
+     {
+      "id": 146,
+      "slug": "smorodinovyj-chaj",
+      "name": "Смородиновый чай",
+      "hex": "#C57555",
+      "hideFromWheel": true
+     },
+     {
+      "id": 41,
+      "slug": "ulun",
+      "name": "Улун",
+      "hex": "#9B8E4E",
+      "hideFromWheel": false
+     },
+     {
+      "id": 40,
+      "slug": "zelenyy-chay",
+      "name": "Зелёный чай",
+      "hex": "#8FBC8F",
+      "hideFromWheel": false
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 5,
+  "slug": "fruity",
+  "name": "Фруктовый",
+  "hex": "#DA2C33",
+  "subsectors": [
+   {
+    "id": 15,
+    "slug": "sadovye",
+    "name": "Садовые",
+    "hex": "#9E4585",
+    "descriptors": [
+     {
+      "id": 97,
+      "slug": "barbaris",
+      "name": "Барбарис",
+      "hex": "#DE5050",
+      "hideFromWheel": false
+     },
+     {
+      "id": 95,
+      "slug": "chereshnya",
+      "name": "Черешня",
+      "hex": "#B83A3A",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "zhyoltaya-chereshnya",
+        "name": "Жёлтая черешня",
+        "hex": "#F0C040"
+       }
+      ]
+     },
+     {
+      "id": 100,
+      "slug": "chernaya-smorodina",
+      "name": "Чёрная смородина",
+      "hex": "#70489B",
+      "hideFromWheel": false
+     },
+     {
+      "id": 96,
+      "slug": "kryzhovnik",
+      "name": "Крыжовник",
+      "hex": "#8DB600",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "krasnyy-kryzhovnik",
+        "name": "Красный крыжовник",
+        "hex": "#8DB600"
+       }
+      ]
+     },
+     {
+      "id": 142,
+      "slug": "oblepiha",
+      "name": "Облепиха",
+      "hex": "#9E4585",
+      "hideFromWheel": true
+     },
+     {
+      "id": 303,
+      "slug": "plodovye-frukty",
+      "name": "Плодовые фрукты",
+      "hex": "#6DC066",
+      "hideFromWheel": true
+     },
+     {
+      "id": 246,
+      "slug": "reven",
+      "name": "Ревень",
+      "hex": "#DA5F75",
+      "hideFromWheel": true
+     },
+     {
+      "id": 99,
+      "slug": "sliva",
+      "name": "Слива",
+      "hex": "#A55A66",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "alycha",
+        "name": "Алыча",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "belaya-sliva",
+        "name": "Белая слива",
+        "hex": "#E8F48C"
+       },
+       {
+        "slug": "krasnaya-sliva",
+        "name": "Красная слива",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "sliva-mirabel",
+        "name": "Слива Мирабель",
+        "hex": "#F0C040"
+       },
+       {
+        "slug": "slivovoe-varenie",
+        "name": "Сливовое варенье",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "slivovoe-vino",
+        "name": "Сливовое вино",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "spelaya-sliva",
+        "name": "Спелая слива",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "temnaya-sliva",
+        "name": "Тёмная слива",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "zhyoltaya-sliva",
+        "name": "Жёлтая слива",
+        "hex": "#FBCEB1"
+       }
+      ]
+     },
+     {
+      "id": 190,
+      "slug": "smorodina",
+      "name": "Смородина",
+      "hex": "#70489B",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "belaya-smorodina",
+        "name": "Белая смородина",
+        "hex": "#70489B"
+       },
+       {
+        "slug": "tyomnaya-smorodina",
+        "name": "Тёмная смородина",
+        "hex": "#6F4685"
+       }
+      ]
+     },
+     {
+      "id": 98,
+      "slug": "zemlyanika",
+      "name": "Земляника",
+      "hex": "#FC5A8D",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "zemlyanichnyj-dzhem",
+        "name": "Земляничный джем",
+        "hex": "#FC5A8D"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": 14,
+    "slug": "tropicheskie",
+    "name": "Тропические",
+    "hex": "#FB8E58",
+    "descriptors": [
+     {
+      "id": 211,
+      "slug": "arbuz",
+      "name": "Арбуз",
+      "hex": "#FF6B6B",
+      "hideFromWheel": true
+     },
+     {
+      "id": 91,
+      "slug": "dynya",
+      "name": "Дыня",
+      "hex": "#F0E68C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "sushenaya-dinya",
+        "name": "Сушеная дыня",
+        "hex": "#F0E68C"
+       }
+      ]
+     },
+     {
+      "id": 195,
+      "slug": "fejhoa",
+      "name": "Фейхоа",
+      "hex": "#A6C94F",
+      "hideFromWheel": true
+     },
+     {
+      "id": 198,
+      "slug": "grenadilla",
+      "name": "Гренадилла",
+      "hex": "#B65A1C",
+      "hideFromWheel": true
+     },
+     {
+      "id": 188,
+      "slug": "guava",
+      "name": "Гуава",
+      "hex": "#F47C7C",
+      "hideFromWheel": true
+     },
+     {
+      "id": 90,
+      "slug": "kivi",
+      "name": "Киви",
+      "hex": "#8DB600",
+      "hideFromWheel": false
+     },
+     {
+      "id": 93,
+      "slug": "lichi",
+      "name": "Личи",
+      "hex": "#FFB3BA",
+      "hideFromWheel": false
+     },
+     {
+      "id": 89,
+      "slug": "mango",
+      "name": "Манго",
+      "hex": "#FF8243",
+      "hideFromWheel": false
+     },
+     {
+      "id": 94,
+      "slug": "marakuyya",
+      "name": "Маракуйя",
+      "hex": "#9B59B6",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "dragonfrut",
+        "name": "Драгонфрут",
+        "hex": "#FC5A8D"
+       }
+      ]
+     },
+     {
+      "id": 92,
+      "slug": "nektarin",
+      "name": "Нектарин",
+      "hex": "#FF6347",
+      "hideFromWheel": false
+     },
+     {
+      "id": 88,
+      "slug": "papayya",
+      "name": "Папайя",
+      "hex": "#FFEFD5",
+      "hideFromWheel": false
+     },
+     {
+      "id": 204,
+      "slug": "sladkij-fizalis",
+      "name": "Сладкий физалис",
+      "hex": "#B8731A",
+      "hideFromWheel": true
+     },
+     {
+      "id": 149,
+      "slug": "tropicheskie-frukty",
+      "name": "Тропические фрукты",
+      "hex": "#FB8E58",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "zheltye-tropicheskie-frukty",
+        "name": "Жёлтые тропические фрукты",
+        "hex": "#FFD700"
+       }
+      ]
+     },
+     {
+      "id": 147,
+      "slug": "zheltye-frukty",
+      "name": "Желтые фрукты",
+      "hex": "#FB8E58",
+      "hideFromWheel": true
+     }
+    ]
+   },
+   {
+    "id": 13,
+    "slug": "tsitrusovye",
+    "name": "Цитрусовые",
+    "hex": "#D6B514",
+    "descriptors": [
+     {
+      "id": 84,
+      "slug": "apelsin",
+      "name": "Апельсин",
+      "hex": "#FF8C00",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "apelsinovyi-pirog",
+        "name": "Апельсиновый пирог",
+        "hex": "#FF8C00"
+       },
+       {
+        "slug": "bambl",
+        "name": "Бамбл",
+        "hex": "#FF8C00"
+       },
+       {
+        "slug": "krasnyj-apelsin",
+        "name": "Красный апельсин",
+        "hex": "#FF8C00"
+       },
+       {
+        "slug": "tsedra-apelsina",
+        "name": "Цедра апельсина",
+        "hex": "#FF8C00"
+       }
+      ]
+     },
+     {
+      "id": 86,
+      "slug": "bergamot",
+      "name": "Бергамот",
+      "hex": "#C5E17A",
+      "hideFromWheel": false
+     },
+     {
+      "id": 134,
+      "slug": "citrusy",
+      "name": "Цитрусы",
+      "hex": "#D6B514",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "cedra-citrusov",
+        "name": "Цедра цитрусов",
+        "hex": "#D6B514"
+       },
+       {
+        "slug": "citrusovyj-marmelad",
+        "name": "Цитрусовый мармелад",
+        "hex": "#FF8C00"
+       }
+      ]
+     },
+     {
+      "id": 82,
+      "slug": "greypfrut",
+      "name": "Грейпфрут",
+      "hex": "#FF6347",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "cedra-grejpfruta",
+        "name": "Цедра грейпфрута",
+        "hex": "#FF8C00"
+       },
+       {
+        "slug": "krasnyj-grejpfrut",
+        "name": "Красный грейпфрут",
+        "hex": "#DE5050"
+       }
+      ]
+     },
+     {
+      "id": 87,
+      "slug": "kumkvat",
+      "name": "Кумкват",
+      "hex": "#FFA500",
+      "hideFromWheel": false
+     },
+     {
+      "id": 85,
+      "slug": "laym",
+      "name": "Лайм",
+      "hex": "#32CD32",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "tsedra-layma",
+        "name": "Цедра лайма",
+        "hex": "#32CD32"
+       }
+      ]
+     },
+     {
+      "id": 80,
+      "slug": "limon",
+      "name": "Лимон",
+      "hex": "#FFF44F",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "limonnaya-merenga",
+        "name": "Лимонная меренга",
+        "hex": "#FFF44F"
+       },
+       {
+        "slug": "limonnaya-vaflya",
+        "name": "Лимонная вафля",
+        "hex": "#FFF44F"
+       },
+       {
+        "slug": "spelyj-limon",
+        "name": "Спелый лимон",
+        "hex": "#FFF44F"
+       },
+       {
+        "slug": "tsedra-limona",
+        "name": "Цедра лимона",
+        "hex": "#FFF44F"
+       }
+      ]
+     },
+     {
+      "id": 83,
+      "slug": "mandarin",
+      "name": "Мандарин",
+      "hex": "#FF7F00",
+      "hideFromWheel": false
+     },
+     {
+      "id": 81,
+      "slug": "pomelo",
+      "name": "Помело",
+      "hex": "#E8F48C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "sviti",
+        "name": "Свити",
+        "hex": "#E8F48C"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": 12,
+    "slug": "kostochkovye-i-drugie",
+    "name": "Косточковые и другие",
+    "hex": "#DC5F0D",
+    "descriptors": [
+     {
+      "id": 74,
+      "slug": "abrikos",
+      "name": "Абрикос",
+      "hex": "#FBCEB1",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "abrikosovaya-kostochka",
+        "name": "Абрикосовая косточка",
+        "hex": "#FBCEB1"
+       }
+      ]
+     },
+     {
+      "id": 73,
+      "slug": "ananas",
+      "name": "Ананас",
+      "hex": "#FFD700",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "ananasovyj-sirop",
+        "name": "Ананасовый сироп",
+        "hex": "#FFD700"
+       },
+       {
+        "slug": "konservirovannyj-ananas",
+        "name": "Консервированный ананас",
+        "hex": "#FFD700"
+       },
+       {
+        "slug": "vyalenyy-ananas",
+        "name": "Вяленый ананас",
+        "hex": "#FFD700"
+       }
+      ]
+     },
+     {
+      "id": 78,
+      "slug": "granat",
+      "name": "Гранат",
+      "hex": "#DA5F75",
+      "hideFromWheel": false
+     },
+     {
+      "id": 77,
+      "slug": "grusha",
+      "name": "Груша",
+      "hex": "#D1E231",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "grushevyi-kompot",
+        "name": "Грушевый компот",
+        "hex": "#D1E231"
+       },
+       {
+        "slug": "sushyonaya-grusha",
+        "name": "Сушёная груша",
+        "hex": "#B5651D"
+       }
+      ]
+     },
+     {
+      "id": 183,
+      "slug": "kostochkovye-frukty",
+      "name": "Косточковые фрукты",
+      "hex": "#DC5F0D",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "zheltye-kostochkovye-frukty",
+        "name": "Жёлтые косточковые фрукты",
+        "hex": "#DC5F0D"
+       }
+      ]
+     },
+     {
+      "id": 79,
+      "slug": "persik",
+      "name": "Персик",
+      "hex": "#FFDAB9",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "belyj-persik",
+        "name": "Белый персик",
+        "hex": "#FFDAB9"
+       },
+       {
+        "slug": "persikovyy-yogurt",
+        "name": "Персиковый йогурт",
+        "hex": "#FFDAB9"
+       }
+      ]
+     },
+     {
+      "id": 76,
+      "slug": "vinograd",
+      "name": "Виноград",
+      "hex": "#6F4685",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "belyi-vinograd",
+        "name": "Белый виноград",
+        "hex": "#6F4685"
+       },
+       {
+        "slug": "belyj-vinograd",
+        "name": "Белый виноград",
+        "hex": "#7D8F3A"
+       },
+       {
+        "slug": "krasnyj-vinograd",
+        "name": "Красный виноград",
+        "hex": "#6F4685"
+       },
+       {
+        "slug": "molodoj-vinograd",
+        "name": "Молодой виноград",
+        "hex": "#6DC066"
+       },
+       {
+        "slug": "sovinyon-blan",
+        "name": "Совиньон блан",
+        "hex": "#6F4685"
+       },
+       {
+        "slug": "temnyi-vinograd",
+        "name": "Тёмный виноград",
+        "hex": "#6F4685"
+       },
+       {
+        "slug": "vinograd-izabella",
+        "name": "Виноград Изабелла",
+        "hex": "#6F4685"
+       },
+       {
+        "slug": "vinograd-traminer",
+        "name": "Виноград Траминер",
+        "hex": "#6F4685"
+       },
+       {
+        "slug": "vinogradnyj-limonad",
+        "name": "Виноградный лимонад",
+        "hex": "#6F4685"
+       },
+       {
+        "slug": "vinogradnyy-pirog",
+        "name": "Виноградный пирог",
+        "hex": "#6F4685"
+       }
+      ]
+     },
+     {
+      "id": 75,
+      "slug": "vishnya",
+      "name": "Вишня",
+      "hex": "#B83A3A",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "chernaya-vishnya",
+        "name": "Чёрная вишня",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "rozovaya-vishnya",
+        "name": "Розовая вишня",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "vishnevaya-kola",
+        "name": "Вишнёвая кола",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "vishnevaya-kostochka",
+        "name": "Вишнёвая косточка",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "vishnevyj-konfityur",
+        "name": "Вишнёвый конфитюр",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "vishnevyj-ledenec",
+        "name": "Вишневый леденец",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "vishnevyj-pirog",
+        "name": "Вишневый пирог",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "vishnevyj-sidr",
+        "name": "Вишнёвый сидр",
+        "hex": "#B83A3A"
+       },
+       {
+        "slug": "vishnya-v-shokolade",
+        "name": "Вишня в шоколаде",
+        "hex": "#B83A3A"
+       }
+      ]
+     },
+     {
+      "id": 72,
+      "slug": "yabloko",
+      "name": "Яблоко",
+      "hex": "#6DC066",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "krasnoe-yabloko",
+        "name": "Красное яблоко",
+        "hex": "#6DC066"
+       },
+       {
+        "slug": "sushyonoe-yabloko",
+        "name": "Сушёное яблоко",
+        "hex": "#9B5B33"
+       },
+       {
+        "slug": "yablochnyi-marmelad",
+        "name": "Яблочный мармелад",
+        "hex": "#6DC066"
+       },
+       {
+        "slug": "yabloko-v-karameli",
+        "name": "Яблоко в карамели",
+        "hex": "#6DC066"
+       },
+       {
+        "slug": "zelyonoe-yabloko",
+        "name": "Зелёное яблоко",
+        "hex": "#6DC066"
+       },
+       {
+        "slug": "zheltoe-yabloko",
+        "name": "Желтое яблоко",
+        "hex": "#6DC066"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": 11,
+    "slug": "suhofrukty",
+    "name": "Сухофрукты",
+    "hex": "#9B5B33",
+    "descriptors": [
+     {
+      "id": 69,
+      "slug": "chernosliv",
+      "name": "Чернослив",
+      "hex": "#6E3389",
+      "hideFromWheel": false
+     },
+     {
+      "id": 71,
+      "slug": "finik",
+      "name": "Финик",
+      "hex": "#AE7838",
+      "hideFromWheel": false
+     },
+     {
+      "id": 66,
+      "slug": "inzhir",
+      "name": "Инжир",
+      "hex": "#A0785A",
+      "hideFromWheel": false
+     },
+     {
+      "id": 67,
+      "slug": "izyum",
+      "name": "Изюм",
+      "hex": "#9C6A5C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "belyj-izyum",
+        "name": "Белый изюм",
+        "hex": "#9C6A5C"
+       },
+       {
+        "slug": "temnyy-izyum",
+        "name": "Тёмный изюм",
+        "hex": "#9C6A5C"
+       }
+      ]
+     },
+     {
+      "id": 68,
+      "slug": "kuraga",
+      "name": "Курага",
+      "hex": "#FFBF00",
+      "hideFromWheel": false
+     },
+     {
+      "id": 143,
+      "slug": "suhofrukty",
+      "name": "Сухофрукты",
+      "hex": "#9B5B33",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "kaskara",
+        "name": "Каскара",
+        "hex": "#9B5B33"
+       },
+       {
+        "slug": "vyalenye-frukty",
+        "name": "Вяленые фрукты",
+        "hex": "#C0392B"
+       }
+      ]
+     },
+     {
+      "id": 153,
+      "slug": "vyalenaya-vishnya",
+      "name": "Вяленая вишня",
+      "hex": "#9C6A5C",
+      "hideFromWheel": true
+     },
+     {
+      "id": 70,
+      "slug": "vyalenyy-banan",
+      "name": "Вяленый банан",
+      "hex": "#DAB86F",
+      "hideFromWheel": false
+     }
+    ]
+   },
+   {
+    "id": 10,
+    "slug": "yagody",
+    "name": "Ягоды",
+    "hex": "#E1467F",
+    "descriptors": [
+     {
+      "id": 63,
+      "slug": "brusnika",
+      "name": "Брусника",
+      "hex": "#C26060",
+      "hideFromWheel": false
+     },
+     {
+      "id": 61,
+      "slug": "chernika",
+      "name": "Черника",
+      "hex": "#8473C2",
+      "hideFromWheel": false
+     },
+     {
+      "id": 64,
+      "slug": "ezhevika",
+      "name": "Ежевика",
+      "hex": "#6E3389",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "ezhevichnoe-vino",
+        "name": "Ежевичное вино",
+        "hex": "#6E3389"
+       },
+       {
+        "slug": "ezhevichnyj-ledenec",
+        "name": "Ежевичный леденец",
+        "hex": "#6E3389"
+       },
+       {
+        "slug": "shelkovica",
+        "name": "Шелковица",
+        "hex": "#6E3389"
+       }
+      ]
+     },
+     {
+      "id": 218,
+      "slug": "kalina",
+      "name": "Калина",
+      "hex": "#DA5F75",
+      "hideFromWheel": true
+     },
+     {
+      "id": 62,
+      "slug": "klubnika",
+      "name": "Клубника",
+      "hex": "#FF6B6B",
+      "hideFromWheel": false
+     },
+     {
+      "id": 60,
+      "slug": "klyukva",
+      "name": "Клюква",
+      "hex": "#C84A55",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "klyukva-v-sahare",
+        "name": "Клюква в сахаре",
+        "hex": "#C84A55"
+       },
+       {
+        "slug": "vyalenaya-klyukva",
+        "name": "Вяленая клюква",
+        "hex": "#9C6A5C"
+       }
+      ]
+     },
+     {
+      "id": 65,
+      "slug": "krasnaya-smorodina",
+      "name": "Красная смородина",
+      "hex": "#DA5F75",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "krasnye-yagody",
+        "name": "Красные ягоды",
+        "hex": "#DA5F75"
+       }
+      ]
+     },
+     {
+      "id": 192,
+      "slug": "lesnye-yagody",
+      "name": "Лесные ягоды",
+      "hex": "#E1467F",
+      "hideFromWheel": true
+     },
+     {
+      "id": 58,
+      "slug": "malina",
+      "name": "Малина",
+      "hex": "#EE5588",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "malinovyy-yogurt",
+        "name": "Малиновый йогурт",
+        "hex": "#EE5588"
+       },
+       {
+        "slug": "sushenaya-malina",
+        "name": "Сушёная малина",
+        "hex": "#EE5588"
+       }
+      ]
+     },
+     {
+      "id": 141,
+      "slug": "ryabina",
+      "name": "Рябина",
+      "hex": "#DE5050",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "chernoplodnaya-ryabina",
+        "name": "Черноплодная рябина",
+        "hex": "#6B2D5B"
+       }
+      ]
+     },
+     {
+      "id": 59,
+      "slug": "shipovnik",
+      "name": "Шиповник",
+      "hex": "#EE8458",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "otvar-shipovnika",
+        "name": "Отвар шиповника",
+        "hex": "#EE8458"
+       },
+       {
+        "slug": "tomat",
+        "name": "Томат",
+        "hex": "#C64B3C"
+       }
+      ]
+     },
+     {
+      "id": 150,
+      "slug": "temnye-yagody",
+      "name": "Темные ягоды",
+      "hex": "#6E3389",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "cheryomuha",
+        "name": "Черёмуха",
+        "hex": "#6E3389"
+       },
+       {
+        "slug": "golubika",
+        "name": "Голубика",
+        "hex": "#6E3389"
+       },
+       {
+        "slug": "temnye-frukty",
+        "name": "Тёмные фрукты",
+        "hex": "#6E3389"
+       }
+      ]
+     },
+     {
+      "id": 210,
+      "slug": "vyalenye-yagody",
+      "name": "Вяленые ягоды",
+      "hex": "#6E3389",
+      "hideFromWheel": true
+     },
+     {
+      "id": 269,
+      "slug": "yagody",
+      "name": "Ягоды",
+      "hex": "#C0392B",
+      "hideFromWheel": true
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 6,
+  "slug": "spicy-unique",
+  "name": "Пряный / Особый",
+  "hex": "#3E7D8C",
+  "subsectors": [
+   {
+    "id": 19,
+    "slug": "teplye-pryanosti",
+    "name": "Тёплые пряности",
+    "hex": "#7A8142",
+    "descriptors": [
+     {
+      "id": 123,
+      "slug": "badyan",
+      "name": "Бадьян",
+      "hex": "#5C3317",
+      "hideFromWheel": false
+     },
+     {
+      "id": 124,
+      "slug": "imbir",
+      "name": "Имбирь",
+      "hex": "#E0C068",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "imbirnyj-el",
+        "name": "Имбирный эль",
+        "hex": "#E0C068"
+       }
+      ]
+     },
+     {
+      "id": 126,
+      "slug": "kardamon",
+      "name": "Кардамон",
+      "hex": "#8DB600",
+      "hideFromWheel": false
+     },
+     {
+      "id": 125,
+      "slug": "kedr",
+      "name": "Кедр",
+      "hex": "#5D6D3B",
+      "hideFromWheel": false
+     },
+     {
+      "id": 122,
+      "slug": "sladkie-spetsii",
+      "name": "Сладкие специи",
+      "hex": "#B8860B",
+      "hideFromWheel": false
+     }
+    ]
+   },
+   {
+    "id": 18,
+    "slug": "pryanosti",
+    "name": "Пряности",
+    "hex": "#77573A",
+    "descriptors": [
+     {
+      "id": 119,
+      "slug": "anis",
+      "name": "Анис",
+      "hex": "#3B5323",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "Lacrichnaya-konfeta",
+        "name": "Лакричная конфета",
+        "hex": "#3B5323"
+       }
+      ]
+     },
+     {
+      "id": 163,
+      "slug": "dubovoya-bochka",
+      "name": "Дубовая бочка",
+      "hex": "#77573A",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "drevesnye-ottenki",
+        "name": "Древесные оттенки",
+        "hex": "#77573A"
+       },
+       {
+        "slug": "dubovye-noty",
+        "name": "Дубовые ноты",
+        "hex": "#77573A"
+       }
+      ]
+     },
+     {
+      "id": 120,
+      "slug": "gvozdika",
+      "name": "Гвоздика",
+      "hex": "#9A6440",
+      "hideFromWheel": false
+     },
+     {
+      "id": 121,
+      "slug": "koritsa",
+      "name": "Корица",
+      "hex": "#D2691E",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "bulochka-s-koricey",
+        "name": "Булочка с корицей",
+        "hex": "#D2691E"
+       },
+       {
+        "slug": "sinnabon",
+        "name": "Синнабон",
+        "hex": "#D2691E"
+       }
+      ]
+     },
+     {
+      "id": 117,
+      "slug": "muskatnyy-oreh",
+      "name": "Мускатный орех",
+      "hex": "#A0785A",
+      "hideFromWheel": false
+     },
+     {
+      "id": 115,
+      "slug": "perets",
+      "name": "Перец",
+      "hex": "#3D3D3D",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "rozovyj-perec",
+        "name": "Розовый перец",
+        "hex": "#FF6B6B"
+       }
+      ]
+     },
+     {
+      "id": 118,
+      "slug": "pikantnyy",
+      "name": "Пикантный",
+      "hex": "#B8723F",
+      "hideFromWheel": false
+     },
+     {
+      "id": 168,
+      "slug": "pryanosti",
+      "name": "Пряности",
+      "hex": "#77573A",
+      "hideFromWheel": true
+     },
+     {
+      "id": 177,
+      "slug": "specii",
+      "name": "Специи",
+      "hex": "#3E7D8C",
+      "hideFromWheel": true,
+      "children": [
+       {
+        "slug": "indijskie-specii",
+        "name": "Индийские специи",
+        "hex": "#3E7D8C"
+       },
+       {
+        "slug": "teplye-spetsii",
+        "name": "Тёплые специи",
+        "hex": "#3E7D8C"
+       }
+      ]
+     },
+     {
+      "id": 116,
+      "slug": "tabak",
+      "name": "Табак",
+      "hex": "#9C7350",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "sladkiy-tabak",
+        "name": "Сладкий табак",
+        "hex": "#9C7350"
+       },
+       {
+        "slug": "trubochnyj-tabak",
+        "name": "Трубочный табак",
+        "hex": "#8B7355"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": 17,
+    "slug": "vypechka",
+    "name": "Выпечка",
+    "hex": "#A99980",
+    "descriptors": [
+     {
+      "id": 110,
+      "slug": "biskvit",
+      "name": "Бисквит",
+      "hex": "#FFE4B5",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "shokoladnyj-biskvit",
+        "name": "Шоколадный бисквит",
+        "hex": "#DEB887"
+       }
+      ]
+     },
+     {
+      "id": 113,
+      "slug": "kruassan",
+      "name": "Круассан",
+      "hex": "#F5DEB3",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "slivochnyj-kruassan",
+        "name": "Сливочный круассан",
+        "hex": "#F5DEB3"
+       }
+      ]
+     },
+     {
+      "id": 109,
+      "slug": "ovsyanoe-pechene",
+      "name": "Овсяное печенье",
+      "hex": "#C8AD7F",
+      "hideFromWheel": false
+     },
+     {
+      "id": 28,
+      "slug": "pechene",
+      "name": "Печенье",
+      "hex": "#DEB887",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "shokoladnoe-pechenye",
+        "name": "Шоколадное печенье",
+        "hex": "#DEB887"
+       },
+       {
+        "slug": "zemlyanichnoe-pechene",
+        "name": "Земляничное печенье",
+        "hex": "#DAA520"
+       }
+      ]
+     },
+     {
+      "id": 111,
+      "slug": "pirog",
+      "name": "Пирог",
+      "hex": "#D2B48C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "limonnyj-pirog",
+        "name": "Лимонный пирог",
+        "hex": "#FFF44F"
+       }
+      ]
+     },
+     {
+      "id": 112,
+      "slug": "rzhanoy-hleb",
+      "name": "Ржаной хлеб",
+      "hex": "#8B7355",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "borodinskiy-hleb",
+        "name": "Бородинский хлеб",
+        "hex": "#8B5A2B"
+       },
+       {
+        "slug": "kvas",
+        "name": "Квас",
+        "hex": "#8B7355"
+       },
+       {
+        "slug": "rizhskiy-hleb",
+        "name": "Рижский хлеб",
+        "hex": "#8B5A2B"
+       }
+      ]
+     },
+     {
+      "id": 114,
+      "slug": "vypechka",
+      "name": "Выпечка",
+      "hex": "#DEB887",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "briosh",
+        "name": "Бриошь",
+        "hex": "#9B6A2F"
+       },
+       {
+        "slug": "maffin",
+        "name": "Маффин",
+        "hex": "#DEB887"
+       },
+       {
+        "slug": "sladkaya-vypechka",
+        "name": "Сладкая выпечка",
+        "hex": "#DEB887"
+       }
+      ]
+     },
+     {
+      "id": 254,
+      "slug": "zharenye-zlaki",
+      "name": "Жареные злаки",
+      "hex": "#C4A35A",
+      "hideFromWheel": true
+     }
+    ]
+   },
+   {
+    "id": 16,
+    "slug": "alkogolnye",
+    "name": "Алкогольные",
+    "hex": "#976065",
+    "descriptors": [
+     {
+      "id": 281,
+      "slug": "alkogolnyj",
+      "name": "Алкогольный",
+      "hex": "#5D6D7E",
+      "hideFromWheel": true
+     },
+     {
+      "id": 106,
+      "slug": "beloe-vino",
+      "name": "Белое вино",
+      "hex": "#F5E6C8",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "risling",
+        "name": "Рислинг",
+        "hex": "#F5E6C8"
+       },
+       {
+        "slug": "zelenoe-vino",
+        "name": "Зелёное вино",
+        "hex": "#7D8F3A"
+       }
+      ]
+     },
+     {
+      "id": 102,
+      "slug": "heres",
+      "name": "Херес",
+      "hex": "#C68E17",
+      "hideFromWheel": false
+     },
+     {
+      "id": 103,
+      "slug": "konyak",
+      "name": "Коньяк",
+      "hex": "#C8732B",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "brendi",
+        "name": "Бренди",
+        "hex": "#C8732B"
+       },
+       {
+        "slug": "konьyachnaya-konfeta",
+        "name": "Коньячная конфета",
+        "hex": "#8A4A1C"
+       }
+      ]
+     },
+     {
+      "id": 108,
+      "slug": "krasnoe-vino",
+      "name": "Красное вино",
+      "hex": "#A55A66",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "krasnoe-suhoe-vino",
+        "name": "Красное сухое вино",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "molodoe-vino",
+        "name": "молодое вино",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "rozovoe-vino",
+        "name": "Розовое вино",
+        "hex": "#A55A66"
+       },
+       {
+        "slug": "yagodnoe-vino",
+        "name": "Ягодное вино",
+        "hex": "#B83A3A"
+       }
+      ]
+     },
+     {
+      "id": 105,
+      "slug": "liker",
+      "name": "Ликёр",
+      "hex": "#BA3D78",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "apelsinovyj-liker",
+        "name": "Апельсиновый ликёр",
+        "hex": "#FF8C00"
+       },
+       {
+        "slug": "aperol",
+        "name": "Апероль",
+        "hex": "#BA3D78"
+       },
+       {
+        "slug": "citrusovyj-liker",
+        "name": "Цитрусовый ликёр",
+        "hex": "#FFA500"
+       },
+       {
+        "slug": "klubnichnyj-liker",
+        "name": "Клубничный ликер",
+        "hex": "#A32638"
+       },
+       {
+        "slug": "likernaya-konfeta",
+        "name": "Ликерная конфета",
+        "hex": "#BA3D78"
+       },
+       {
+        "slug": "shokoladnyj-liker",
+        "name": "Шоколадный ликёр",
+        "hex": "#7A4A2A"
+       },
+       {
+        "slug": "slivochnyj-liker",
+        "name": "Сливочный ликёр",
+        "hex": "#E8D5B0"
+       },
+       {
+        "slug": "vishnevyj-liker",
+        "name": "Вишнёвый ликёр",
+        "hex": "#BA3D78"
+       },
+       {
+        "slug": "yagodnyy-liker",
+        "name": "Ягодный ликёр",
+        "hex": "#BA3D78"
+       }
+      ]
+     },
+     {
+      "id": 156,
+      "slug": "portvejn",
+      "name": "Портвейн",
+      "hex": "#976065",
+      "hideFromWheel": false
+     },
+     {
+      "id": 107,
+      "slug": "rom",
+      "name": "Ром",
+      "hex": "#9C6A5C",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "rom-so-speciyami",
+        "name": "Ром со специями",
+        "hex": "#9C6A5C"
+       },
+       {
+        "slug": "temnyy-rom",
+        "name": "Тёмный ром",
+        "hex": "#9C6A5C"
+       }
+      ]
+     },
+     {
+      "id": 104,
+      "slug": "vermut",
+      "name": "Вермут",
+      "hex": "#808000",
+      "hideFromWheel": false,
+      "children": [
+       {
+        "slug": "belyj-vermut",
+        "name": "Белый вермут",
+        "hex": "#F5E6C8"
+       },
+       {
+        "slug": "krasnyy-vermut",
+        "name": "Красный вермут",
+        "hex": "#A63A50"
+       }
+      ]
+     },
+     {
+      "id": 101,
+      "slug": "viski",
+      "name": "Виски",
+      "hex": "#D2691E",
+      "hideFromWheel": false
+     },
+     {
+      "id": 144,
+      "slug": "yablochnyj-sidr",
+      "name": "Яблочный сидр",
+      "hex": "#976065",
+      "hideFromWheel": true
+     }
+    ]
+   }
+  ]
+ }
+]
