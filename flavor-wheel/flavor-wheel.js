@@ -43,7 +43,15 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 6;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "flat1";
+const DATA_CACHE_BUST = "motion1";
+const GRAIN_TILE = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">' +
+  '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>' +
+  '<rect width="100%" height="100%" filter="url(#n)" opacity=".55"/></svg>'
+)}`;
+const TILT_MAX_GYRO = 7;
+const TILT_MAX_MOUSE = 4;
+const TILT_LERP = 0.12;
 
 function cssText() {
   return `
@@ -129,16 +137,58 @@ function cssText() {
 .trail-crumb.is-current { cursor: default; box-shadow: 0 8px 20px rgba(0,0,0,.14); }
 .trail-crumb.is-current:hover { filter: none; transform: none; }
 .trail-sep { color: #000000; opacity: .35; font-size: 13px; font-weight: 600; }
-.wheel-box {
+.wheel-perspective {
   width: var(--fw-wheel-size);
+  max-width: 100%;
+  perspective: 900px;
+  perspective-origin: 50% 45%;
+}
+:host([data-layout="wide"]) .wheel-perspective { margin: 0; }
+.wheel-tilt {
+  --tilt-rx: 0deg;
+  --tilt-ry: 0deg;
+  --tilt-sx: 0px;
+  --tilt-sy: 18px;
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry));
+  will-change: transform;
+  filter:
+    drop-shadow(var(--tilt-sx) var(--tilt-sy) 28px rgba(0, 0, 0, 0.14))
+    drop-shadow(0 6px 10px rgba(0, 0, 0, 0.08));
+}
+.wheel-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse 70% 34% at 50% 8%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 70%);
+  mix-blend-mode: soft-light;
+}
+.wheel-box {
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
   flex: 0 0 auto;
   aspect-ratio: 1;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+  z-index: 1;
 }
-:host([data-layout="wide"]) .wheel-box { margin: 0; }
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0.055;
+  background-image: url("${GRAIN_TILE}");
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+}
 svg.wheel {
   display: block; width: 100%; height: auto; overflow: visible;
   touch-action: none; cursor: grab;
@@ -164,7 +214,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .seg {
   cursor: pointer; outline: none; isolation: isolate;
   transform-box: view-box; transform-origin: 400px 400px;
-  transition: transform .2s ease;
+  transition: transform .18s cubic-bezier(.22,.8,.3,1);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
@@ -184,7 +234,24 @@ svg.wheel.is-dragging { cursor: grabbing; }
 }
 .seg:focus-visible .seg-focus-ring { visibility: visible; }
 .seg.is-hot { transform: scale(1.03); }
-.seg .tile-fill { transition: filter .2s ease; }
+.seg.is-press { transform: scale(1.055); }
+.seg .tile-fill {
+  transition: filter .18s ease;
+  transform-box: fill-box;
+}
+.seg.is-hot .tile-fill { filter: brightness(1.05); }
+.seg.is-press .tile-fill { filter: brightness(1.1); }
+.seg[data-selected="1"]:not(.is-press) .tile-fill {
+  animation: seg-breathe 3s ease-in-out infinite;
+}
+@keyframes seg-breathe {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: brightness(1.07) drop-shadow(0 0 7px color-mix(in srgb, var(--seg-hex, #888) 50%, transparent));
+  }
+}
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -290,7 +357,12 @@ span.chip { cursor: default; }
 .load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   .seg, .tile-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
-  .seg.is-hot, .center-hit.is-back:hover { transform: none; }
+  .seg.is-hot, .seg.is-press, .center-hit.is-back:hover { transform: none; }
+  .seg[data-selected="1"] .tile-fill { animation: none !important; }
+  .wheel-tilt {
+    transform: none !important;
+    filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.12)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.07));
+  }
 }
 `;
 }
@@ -332,6 +404,24 @@ class FlavorWheel extends HTMLElement {
     this.inertiaRaf = 0;
     this.urlTimer = 0;
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.pressedSeg = null;
+    this.tiltTarget = { x: 0, y: 0 };
+    this.tiltCurrent = { x: 0, y: 0 };
+    this.tiltRaf = 0;
+    this.tiltMode = "none";
+    this.gyroAllowed = false;
+    this.gyroAsked = false;
+    this.onOrient = (e) => this.handleOrientation(e);
+    this.onMouseMove = (e) => this.handleMouseTilt(e);
+    this.onMouseLeave = () => {
+      this.tiltTarget.x = 0;
+      this.tiltTarget.y = 0;
+    };
+    this.onReducedChange = (e) => {
+      this.reduced = e.matches;
+      if (this.reduced) this.resetTilt(true);
+      else this.ensureTiltLoop();
+    };
   }
 
   get syncUrl() {
@@ -352,7 +442,12 @@ class FlavorWheel extends HTMLElement {
     this.ro?.disconnect();
     this.hostRo?.disconnect();
     cancelAnimationFrame(this.inertiaRaf);
+    cancelAnimationFrame(this.tiltRaf);
     clearTimeout(this.urlTimer);
+    window.removeEventListener("deviceorientation", this.onOrient);
+    this.shadowRoot?.removeEventListener("pointermove", this.onMouseMove);
+    this.wheelPerspective?.removeEventListener("pointerleave", this.onMouseLeave);
+    window.matchMedia("(prefers-reduced-motion: reduce)").removeEventListener?.("change", this.onReducedChange);
   }
 
   attributeChangedCallback(name) {
@@ -382,18 +477,24 @@ class FlavorWheel extends HTMLElement {
   renderShell() {
     this.shadowRoot.innerHTML = `
       <style>${cssText()}</style>
+      <div class="grain" aria-hidden="true"></div>
       <div class="stage">
         <div class="wrap">
           <div class="grid" data-testid="taste-wheel-grid">
             <div class="wheel-col">
               <nav class="trail" data-testid="wheel-trail" aria-label="Путь выбора"></nav>
-              <div class="wheel-box" data-testid="wheel-filter">
-                <svg class="wheel" tabindex="-1" viewBox="0 0 800 800" role="img" aria-label="Колесо вкусов — фильтр по нотам (потяните для вращения)">
-                  <title>Колесо вкусов</title>
-                  <defs>${filters()}</defs>
-                  <g class="rotor" transform="rotate(0 400 400)"></g>
-                  <g class="center-layer"></g>
-                </svg>
+              <div class="wheel-perspective">
+                <div class="wheel-tilt">
+                  <div class="wheel-box" data-testid="wheel-filter">
+                    <svg class="wheel" tabindex="-1" viewBox="0 0 800 800" role="img" aria-label="Колесо вкусов — фильтр по нотам (потяните для вращения)">
+                      <title>Колесо вкусов</title>
+                      <defs>${filters()}</defs>
+                      <g class="rotor" transform="rotate(0 400 400)"></g>
+                      <g class="center-layer"></g>
+                    </svg>
+                  </div>
+                  <div class="wheel-shine" aria-hidden="true"></div>
+                </div>
               </div>
             </div>
             <div class="panel" data-testid="wheel-info-panel"></div>
@@ -404,6 +505,8 @@ class FlavorWheel extends HTMLElement {
     this.rotor = this.shadowRoot.querySelector(".rotor");
     this.centerLayer = this.shadowRoot.querySelector(".center-layer");
     this.wheelBox = this.shadowRoot.querySelector(".wheel-box");
+    this.wheelPerspective = this.shadowRoot.querySelector(".wheel-perspective");
+    this.wheelTilt = this.shadowRoot.querySelector(".wheel-tilt");
     this.panelEl = this.shadowRoot.querySelector(".panel");
     this.trailEl = this.shadowRoot.querySelector(".trail");
   }
@@ -412,7 +515,11 @@ class FlavorWheel extends HTMLElement {
     this.svg.addEventListener("pointerdown", (e) => this.onDown(e));
     this.svg.addEventListener("pointermove", (e) => this.onMove(e));
     this.svg.addEventListener("pointerup", (e) => this.onUp(e));
-    this.svg.addEventListener("pointercancel", () => { this.drag = null; this.svg.classList.remove("is-dragging"); });
+    this.svg.addEventListener("pointercancel", () => {
+      this.drag = null;
+      this.svg.classList.remove("is-dragging");
+      this.clearPress();
+    });
     this.svg.addEventListener("pointerover", (e) => {
       const seg = e.target.closest?.(".seg");
       if (!seg || seg === this.hot) return;
@@ -452,6 +559,9 @@ class FlavorWheel extends HTMLElement {
       e.preventDefault();
       this.onSegment(seg);
     });
+    this.shadowRoot.addEventListener("pointermove", this.onMouseMove, { passive: true });
+    this.wheelPerspective?.addEventListener("pointerleave", this.onMouseLeave);
+    this.ensureTiltLoop();
   }
 
   watch() {
@@ -472,9 +582,7 @@ class FlavorWheel extends HTMLElement {
       if (this.tree.length) this.renderWheel();
     });
     this.ro.observe(this.wheelBox);
-    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener?.("change", (e) => {
-      this.reduced = e.matches;
-    });
+    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener?.("change", this.onReducedChange);
   }
 
   dataUrls() {
@@ -806,7 +914,7 @@ class FlavorWheel extends HTMLElement {
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
-    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}">` +
+    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" style="--seg-hex:${s.node.hex}">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
       `<path class="tile-fill" d="${d}" fill="${s.node.hex}" fill-opacity="1" stroke="rgba(255,255,255,.55)" stroke-width="1.25" stroke-linejoin="round"></path>` +
       `</g>` +
@@ -1011,6 +1119,115 @@ class FlavorWheel extends HTMLElement {
     if (root.activeElement === this.svg) this.svg.blur();
   }
 
+  clearPress() {
+    if (!this.pressedSeg) return;
+    this.pressedSeg.classList.remove("is-press");
+    this.pressedSeg = null;
+  }
+
+  setPress(seg) {
+    if (this.pressedSeg === seg) return;
+    this.clearPress();
+    if (!seg) return;
+    this.pressedSeg = seg;
+    seg.classList.add("is-press");
+  }
+
+  async maybeRequestGyro() {
+    if (this.gyroAsked || this.reduced) return;
+    this.gyroAsked = true;
+    try {
+      const DOE = window.DeviceOrientationEvent;
+      if (DOE && typeof DOE.requestPermission === "function") {
+        const state = await DOE.requestPermission();
+        this.gyroAllowed = state === "granted";
+      } else if ("DeviceOrientationEvent" in window) {
+        this.gyroAllowed = true;
+      }
+    } catch {
+      this.gyroAllowed = false;
+    }
+    if (this.gyroAllowed) {
+      this.tiltMode = "gyro";
+      window.addEventListener("deviceorientation", this.onOrient, { passive: true });
+    } else {
+      this.tiltMode = "mouse";
+    }
+    this.ensureTiltLoop();
+  }
+
+  handleOrientation(e) {
+    if (this.reduced || !this.gyroAllowed) return;
+    const beta = Number(e.beta) || 0;
+    const gamma = Number(e.gamma) || 0;
+    const rx = Math.max(-TILT_MAX_GYRO, Math.min(TILT_MAX_GYRO, beta * 0.18));
+    const ry = Math.max(-TILT_MAX_GYRO, Math.min(TILT_MAX_GYRO, gamma * 0.22));
+    this.tiltTarget.x = rx;
+    this.tiltTarget.y = ry;
+  }
+
+  handleMouseTilt(e) {
+    if (this.reduced || this.tiltMode === "gyro") return;
+    if (e.pointerType && e.pointerType !== "mouse") return;
+    const box = this.wheelPerspective?.getBoundingClientRect();
+    if (!box || !box.width || !box.height) return;
+    const nx = ((e.clientX - box.left) / box.width) * 2 - 1;
+    const ny = ((e.clientY - box.top) / box.height) * 2 - 1;
+    if (Math.abs(nx) > 1.4 || Math.abs(ny) > 1.4) {
+      this.tiltTarget.x = 0;
+      this.tiltTarget.y = 0;
+      return;
+    }
+    this.tiltMode = "mouse";
+    this.tiltTarget.x = Math.max(-TILT_MAX_MOUSE, Math.min(TILT_MAX_MOUSE, -ny * TILT_MAX_MOUSE));
+    this.tiltTarget.y = Math.max(-TILT_MAX_MOUSE, Math.min(TILT_MAX_MOUSE, nx * TILT_MAX_MOUSE));
+  }
+
+  resetTilt(hard = false) {
+    this.tiltTarget.x = 0;
+    this.tiltTarget.y = 0;
+    if (hard) {
+      this.tiltCurrent.x = 0;
+      this.tiltCurrent.y = 0;
+      this.applyTiltStyles();
+      cancelAnimationFrame(this.tiltRaf);
+      this.tiltRaf = 0;
+    }
+  }
+
+  applyTiltStyles() {
+    if (!this.wheelTilt) return;
+    const rx = this.tiltCurrent.x;
+    const ry = this.tiltCurrent.y;
+    this.wheelTilt.style.setProperty("--tilt-rx", `${rx.toFixed(3)}deg`);
+    this.wheelTilt.style.setProperty("--tilt-ry", `${ry.toFixed(3)}deg`);
+    // Тень слегка против наклона.
+    this.wheelTilt.style.setProperty("--tilt-sx", `${(-ry * 1.1).toFixed(2)}px`);
+    this.wheelTilt.style.setProperty("--tilt-sy", `${(18 + rx * 0.9).toFixed(2)}px`);
+  }
+
+  ensureTiltLoop() {
+    if (this.reduced || this.tiltRaf) return;
+    const tick = () => {
+      if (this.reduced) {
+        this.tiltRaf = 0;
+        this.resetTilt(true);
+        return;
+      }
+      const dx = this.tiltTarget.x - this.tiltCurrent.x;
+      const dy = this.tiltTarget.y - this.tiltCurrent.y;
+      this.tiltCurrent.x += dx * TILT_LERP;
+      this.tiltCurrent.y += dy * TILT_LERP;
+      if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) {
+        this.tiltCurrent.x = this.tiltTarget.x;
+        this.tiltCurrent.y = this.tiltTarget.y;
+      }
+      this.applyTiltStyles();
+      this.tiltRaf = requestAnimationFrame(tick);
+    };
+    this.tiltRaf = requestAnimationFrame(tick);
+  }
+
   onDown(e) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     this.lastPointerType = e.pointerType || "";
@@ -1018,6 +1235,9 @@ class FlavorWheel extends HTMLElement {
       this.blurPointerFocus();
       if (e.cancelable) e.preventDefault();
     }
+    if (e.pointerType === "touch" || e.pointerType === "pen") this.maybeRequestGyro();
+    const seg = e.target.closest?.(".seg");
+    if (seg) this.setPress(seg);
     this.cancelInertia();
     this.drag = { last: this.pointerAngle(e), moved: 0, active: false, ts: e.timeStamp, id: e.pointerId };
     this.velocity = 0;
@@ -1034,6 +1254,7 @@ class FlavorWheel extends HTMLElement {
     if (!this.drag.active) {
       if (this.drag.moved <= 5) return;
       this.drag.active = true;
+      this.clearPress();
       this.svg.setPointerCapture?.(e.pointerId);
       this.svg.classList.add("is-dragging");
       this.blurPointerFocus();
@@ -1049,6 +1270,7 @@ class FlavorWheel extends HTMLElement {
     const active = this.drag.active;
     this.drag = null;
     this.svg.classList.remove("is-dragging");
+    this.clearPress();
     if (e && (e.pointerType === "mouse" || e.pointerType === "touch" || e.pointerType === "pen")) {
       this.blurPointerFocus();
     }
