@@ -1,6 +1,6 @@
 import {
   CX, CY, wheelGeometry, petalPath, fitLabel, labelPlacement,
-  isLight, inertiaTarget, glow, polar,
+  inertiaTarget,
 } from "./geometry.js";
 
 const INFO_EMPTY = "Выберите сектор, подкатегорию или конкретную ноту на колесе — здесь появится описание.";
@@ -38,122 +38,12 @@ function mixHex(hex, amount = 0.78) {
   return toHex({ r: mix(r), g: mix(g), b: mix(b) });
 }
 
-function mixBlack(hex, amount = 0.25) {
-  const { r, g, b } = parseRgb(hex);
-  const mix = (c) => c * (1 - amount);
-  return toHex({ r: mix(r), g: mix(g), b: mix(b) });
-}
-
-function tuneHex(hex, { sat = 1, light = 1 } = {}) {
-  let { r, g, b } = parseRgb(hex);
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h = 0;
-  let s = 0;
-  let l = (max + min) / 2;
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
-    else if (max === g) h = ((b - r) / d + 2) * 60;
-    else h = ((r - g) / d + 4) * 60;
-  }
-  s = Math.min(1, Math.max(0, s * sat));
-  l = Math.min(1, Math.max(0, l * light));
-  const C = s * (1 - Math.abs(2 * l - 1));
-  const X = C * (1 - Math.abs(((h / 60) % 2) - 1));
-  const m = l - C / 2;
-  let r1 = 0; let g1 = 0; let b1 = 0;
-  if (h < 60) [r1, g1, b1] = [C, X, 0];
-  else if (h < 120) [r1, g1, b1] = [X, C, 0];
-  else if (h < 180) [r1, g1, b1] = [0, C, X];
-  else if (h < 240) [r1, g1, b1] = [0, X, C];
-  else if (h < 300) [r1, g1, b1] = [X, 0, C];
-  else [r1, g1, b1] = [C, 0, X];
-  return toHex({ r: (r1 + m) * 255, g: (g1 + m) * 255, b: (b1 + m) * 255 });
-}
-
 const MAIN_GAP = 12;
 const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 6;
 const PREVIEW_RADIUS = 12;
-const TILE_FACE_OP = 1;
-const TILE_PREVIEW_OP = 1;
-/** Свет сверху-слева (viewBox 800×800). */
-const SUN = { x1: 230, y1: 200, x2: 570, y2: 600 };
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "v4";
-
-function acrylicTileFx(prefix, hex, rIn, rOut, a0, a1) {
-  const gl = glow(rIn, rOut, a0, a1);
-  const base = hex;
-  // Край гуще/насыщеннее без белого подмеса; тело — чистый hex из данных.
-  const edge = tuneHex(hex, { sat: 1.28, light: 0.78 });
-  const fillId = `${prefix}-fill`;
-  const rimLightId = `${prefix}-rim-hi`;
-  const rimSatId = `${prefix}-rim-sat`;
-  const clipId = `${prefix}-clip`;
-  const defs =
-    `<radialGradient id="${fillId}" cx="${gl.cx}" cy="${gl.cy}" r="${Math.max(30, gl.r * 0.98)}" gradientUnits="userSpaceOnUse">` +
-    `<stop offset="0%" stop-color="${base}" stop-opacity="0.58"></stop>` +
-    `<stop offset="40%" stop-color="${base}" stop-opacity="0.68"></stop>` +
-    `<stop offset="75%" stop-color="${base}" stop-opacity="0.84"></stop>` +
-    `<stop offset="100%" stop-color="${edge}" stop-opacity="0.98"></stop>` +
-    `</radialGradient>` +
-    `<linearGradient id="${rimLightId}" gradientUnits="userSpaceOnUse" x1="${SUN.x1}" y1="${SUN.y1}" x2="${SUN.x2}" y2="${SUN.y2}">` +
-    `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.78"></stop>` +
-    `<stop offset="14%" stop-color="#ffffff" stop-opacity="0.12"></stop>` +
-    `<stop offset="32%" stop-color="#ffffff" stop-opacity="0"></stop>` +
-    `<stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>` +
-    `</linearGradient>` +
-    `<linearGradient id="${rimSatId}" gradientUnits="userSpaceOnUse" x1="${SUN.x2}" y1="${SUN.y2}" x2="${SUN.x1}" y2="${SUN.y1}">` +
-    `<stop offset="0%" stop-color="${edge}" stop-opacity="0.98"></stop>` +
-    `<stop offset="40%" stop-color="${base}" stop-opacity="0.55"></stop>` +
-    `<stop offset="100%" stop-color="${base}" stop-opacity="0"></stop>` +
-    `</linearGradient>`;
-  return { defs, fillId, rimLightId, rimSatId, clipId, hex: base };
-}
-
-function glassTileDefs(d, fx) {
-  return `<clipPath id="${fx.clipId}"><path d="${d}"></path></clipPath>${fx.defs}`;
-}
-
-function glassTileBody(d, fx, baseOp, compact) {
-  const hiW = compact ? 0.9 : 1.15;
-  const satW = compact ? 1.25 : 1.55;
-  return `<g class="glass-body">` +
-    `<g clip-path="url(#${fx.clipId})">` +
-    `<path class="glass-fill" d="${d}" fill="url(#${fx.fillId})" fill-opacity="${baseOp}"></path>` +
-    `<path class="glass-rim-sat" d="${d}" fill="none" stroke="url(#${fx.rimSatId})" stroke-width="${satW}" stroke-linejoin="round"></path>` +
-    `<path class="glass-rim-hi" d="${d}" fill="none" stroke="url(#${fx.rimLightId})" stroke-width="${hiW}" stroke-linejoin="round"></path>` +
-    `</g></g>`;
-}
-
-function glassSparkStar(x, y, arm, sw) {
-  return `<path d="M ${x} ${y - arm} L ${x} ${y + arm} M ${x - arm} ${y} L ${x + arm} ${y}" stroke="#ffffff" stroke-opacity="0.95" stroke-width="${sw}" stroke-linecap="round"></path>`;
-}
-
-function glassEdgeSparks(rIn, rOut, a0, a1, compact) {
-  const span = a1 - a0;
-  const aOut = a0 + span * 0.16;
-  const aEdge = a0 + span * 0.28;
-  const p0 = polar(CX, CY, rOut - 5, aOut);
-  const p1 = polar(CX, CY, rOut - 2, aOut + 2.4);
-  const sw = compact ? 0.65 : 0.85;
-  const arm = compact ? 2.2 : 2.8;
-  let html = `<g class="glass-spark" pointer-events="none">` +
-    `<line x1="${p0.x.toFixed(2)}" y1="${p0.y.toFixed(2)}" x2="${p1.x.toFixed(2)}" y2="${p1.y.toFixed(2)}" stroke="#ffffff" stroke-opacity="0.9" stroke-width="${sw}" stroke-linecap="round"></line>` +
-    glassSparkStar(p0.x, p0.y, arm, compact ? 0.55 : 0.7);
-  const e0 = polar(CX, CY, rOut - 7, aEdge);
-  const e1 = polar(CX, CY, rOut - 4, aEdge + 3.2);
-  html += `<line x1="${e0.x.toFixed(2)}" y1="${e0.y.toFixed(2)}" x2="${e1.x.toFixed(2)}" y2="${e1.y.toFixed(2)}" stroke="#ffffff" stroke-opacity="0.62" stroke-width="${compact ? 0.5 : 0.6}" stroke-linecap="round"></line>`;
-  if (!compact && span > 14) {
-    const s = polar(CX, CY, rIn + (rOut - rIn) * 0.22, a0 + span * 0.08);
-    html += glassSparkStar(s.x, s.y, 2, 0.55);
-  }
-  return `${html}</g>`;
-}
+const DATA_CACHE_BUST = "flat1";
 
 function cssText() {
   return `
@@ -247,21 +137,6 @@ function cssText() {
   aspect-ratio: 1;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 50%;
-  background:
-    repeating-linear-gradient(
-      128deg,
-      transparent 0 46px,
-      rgba(0, 0, 0, 0.016) 46px 54px,
-      transparent 54px 104px
-    ),
-    repeating-linear-gradient(
-      128deg,
-      transparent 0 18px,
-      rgba(255, 255, 255, 0.35) 18px 26px,
-      transparent 26px 72px
-    ),
-    linear-gradient(145deg, #ffffff 0%, #fafaf8 58%, #f7f6f3 100%);
 }
 :host([data-layout="wide"]) .wheel-box { margin: 0; }
 svg.wheel {
@@ -309,8 +184,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
 }
 .seg:focus-visible .seg-focus-ring { visibility: visible; }
 .seg.is-hot { transform: scale(1.03); }
-.seg .glass-fill { transition: fill-opacity .2s ease; }
-.seg .glass-spark { pointer-events: none; }
+.seg .tile-fill { transition: filter .2s ease; }
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -415,15 +289,23 @@ span.chip { cursor: default; }
 .show-cta:disabled { opacity: .4; cursor: not-allowed; }
 .load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
-  .seg, .glass-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
+  .seg, .tile-fill, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
   .seg.is-hot, .center-hit.is-back:hover { transform: none; }
 }
 `;
 }
 
 function filters() {
-  // Только тень центральной кнопки — у плиток/превью теней нет.
-  return `<filter id="wheel-center-shadow" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.08"></feDropShadow></filter>`;
+  const specs = [
+    ["wheel-petal-shadow-default", 2, 5, 0.12],
+    ["wheel-petal-shadow-selected", 4, 8, 0.18],
+    ["wheel-petal-shadow-hover", 6, 12, 0.22],
+    ["wheel-preview-shadow", 1, 3, 0.08],
+    ["wheel-center-shadow", 2, 6, 0.08],
+  ];
+  return specs.map(([id, dy, dev, op]) =>
+    `<filter id="${id}" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="${dy}" stdDeviation="${dev}" flood-color="#000" flood-opacity="${op}"></feDropShadow></filter>`
+  ).join("");
 }
 
 class FlavorWheel extends HTMLElement {
@@ -450,7 +332,6 @@ class FlavorWheel extends HTMLElement {
     this.inertiaRaf = 0;
     this.urlTimer = 0;
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    this.fxCompact = false;
   }
 
   get syncUrl() {
@@ -577,13 +458,6 @@ class FlavorWheel extends HTMLElement {
     const applyHost = () => {
       const w = Math.round(this.getBoundingClientRect().width || this.clientWidth || 0);
       this.dataset.layout = w >= 1280 ? "wide" : "narrow";
-      const compact = w <= 425;
-      if (compact) this.setAttribute("data-compact", "");
-      else this.removeAttribute("data-compact");
-      if (compact !== this.fxCompact) {
-        this.fxCompact = compact;
-        if (this.tree.length) this.renderWheel();
-      }
     };
     this.hostRo = new ResizeObserver(applyHost);
     this.hostRo.observe(this);
@@ -864,25 +738,13 @@ class FlavorWheel extends HTMLElement {
     const level = this.viewLevel;
     const model = this.model(level, g);
     this.segmentCount = Math.max(1, model.main.length);
-    const compact = this.fxCompact;
-    const previewDefs = [];
-    const previewBodies = [];
-    model.preview.forEach((p, i) => {
+    const previews = model.preview.map((p) => {
       const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PREVIEW_GAP, PREVIEW_RADIUS);
-      const prefix = `preview-${level}-${i}`;
-      const fx = acrylicTileFx(prefix, p.hex, g.middleR + 12, g.outerR, p.a0, p.a1);
-      previewDefs.push(glassTileDefs(d, fx));
-      previewBodies.push(
-        `<g pointer-events="none">${glassTileBody(d, fx, TILE_PREVIEW_OP, compact)}` +
-        `${glassEdgeSparks(g.middleR + 12, g.outerR, p.a0, p.a1, compact)}</g>`
-      );
-    });
-    const mainBuilt = model.main.map((s) => this.segmentHtml(s, level, g));
-    const mainDefs = mainBuilt.map((x) => x.defs).join("");
-    const segs = mainBuilt.map((x) => x.html).join("");
+      return `<path d="${d}" fill="${p.hex}" fill-opacity="1" stroke="rgba(255,255,255,.55)" stroke-width="1.1" stroke-linejoin="round"></path>`;
+    }).join("");
+    const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
     this.rotor.innerHTML =
-      `<defs>${previewDefs.join("")}${mainDefs}</defs>` +
-      `<g pointer-events="none">${previewBodies.join("")}</g>${segs}`;
+      `<g pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
@@ -940,21 +802,17 @@ class FlavorWheel extends HTMLElement {
     const d = petalPath(CX, CY, s.rIn, s.rOut, s.a0, s.a1, MAIN_GAP, MAIN_RADIUS);
     const fitted = fitLabel(s.node.name, s.rIn, s.rOut, s.a0, s.a1, g.labelMaxFont(level));
     const place = labelPlacement(s.rIn, s.rOut, s.a0, s.a1, fitted.fontSize, fitted.lines.length);
-    const prefix = `petal-${level}-${s.node.id}`;
-    const compact = this.fxCompact;
-    const fx = acrylicTileFx(prefix, s.node.hex, s.rIn, s.rOut, s.a0, s.a1);
-    const baseOp = TILE_FACE_OP;
     const tspans = fitted.lines.map((line, i) =>
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
-    const html = `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}">` +
-      `${glassTileBody(d, fx, baseOp, compact)}` +
-      `${glassEdgeSparks(s.rIn, s.rOut, s.a0, s.a1, compact)}` +
+    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}">` +
+      `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
+      `<path class="tile-fill" d="${d}" fill="${s.node.hex}" fill-opacity="1" stroke="rgba(255,255,255,.55)" stroke-width="1.25" stroke-linejoin="round"></path>` +
+      `</g>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
       `</g>`;
-    return { defs: glassTileDefs(d, fx), html };
   }
 
   renderCenter() {
@@ -983,9 +841,8 @@ class FlavorWheel extends HTMLElement {
     const selected = seg.dataset.selected === "1";
     const hot = seg === this.hot || seg.matches(":focus-visible");
     seg.classList.toggle("is-hot", hot || selected);
-    const base = Number(seg.dataset.baseOp || TILE_FACE_OP);
-    const fill = seg.querySelector(".glass-fill");
-    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.04 : 0))));
+    const name = hot ? "hover" : selected ? "selected" : "default";
+    seg.querySelector(".tile-body")?.setAttribute("filter", `url(#wheel-petal-shadow-${name})`);
   }
 
   updateSelected() {
