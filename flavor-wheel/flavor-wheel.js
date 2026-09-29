@@ -19,16 +19,71 @@ function paras(text) {
   return String(text || "").split("\n").filter((p) => p.trim()).map((p) => `<p>${esc(p)}</p>`).join("") || `<p>${esc(FALLBACK_INFO)}</p>`;
 }
 
-function mixHex(hex, amount = 0.78) {
+function parseRgb(hex) {
   const raw = String(hex || "#cccccc").replace("#", "");
   const full = raw.length === 3 ? raw.split("").map((c) => c + c).join("") : raw.padEnd(6, "0").slice(0, 6);
   const n = Number.parseInt(full, 16);
-  if (Number.isNaN(n)) return "#f3f3f0";
-  const r = (n >> 16) & 255;
-  const g = (n >> 8) & 255;
-  const b = n & 255;
-  const mix = (c) => Math.round(c + (255 - c) * amount);
-  return `#${[mix(r), mix(g), mix(b)].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+  if (Number.isNaN(n)) return { r: 204, g: 204, b: 204 };
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+function toHex({ r, g, b }) {
+  const hx = (c) => Math.max(0, Math.min(255, Math.round(c))).toString(16).padStart(2, "0");
+  return `#${hx(r)}${hx(g)}${hx(b)}`;
+}
+
+function mixHex(hex, amount = 0.78) {
+  const { r, g, b } = parseRgb(hex);
+  const mix = (c) => c + (255 - c) * amount;
+  return toHex({ r: mix(r), g: mix(g), b: mix(b) });
+}
+
+function mixBlack(hex, amount = 0.25) {
+  const { r, g, b } = parseRgb(hex);
+  const mix = (c) => c * (1 - amount);
+  return toHex({ r: mix(r), g: mix(g), b: mix(b) });
+}
+
+function tuneHex(hex, { sat = 1, light = 1 } = {}) {
+  let { r, g, b } = parseRgb(hex);
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  let l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
+    else if (max === g) h = ((b - r) / d + 2) * 60;
+    else h = ((r - g) / d + 4) * 60;
+  }
+  s = Math.min(1, Math.max(0, s * sat));
+  l = Math.min(1, Math.max(0, l * light));
+  const C = s * (1 - Math.abs(2 * l - 1));
+  const X = C * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - C / 2;
+  let r1 = 0; let g1 = 0; let b1 = 0;
+  if (h < 60) [r1, g1, b1] = [C, X, 0];
+  else if (h < 120) [r1, g1, b1] = [X, C, 0];
+  else if (h < 180) [r1, g1, b1] = [0, C, X];
+  else if (h < 240) [r1, g1, b1] = [0, X, C];
+  else if (h < 300) [r1, g1, b1] = [X, 0, C];
+  else [r1, g1, b1] = [C, 0, X];
+  return toHex({ r: (r1 + m) * 255, g: (g1 + m) * 255, b: (b1 + m) * 255 });
+}
+
+/** Палитра витража от базового hex из данных: насыщенный край, осветлённый центр под чёрный текст. */
+function glassPalette(hex) {
+  const vivid = tuneHex(hex, { sat: 1.28, light: 1.02 });
+  return {
+    rim: mixBlack(tuneHex(hex, { sat: 1.2, light: 0.82 }), 0.18),
+    deep: tuneHex(hex, { sat: 1.22, light: 0.9 }),
+    mid: vivid,
+    core: mixHex(vivid, 0.42),
+    bloom: mixHex(vivid, 0.7),
+  };
 }
 
 function cssText() {
@@ -96,13 +151,13 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform-box: view-box; transform-origin: 400px 400px;
   transition: transform .2s ease;
 }
-.seg.is-hot { transform: scale(1.04); }
+.seg.is-hot { transform: scale(1.03); }
 .seg .glass-fill { transition: fill-opacity .2s ease; }
 .seg .glass-sheen {
-  pointer-events: none; mix-blend-mode: screen; opacity: .55;
+  pointer-events: none; mix-blend-mode: screen; opacity: .38;
   transition: opacity .28s ease;
 }
-.seg.is-hot .glass-sheen { opacity: .95; }
+.seg.is-hot .glass-sheen { opacity: .72; }
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -190,9 +245,9 @@ span.chip { cursor: default; }
 
 function filters() {
   const specs = [
-    ["wheel-petal-shadow-default", 2, 5, 0.1],
-    ["wheel-petal-shadow-selected", 4, 8, 0.16],
-    ["wheel-petal-shadow-hover", 6, 12, 0.2],
+    ["wheel-petal-shadow-default", 2, 5, 0.12],
+    ["wheel-petal-shadow-selected", 4, 8, 0.18],
+    ["wheel-petal-shadow-hover", 6, 12, 0.22],
     ["wheel-preview-shadow", 1, 3, 0.08],
     ["wheel-center-shadow", 2, 6, 0.08],
   ];
@@ -572,12 +627,23 @@ class FlavorWheel extends HTMLElement {
     const level = this.viewLevel;
     const model = this.model(level, g);
     this.segmentCount = Math.max(1, model.main.length);
-    const previews = model.preview.map((p) => {
+    const previewDefs = [];
+    const previews = model.preview.map((p, i) => {
       const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, 6, 12);
-      return `<path d="${d}" fill="${p.hex}" fill-opacity="0.28" stroke="rgba(255,255,255,.55)" stroke-width="1.1"></path>`;
+      const mid = (p.a0 + p.a1) / 2;
+      const gl = glow(g.middleR + 12, g.outerR, p.a0, p.a1);
+      const id = `preview-grad-${level}-${i}`;
+      const pal = glassPalette(p.hex);
+      previewDefs.push(
+        `<radialGradient id="${id}" cx="${gl.cx}" cy="${gl.cy}" r="${Math.max(18, (g.outerR - g.middleR) * 0.95)}" gradientUnits="userSpaceOnUse">` +
+        `<stop offset="0%" stop-color="${pal.bloom}"></stop>` +
+        `<stop offset="55%" stop-color="${pal.mid}"></stop>` +
+        `<stop offset="100%" stop-color="${pal.deep}"></stop></radialGradient>`
+      );
+      return `<path d="${d}" fill="url(#${id})" fill-opacity="0.72" stroke="#1c1510" stroke-width="1.35" stroke-linejoin="round" data-mid="${mid}"></path>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
-    this.rotor.innerHTML = `<g pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
+    this.rotor.innerHTML = `<defs>${previewDefs.join("")}</defs><g pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
@@ -636,14 +702,35 @@ class FlavorWheel extends HTMLElement {
     const fitted = fitLabel(s.node.name, s.rIn, s.rOut, s.a0, s.a1, g.labelMaxFont(level));
     const place = labelPlacement(s.rIn, s.rOut, s.a0, s.a1, fitted.fontSize, fitted.lines.length);
     const gl = glow(s.rIn, s.rOut, s.a0, s.a1);
-    const gid = `petal-glow-${level}-${s.node.id}`;
-    const fill = "#000000";
-    const baseOp = level === 2 ? 0.64 : 0.5;
+    const pal = glassPalette(s.node.hex);
+    const gid = `petal-glass-${level}-${s.node.id}`;
+    const sid = `petal-sheen-${level}-${s.node.id}`;
+    const baseOp = level === 2 ? 0.96 : 0.94;
     const tspans = fitted.lines.map((line, i) =>
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
-    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}"><g filter="url(#wheel-petal-shadow-default)"><path class="glass-fill" d="${d}" fill="${s.node.hex}" fill-opacity="${baseOp}" stroke="rgba(255,255,255,.55)" stroke-width="1.25"></path></g><defs><radialGradient id="${gid}" cx="${gl.cx}" cy="${gl.cy}" r="${gl.r}" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff" stop-opacity="0.5"></stop><stop offset="55%" stop-color="#fff" stop-opacity="0.12"></stop><stop offset="100%" stop-color="#fff" stop-opacity="0"></stop></radialGradient></defs><path class="glass-sheen" d="${d}" fill="url(#${gid})"></path><text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="${fill}">${tspans}</text></g>`;
+    const sheenR = Math.max(24, gl.r * 0.72);
+    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}">` +
+      `<defs>` +
+      `<radialGradient id="${gid}" cx="${gl.cx}" cy="${gl.cy}" r="${gl.r}" gradientUnits="userSpaceOnUse">` +
+      `<stop offset="0%" stop-color="${pal.bloom}"></stop>` +
+      `<stop offset="28%" stop-color="${pal.core}"></stop>` +
+      `<stop offset="68%" stop-color="${pal.mid}"></stop>` +
+      `<stop offset="100%" stop-color="${pal.rim}"></stop>` +
+      `</radialGradient>` +
+      `<radialGradient id="${sid}" cx="${gl.cx}" cy="${gl.cy}" r="${sheenR}" gradientUnits="userSpaceOnUse">` +
+      `<stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"></stop>` +
+      `<stop offset="45%" stop-color="#ffffff" stop-opacity="0.16"></stop>` +
+      `<stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>` +
+      `</radialGradient>` +
+      `</defs>` +
+      `<g class="glass-body" filter="url(#wheel-petal-shadow-default)">` +
+      `<path class="glass-fill" d="${d}" fill="url(#${gid})" fill-opacity="${baseOp}" stroke="#1c1510" stroke-width="2.6" stroke-linejoin="round"></path>` +
+      `</g>` +
+      `<path class="glass-sheen" d="${d}" fill="url(#${sid})"></path>` +
+      `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
+      `</g>`;
   }
 
   renderCenter() {
@@ -675,10 +762,10 @@ class FlavorWheel extends HTMLElement {
     const hot = seg === this.hot || seg.matches(":focus-visible");
     seg.classList.toggle("is-hot", hot || selected);
     const name = hot ? "hover" : selected ? "selected" : "default";
-    seg.querySelector("g")?.setAttribute("filter", `url(#wheel-petal-shadow-${name})`);
-    const base = Number(seg.dataset.baseOp || 0.62);
+    seg.querySelector(".glass-body")?.setAttribute("filter", `url(#wheel-petal-shadow-${name})`);
+    const base = Number(seg.dataset.baseOp || 0.94);
     const fill = seg.querySelector(".glass-fill");
-    if (fill) fill.setAttribute("fill-opacity", String(Math.min(0.92, base + (hot || selected ? 0.1 : 0))));
+    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.04 : 0))));
   }
 
   updateSelected() {
