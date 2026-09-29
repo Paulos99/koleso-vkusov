@@ -146,6 +146,9 @@ function cssText() {
   min-width: 0;
   align-self: flex-start;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
   outline: none;
   max-width: var(--fw-max-width);
   margin: 0 auto;
@@ -224,9 +227,18 @@ function cssText() {
 :host([data-layout="wide"]) .wheel-box { margin: 0; }
 svg.wheel {
   display: block; width: 100%; height: auto; overflow: visible;
-  touch-action: none; user-select: none; cursor: grab;
+  touch-action: none; cursor: grab;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+svg.wheel * {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 svg.wheel:focus { outline: none; }
 svg.wheel:focus-visible {
@@ -239,10 +251,24 @@ svg.wheel.is-dragging { cursor: grabbing; }
   cursor: pointer; outline: none; isolation: isolate;
   transform-box: view-box; transform-origin: 400px 400px;
   transition: transform .2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 .seg:focus { outline: none; }
 .seg:focus:not(:focus-visible) { outline: none; }
 .seg:focus-visible { outline: none; }
+.seg .seg-focus-ring {
+  pointer-events: none;
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  visibility: hidden;
+}
+.seg:focus-visible .seg-focus-ring { visibility: visible; }
 .seg.is-hot { transform: scale(1.03); }
 .seg .glass-fill { transition: fill-opacity .2s ease; }
 .seg .glass-glint { pointer-events: none; }
@@ -251,13 +277,36 @@ svg.wheel.is-dragging { cursor: grabbing; }
   fill: #000000;
   stroke: none;
   paint-order: normal;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
+.seg text::selection { background: transparent; }
 .center-hit {
   cursor: default; outline: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
   transform-box: view-box; transform-origin: 400px 400px;
   transition: transform .2s ease, opacity .2s ease;
 }
+.center-hit text {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.center-hit .center-focus-ring {
+  pointer-events: none;
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.45);
+  stroke-width: 2.5;
+  visibility: hidden;
+}
+.center-hit:focus-visible .center-focus-ring { visibility: visible; }
 .center-hit.is-back { cursor: pointer; }
 .center-hit:focus:not(:focus-visible) { outline: none; }
 .center-hit.is-back:hover, .center-hit.is-back:focus-visible { transform: scale(1.04); opacity: .92; }
@@ -817,6 +866,7 @@ class FlavorWheel extends HTMLElement {
       `${acrylicGlints(s.rIn, s.rOut, s.a0, s.a1, this.fxCompact)}` +
       `</g>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
+      `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
       `</g>`;
   }
 
@@ -839,7 +889,7 @@ class FlavorWheel extends HTMLElement {
     const texts = lines.map((t, i) =>
       `<text x="400" y="${startY + i * step}" text-anchor="middle" dominant-baseline="central" font-family="Mulish, sans-serif" font-weight="700" font-size="${fs}" letter-spacing="${canBack ? -1 : -1.2}" fill="${color}" stroke="none" pointer-events="none">${esc(t)}</text>`
     ).join("");
-    this.centerLayer.innerHTML = `<g class="${cls}"${aria} filter="url(#wheel-center-shadow)"><circle class="center-disc" cx="400" cy="400" r="${r}"></circle>${texts}</g>`;
+    this.centerLayer.innerHTML = `<g class="${cls}"${aria} filter="url(#wheel-center-shadow)"><circle class="center-disc" cx="400" cy="400" r="${r}"></circle><circle class="center-focus-ring" cx="400" cy="400" r="${r + 3}" aria-hidden="true"></circle>${texts}</g>`;
   }
 
   paintSeg(seg) {
@@ -1024,6 +1074,7 @@ class FlavorWheel extends HTMLElement {
     this.lastPointerType = e.pointerType || "";
     if (e.pointerType === "mouse" || e.pointerType === "touch" || e.pointerType === "pen") {
       this.blurPointerFocus();
+      if (e.cancelable) e.preventDefault();
     }
     this.cancelInertia();
     this.drag = { last: this.pointerAngle(e), moved: 0, active: false, ts: e.timeStamp, id: e.pointerId };
