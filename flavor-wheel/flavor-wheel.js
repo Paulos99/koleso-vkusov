@@ -75,11 +75,14 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion16";
-/** Лёгкая «материя» плитки (п.14): прозрачность / blur / зерно — без молочного стекла. */
+const DATA_CACHE_BUST = "motion17";
+/**
+ * Лёгкая «материя» плитки (п.14→15): fill-opacity сохраняем;
+ * шум — один статичный растровый оверлей (не feTurbulence на каждой плитке);
+ * мягкий край (stdDev 0.55) снят — почти незаметен, дорого на мобильных.
+ */
 const TILE_FILL_OPACITY = 0.9;
-const TILE_SOFT_STDDEV = 0.55;
-const TILE_GRAIN_OPACITY = 0.055;
+const TILE_GRAIN_OPACITY = 0.06;
 
 /** Нормализованный непрозрачный hex из JSON — без mix/lighten. */
 function solidHex(hex) {
@@ -400,17 +403,23 @@ function cssText() {
 .wheel-tilt {
   --tilt-rx: 0deg;
   --tilt-ry: 0deg;
-  --tilt-sx: 0px;
-  --tilt-sy: 18px;
   position: relative;
   width: 100%;
   transform-style: preserve-3d;
   transform: rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry));
-  will-change: transform;
-  /* Чуть мягче тень колеса — с полупрозрачными плитками не сереет */
-  filter:
-    drop-shadow(var(--tilt-sx) var(--tilt-sy) 26px rgba(0, 0, 0, 0.10))
-    drop-shadow(0 5px 9px rgba(0, 0, 0, 0.06));
+  /* will-change включается только на время активного tilt (см. applyTiltStyles) */
+}
+/* Статичная тень колеса — box-shadow на div, без CSS filter (не пересчитывается при rotate/tilt). */
+.wheel-shadow {
+  position: absolute;
+  inset: 4% 6% 2%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  background: transparent;
+  box-shadow:
+    0 18px 28px rgba(0, 0, 0, 0.10),
+    0 5px 10px rgba(0, 0, 0, 0.06);
 }
 .wheel-shine {
   position: absolute;
@@ -433,15 +442,19 @@ function cssText() {
   position: relative;
   z-index: 1;
 }
-.grain {
+/* Один общий слой зерна поверх колеса; вращается с ротором (transform), без SVG-фильтров. */
+.wheel-grain {
   position: absolute;
   inset: 0;
+  border-radius: 50%;
   pointer-events: none;
-  z-index: 8;
-  opacity: 0.055;
+  z-index: 3;
+  opacity: ${TILE_GRAIN_OPACITY};
   background-image: url("${GRAIN_TILE}");
-  background-size: 160px 160px;
-  mix-blend-mode: multiply;
+  background-size: 120px 120px;
+  mix-blend-mode: overlay;
+  transform-origin: 50% 50%;
+  contain: strict;
 }
 svg.wheel {
   display: block; width: 100%; height: auto; overflow: visible;
@@ -555,8 +568,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform-box: view-box;
   transform-origin: 400px 400px;
   transform: translate(0px, 0px) scale(1);
-  filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
-  will-change: transform, filter;
+  /* Без filter: drop-shadow в WAAPI на десятках превью — дорого на мобильных (п.15). */
 }
 /* Подпись — часть плитки (внутри tile-parallax); без will-change, без filter */
 .seg text, .tile-label {
@@ -704,37 +716,22 @@ span.chip { cursor: default; }
   .center-hit.is-back:hover { transform: none !important; }
   .seg.is-hot .tile-shade, .seg.is-press .tile-shade { filter: none !important; }
   .tile-parallax { transform: none !important; }
-  .preview-motion { transform: none !important; filter: none !important; will-change: auto; }
-  .wheel-tilt {
-    transform: none !important;
-    filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.09)) drop-shadow(0 3px 7px rgba(0, 0, 0, 0.05));
-  }
+  .preview-motion { transform: none !important; }
+  .wheel-tilt { transform: none !important; }
 }
 `;
 }
 
 function filters() {
-  // Тени чуть слабее: сквозь fill-opacity ~0.9 не должны сереть.
+  // Только лёгкие feDropShadow (без feTurbulence/blur на плитках — п.15).
   const specs = [
     ["wheel-petal-shadow-default", 2, 4.5, 0.08],
     ["wheel-petal-shadow-selected", 3.5, 7, 0.12],
-    ["wheel-petal-shadow-hover", 5, 10, 0.14],
-    ["wheel-preview-shadow", 1, 2.5, 0.05],
     ["wheel-center-shadow", 2, 5, 0.06],
   ];
-  const shadows = specs.map(([id, dy, dev, op]) =>
+  return specs.map(([id, dy, dev, op]) =>
     `<filter id="${id}" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="${dy}" stdDeviation="${dev}" flood-color="#000" flood-opacity="${op}"></feDropShadow></filter>`
   ).join("");
-  // Один общий finish-фильтр на все плитки/превью: мягкий край + статичное зерно.
-  const surface =
-    `<filter id="wheel-tile-surface" x="-14%" y="-14%" width="128%" height="128%" color-interpolation-filters="sRGB">` +
-    `<feGaussianBlur in="SourceGraphic" stdDeviation="${TILE_SOFT_STDDEV}" result="soft"/>` +
-    `<feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="4" stitchTiles="stitch" result="noise"/>` +
-    `<feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.52 0 0 0 0 0.52 0 0 0 0 0.52 0 0 0 ${TILE_GRAIN_OPACITY} 0" result="grain"/>` +
-    `<feComposite in="grain" in2="soft" operator="in" result="grainClip"/>` +
-    `<feBlend in="soft" in2="grainClip" mode="overlay" result="out"/>` +
-    `</filter>`;
-  return shadows + surface;
 }
 
 class FlavorWheel extends HTMLElement {
@@ -777,11 +774,27 @@ class FlavorWheel extends HTMLElement {
     this.paraRaf = 0;
     this.cascadeParentId = null;
     this.cascadeMode = "idle";
+    this.rotRaf = 0;
+    this.svgRect = null;
+    this.wheelRect = null;
+    this.draggingLayer = false;
     this.onOrient = (e) => this.handleOrientation(e);
-    this.onMouseMove = (e) => this.handleMouseTilt(e);
+    this.onMouseMove = (e) => {
+      if (!this._tiltMoveQueued) {
+        this._tiltMoveQueued = true;
+        this._tiltMoveEvent = e;
+        requestAnimationFrame(() => {
+          this._tiltMoveQueued = false;
+          if (this._tiltMoveEvent) this.handleMouseTilt(this._tiltMoveEvent);
+        });
+      } else {
+        this._tiltMoveEvent = e;
+      }
+    };
     this.onMouseLeave = () => {
       this.tiltTarget.x = 0;
       this.tiltTarget.y = 0;
+      this.ensureTiltLoop();
     };
     this.onReducedChange = (e) => {
       this.reduced = e.matches;
@@ -819,6 +832,7 @@ class FlavorWheel extends HTMLElement {
     this.stopInertia();
     cancelAnimationFrame(this.tiltRaf);
     cancelAnimationFrame(this.paraRaf);
+    cancelAnimationFrame(this.rotRaf);
     clearTimeout(this.urlTimer);
     window.removeEventListener("deviceorientation", this.onOrient);
     window.removeEventListener("orientationchange", this.onStableViewport);
@@ -855,7 +869,6 @@ class FlavorWheel extends HTMLElement {
   renderShell() {
     this.shadowRoot.innerHTML = `
       <style>${cssText()}</style>
-      <div class="grain" aria-hidden="true"></div>
       <div class="stage">
         <div class="wrap">
           <div class="grid" data-testid="taste-wheel-grid">
@@ -863,6 +876,7 @@ class FlavorWheel extends HTMLElement {
               <nav class="trail" data-testid="wheel-trail" aria-label="Путь выбора"></nav>
               <div class="wheel-perspective">
                 <div class="wheel-tilt">
+                  <div class="wheel-shadow" aria-hidden="true"></div>
                   <div class="wheel-box" data-testid="wheel-filter">
                     <svg class="wheel" tabindex="-1" viewBox="0 0 800 800" role="img" aria-label="Колесо вкусов — фильтр по нотам (потяните для вращения)">
                       <title>Колесо вкусов</title>
@@ -870,6 +884,7 @@ class FlavorWheel extends HTMLElement {
                       <g class="rotor" transform="rotate(0 400 400)"></g>
                       <g class="center-layer"></g>
                     </svg>
+                    <div class="wheel-grain" aria-hidden="true"></div>
                   </div>
                   <div class="wheel-shine" aria-hidden="true"></div>
                 </div>
@@ -883,10 +898,42 @@ class FlavorWheel extends HTMLElement {
     this.rotor = this.shadowRoot.querySelector(".rotor");
     this.centerLayer = this.shadowRoot.querySelector(".center-layer");
     this.wheelBox = this.shadowRoot.querySelector(".wheel-box");
+    this.wheelGrain = this.shadowRoot.querySelector(".wheel-grain");
     this.wheelPerspective = this.shadowRoot.querySelector(".wheel-perspective");
     this.wheelTilt = this.shadowRoot.querySelector(".wheel-tilt");
     this.panelEl = this.shadowRoot.querySelector(".panel");
     this.trailEl = this.shadowRoot.querySelector(".trail");
+  }
+
+  invalidateRects() {
+    this.svgRect = null;
+    this.wheelRect = null;
+  }
+
+  /** Применить угол ротора + зерно; will-change только на время жеста/инерции. */
+  applyRotation(opts = {}) {
+    const active = !!opts.active;
+    this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
+    if (this.wheelGrain) {
+      this.wheelGrain.style.transform = `rotate(${this.rotation}deg)`;
+    }
+    if (active !== this.draggingLayer) {
+      this.draggingLayer = active;
+      if (this.rotor) {
+        this.rotor.style.willChange = active ? "transform" : "";
+      }
+      if (this.wheelGrain) {
+        this.wheelGrain.style.willChange = active ? "transform" : "";
+      }
+    }
+  }
+
+  scheduleRotation(active = true) {
+    if (this.rotRaf) return;
+    this.rotRaf = requestAnimationFrame(() => {
+      this.rotRaf = 0;
+      this.applyRotation({ active });
+    });
   }
 
   bind() {
@@ -925,7 +972,18 @@ class FlavorWheel extends HTMLElement {
       if (!seg) return;
       if (this.hot === seg) this.setHot(null);
     });
-    this.svg.addEventListener("pointermove", (e) => this.handleTileParallax(e), { passive: true });
+    this.svg.addEventListener("pointermove", (e) => {
+      if (!this._paraMoveQueued) {
+        this._paraMoveQueued = true;
+        this._paraMoveEvent = e;
+        requestAnimationFrame(() => {
+          this._paraMoveQueued = false;
+          if (this._paraMoveEvent) this.handleTileParallax(this._paraMoveEvent);
+        });
+      } else {
+        this._paraMoveEvent = e;
+      }
+    }, { passive: true });
     this.shadowRoot.addEventListener("click", (e) => this.onClick(e));
     this.shadowRoot.addEventListener("keydown", (e) => {
       if (e.key !== "Enter" && e.key !== " ") return;
@@ -956,15 +1014,22 @@ class FlavorWheel extends HTMLElement {
       if (next === "narrow") this.updateStableViewport(true);
       if (prev !== next) queueMicrotask(() => this.syncPanelOverflow());
     };
-    this.hostRo = new ResizeObserver(applyHost);
+    this.hostRo = new ResizeObserver(() => {
+      this.invalidateRects();
+      applyHost();
+    });
     this.hostRo.observe(this);
-    window.addEventListener("resize", applyHost);
+    window.addEventListener("resize", () => {
+      this.invalidateRects();
+      applyHost();
+    });
     window.addEventListener("orientationchange", this.onStableViewport);
     // resize: updateStableViewport сам фильтрует скачки адресной строки (только ширина/ориентация).
     window.addEventListener("resize", this.onStableViewport);
     applyHost();
     this.updateStableViewport(true);
     this.ro = new ResizeObserver(() => {
+      this.invalidateRects();
       const w = this.wheelBox?.clientWidth || 0;
       if (!w || Math.abs(w - this.wheelW) < 0.5) return;
       this.wheelW = w;
@@ -1217,7 +1282,12 @@ class FlavorWheel extends HTMLElement {
   }
 
   svgPoint(e) {
-    const rect = this.svg.getBoundingClientRect();
+    // getBoundingClientRect один раз на жест/resize — не в каждом pointermove.
+    let rect = this.svgRect;
+    if (!rect) {
+      rect = this.svg.getBoundingClientRect();
+      this.svgRect = rect;
+    }
     const vb = this.svg.viewBox.baseVal;
     return {
       x: vb.x + ((e.clientX - rect.left) / rect.width) * vb.width,
@@ -1280,13 +1350,13 @@ class FlavorWheel extends HTMLElement {
       const mid = (p.a0 + p.a1) / 2;
       return `<g class="preview-tile" data-parent-id="${esc(String(p.parentId))}" data-preview-i="${p.index}" data-mid="${mid}">` +
         `<g class="preview-motion">` +
-        `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="${TILE_FILL_OPACITY}" stroke="none" stroke-width="0" filter="url(#wheel-tile-surface)" data-hex-raw="${esc(p.hex)}"></path>` +
+        `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="${TILE_FILL_OPACITY}" stroke="none" stroke-width="0" data-hex-raw="${esc(p.hex)}"></path>` +
         `</g></g>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
     this.rotor.innerHTML =
-      `<g class="preview-ring" pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
-    this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
+      `<g class="preview-ring" pointer-events="none">${previews}</g>${segs}`;
+    this.applyRotation({ active: false });
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
     this.resetParallax(true);
@@ -1363,7 +1433,7 @@ class FlavorWheel extends HTMLElement {
       `<g class="tile-parallax">` +
       `<g class="tile-shade">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
-      `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="${TILE_FILL_OPACITY}" stroke="none" stroke-width="0" filter="url(#wheel-tile-surface)"></path>` +
+      `<path class="tile-fill" d="${d}" fill="${fill}" fill-opacity="${TILE_FILL_OPACITY}" stroke="none" stroke-width="0"></path>` +
       `</g></g>` +
       `<text class="tile-label" x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000" stroke="none">${tspans}</text>` +
       `</g></g></g>` +
@@ -1431,10 +1501,7 @@ class FlavorWheel extends HTMLElement {
 
   previewPose(tile, up) {
     if (!up) {
-      return {
-        transform: "translate(0px, 0px) scale(1)",
-        filter: "drop-shadow(0px 0px 0px rgba(0,0,0,0))",
-      };
+      return { transform: "translate(0px, 0px) scale(1)" };
     }
     const mid = Number(tile.dataset.mid) || 0;
     const rad = ((mid - 90) * Math.PI) / 180;
@@ -1442,7 +1509,6 @@ class FlavorWheel extends HTMLElement {
     const dy = Math.sin(rad) * CASCADE_OUT;
     return {
       transform: `translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) scale(${CASCADE_SCALE})`,
-      filter: "drop-shadow(0px 2px 3px rgba(0,0,0,0.14))",
     };
   }
 
@@ -1457,12 +1523,10 @@ class FlavorWheel extends HTMLElement {
       } catch { /* ignore */ }
     });
     let fromT = motion.style.transform || getComputedStyle(motion).transform;
-    let fromF = motion.style.filter || getComputedStyle(motion).filter;
     if (!fromT || fromT === "none") fromT = "translate(0px, 0px) scale(1)";
-    if (!fromF || fromF === "none") fromF = "drop-shadow(0px 0px 0px rgba(0,0,0,0))";
     const to = this.previewPose(tile, dir === "up");
     const anim = motion.animate(
-      [{ transform: fromT, filter: fromF }, to],
+      [{ transform: fromT }, to],
       {
         duration,
         delay,
@@ -1478,7 +1542,6 @@ class FlavorWheel extends HTMLElement {
         }
         try { anim.commitStyles?.(); anim.cancel(); } catch { /* ignore */ }
         motion.style.transform = "";
-        motion.style.filter = "";
       }).catch(() => {});
     }
     return anim;
@@ -1493,7 +1556,6 @@ class FlavorWheel extends HTMLElement {
         try { a.cancel(); } catch { /* ignore */ }
       });
       motion.style.transform = "";
-      motion.style.filter = "";
     });
   }
 
@@ -2049,6 +2111,7 @@ class FlavorWheel extends HTMLElement {
 
   handleTileParallax(e) {
     if (this.reduced || this.drag?.active) return;
+    if (e.pointerType && e.pointerType !== "mouse") return;
     const seg = e.target.closest?.(".seg");
     if (!seg) {
       if (this.paraSeg) this.clearParaTarget();
@@ -2059,10 +2122,15 @@ class FlavorWheel extends HTMLElement {
       if (prev) prev.style.transform = "";
       this.paraCurrent.x = 0;
       this.paraCurrent.y = 0;
+      this._paraBox = null;
     }
     this.paraSeg = seg;
-    const fill = seg.querySelector(".tile-fill");
-    const box = (fill || seg).getBoundingClientRect();
+    if (!this._paraBox || this._paraBoxSeg !== seg) {
+      const fill = seg.querySelector(".tile-fill");
+      this._paraBox = (fill || seg).getBoundingClientRect();
+      this._paraBoxSeg = seg;
+    }
+    const box = this._paraBox;
     if (!box.width || !box.height) return;
     const max = this.paraMaxPx();
     const nx = ((e.clientX - box.left) / box.width) * 2 - 1;
@@ -2103,23 +2171,30 @@ class FlavorWheel extends HTMLElement {
     const ry = Math.max(-TILT_MAX_GYRO, Math.min(TILT_MAX_GYRO, gamma * 0.22));
     this.tiltTarget.x = rx;
     this.tiltTarget.y = ry;
+    this.ensureTiltLoop();
   }
 
   handleMouseTilt(e) {
     if (this.reduced || this.tiltMode === "gyro") return;
     if (e.pointerType && e.pointerType !== "mouse") return;
-    const box = this.wheelPerspective?.getBoundingClientRect();
+    let box = this.wheelRect;
+    if (!box) {
+      box = this.wheelPerspective?.getBoundingClientRect();
+      this.wheelRect = box;
+    }
     if (!box || !box.width || !box.height) return;
     const nx = ((e.clientX - box.left) / box.width) * 2 - 1;
     const ny = ((e.clientY - box.top) / box.height) * 2 - 1;
     if (Math.abs(nx) > 1.4 || Math.abs(ny) > 1.4) {
       this.tiltTarget.x = 0;
       this.tiltTarget.y = 0;
+      this.ensureTiltLoop();
       return;
     }
     this.tiltMode = "mouse";
     this.tiltTarget.x = Math.max(-TILT_MAX_MOUSE, Math.min(TILT_MAX_MOUSE, -ny * TILT_MAX_MOUSE));
     this.tiltTarget.y = Math.max(-TILT_MAX_MOUSE, Math.min(TILT_MAX_MOUSE, nx * TILT_MAX_MOUSE));
+    this.ensureTiltLoop();
   }
 
   resetTilt(hard = false) {
@@ -2131,6 +2206,7 @@ class FlavorWheel extends HTMLElement {
       this.applyTiltStyles();
       cancelAnimationFrame(this.tiltRaf);
       this.tiltRaf = 0;
+      if (this.wheelTilt) this.wheelTilt.style.willChange = "";
     }
   }
 
@@ -2140,9 +2216,9 @@ class FlavorWheel extends HTMLElement {
     const ry = this.tiltCurrent.y;
     this.wheelTilt.style.setProperty("--tilt-rx", `${rx.toFixed(3)}deg`);
     this.wheelTilt.style.setProperty("--tilt-ry", `${ry.toFixed(3)}deg`);
-    // Тень слегка против наклона (коэфф. пропорциональны малой амплитуде ~2°).
-    this.wheelTilt.style.setProperty("--tilt-sx", `${(-ry * 0.35).toFixed(2)}px`);
-    this.wheelTilt.style.setProperty("--tilt-sy", `${(18 + rx * 0.28).toFixed(2)}px`);
+    const active = Math.abs(rx) > 0.01 || Math.abs(ry) > 0.01
+      || Math.abs(this.tiltTarget.x) > 0.01 || Math.abs(this.tiltTarget.y) > 0.01;
+    this.wheelTilt.style.willChange = active ? "transform" : "";
   }
 
   ensureTiltLoop() {
@@ -2162,6 +2238,16 @@ class FlavorWheel extends HTMLElement {
         this.tiltCurrent.y = this.tiltTarget.y;
       }
       this.applyTiltStyles();
+      const idle =
+        Math.abs(this.tiltTarget.x - this.tiltCurrent.x) < 0.01 &&
+        Math.abs(this.tiltTarget.y - this.tiltCurrent.y) < 0.01 &&
+        Math.abs(this.tiltCurrent.x) < 0.01 &&
+        Math.abs(this.tiltCurrent.y) < 0.01;
+      if (idle) {
+        this.tiltRaf = 0;
+        if (this.wheelTilt) this.wheelTilt.style.willChange = "";
+        return;
+      }
       this.tiltRaf = requestAnimationFrame(tick);
     };
     this.tiltRaf = requestAnimationFrame(tick);
@@ -2203,12 +2289,17 @@ class FlavorWheel extends HTMLElement {
 
   startInertia(v0Dps) {
     this.stopInertia();
-    if (this.reduced || Math.abs(v0Dps) < INERTIA_STOP_DPS) return;
+    if (this.reduced || Math.abs(v0Dps) < INERTIA_STOP_DPS) {
+      this.applyRotation({ active: false });
+      return;
+    }
     this.inertiaV = v0Dps;
     this.inertiaLastT = performance.now();
+    this.applyRotation({ active: true });
     const tick = (now) => {
       if (this.reduced) {
         this.stopInertia();
+        this.applyRotation({ active: false });
         return;
       }
       let dt = (now - this.inertiaLastT) / 1000;
@@ -2220,10 +2311,11 @@ class FlavorWheel extends HTMLElement {
       if (dt > 0.05) dt = 0.05;
       this.rotation += this.inertiaV * dt;
       this.inertiaV *= Math.exp(-INERTIA_FRICTION * dt);
-      this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
+      this.applyRotation({ active: true });
       if (Math.abs(this.inertiaV) < INERTIA_STOP_DPS) {
         this.inertiaV = 0;
         this.inertiaRaf = 0;
+        this.applyRotation({ active: false });
         return;
       }
       this.inertiaRaf = requestAnimationFrame(tick);
@@ -2234,6 +2326,8 @@ class FlavorWheel extends HTMLElement {
   onDown(e) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     this.lastPointerType = e.pointerType || "";
+    // Свежий rect на старт жеста.
+    this.invalidateRects();
     if (e.pointerType === "mouse" || e.pointerType === "touch" || e.pointerType === "pen") {
       this.blurPointerFocus();
       if (e.cancelable) e.preventDefault();
@@ -2268,7 +2362,7 @@ class FlavorWheel extends HTMLElement {
       this.blurPointerFocus();
     }
     this.rotation += delta;
-    this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
+    this.scheduleRotation(true);
     const samples = this.drag.samples;
     samples.push({ t: e.timeStamp, rot: this.rotation });
     const cut = e.timeStamp - (INERTIA_SAMPLE_MS + 40);
@@ -2296,6 +2390,7 @@ class FlavorWheel extends HTMLElement {
       this.startInertia(v0);
       return;
     }
+    this.applyRotation({ active: false });
     if (suppressTap) {
       this.suppressClick = true;
       setTimeout(() => { this.suppressClick = false; }, 0);
