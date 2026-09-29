@@ -75,7 +75,7 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion12";
+const DATA_CACHE_BUST = "motion13";
 
 /** Нормализованный непрозрачный hex из JSON — без mix/lighten. */
 function solidHex(hex) {
@@ -87,11 +87,16 @@ const PANEL_OUT_MS = 280;
 const PANEL_IN_MS = 340;
 const PANEL_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 const PANEL_SHIFT_PX = 6;
-/** Hover-левитация плитки (scale/тень/fill): было ~180–220 ms → ~×5. */
+/**
+ * Hover-левитация + лесенка превью: общие duration/easing (п.6 / п.11).
+ * CSS: --lift-dur / --lift-ease; press остаётся коротким.
+ */
 const HOVER_LIFT_MS = 1200;
 const PRESS_LIFT_MS = 140;
-const EASE_LIFT_UP = "cubic-bezier(0.22, 0.2, 0.36, 1)";
-const EASE_LIFT_DOWN = "cubic-bezier(0.45, 0.05, 0.55, 0.95)";
+const LIFT_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+/** @deprecated aliases — тот же easing вверх/вниз (симметрично). */
+const EASE_LIFT_UP = LIFT_EASE;
+const EASE_LIFT_DOWN = LIFT_EASE;
 /** Тяжёлая инерция маховика (°/с, трение 1/с). */
 const INERTIA_SAMPLE_MS = 100;
 const INERTIA_PAUSE_MS = 100;
@@ -105,13 +110,8 @@ const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
 const PARA_MAX_NARROW = 1.75;
 const PARA_LERP = 0.18;
-/** Каскад «лесенкой» дочерних превью при hover/press родителя (уровни 0–1). */
-const CASCADE_DELAY = 48;
-const CASCADE_UP_MS = 260;
-const CASCADE_DOWN_MS = 170;
-const CASCADE_DOWN_DELAY = 26;
-const CASCADE_FAST_MS = 130;
-const CASCADE_FAST_DELAY = 16;
+/** Каскад «лесенкой»: тот же темп, что hover; ступень ≤30 ms. */
+const CASCADE_STAGGER_MS = 24;
 const CASCADE_SCALE = 1.05;
 const CASCADE_OUT = 6;
 const LIFT_REST = {
@@ -146,6 +146,9 @@ function cssText() {
   --fw-max-width: 1280px;
   --fw-bg: transparent;
   --fw-ink: #000000;
+  /* Общий темп подъёма: основной блок и лесенка превью (п.6 / п.11). */
+  --lift-dur: ${HOVER_LIFT_MS}ms;
+  --lift-ease: ${LIFT_EASE};
   /* Стабильная высота экрана (панель/layout); на размер колеса не влияет. */
   --fw-vh: 1vh;
   --fw-stable-h: calc(var(--fw-vh) * 100);
@@ -490,25 +493,23 @@ svg.wheel.is-dragging { cursor: grabbing; }
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
   will-change: transform, filter;
 }
-/* Hover-левитация: медленный мягкий взлёт; press — короткий отклик на том же слое */
+/* Hover-левитация: тот же --lift-dur/--lift-ease, что у лесенки; press — короткий */
 .tile-levitate {
   transform-box: view-box;
   transform-origin: 400px 400px;
   transform: scale(1);
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
-  /* Опускание: мягкий settle — синхронно с fill */
   transition:
-    transform ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN},
-    filter ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN};
+    transform var(--lift-dur) var(--lift-ease),
+    filter var(--lift-dur) var(--lift-ease);
   will-change: transform, filter;
 }
 .seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-levitate {
   transform: scale(1.03);
   filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
-  /* Подъём — синхронно с fill */
   transition:
-    transform ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP},
-    filter ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP};
+    transform var(--lift-dur) var(--lift-ease),
+    filter var(--lift-dur) var(--lift-ease);
 }
 .seg.is-press .tile-levitate {
   transform: scale(1.055);
@@ -522,8 +523,8 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform: scale(1);
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
   transition:
-    transform ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN},
-    filter ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN};
+    transform var(--lift-dur) var(--lift-ease),
+    filter var(--lift-dur) var(--lift-ease);
 }
 /* Локальный параллакс заливки — отдельный слой внутри подъёма; hit-test остаётся на path */
 .tile-parallax {
@@ -532,21 +533,21 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform: translate(0px, 0px);
   will-change: transform;
 }
-/* Осветление: те же duration/easing, что у подъёма (вход/выход hover и selected) */
+/* Осветление: тот же темп, что подъём */
 .seg .tile-fill {
-  transition: fill ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN};
+  transition: fill var(--lift-dur) var(--lift-ease);
   transform-box: fill-box;
 }
 .seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-fill {
-  transition: fill ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP};
+  transition: fill var(--lift-dur) var(--lift-ease);
 }
 .seg.is-press .tile-fill {
   transition: fill ${PRESS_LIFT_MS}ms ease;
 }
 .seg[data-selected="1"] .tile-fill {
-  transition: fill ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP};
+  transition: fill var(--lift-dur) var(--lift-ease);
 }
-/* Каскад дочерних превью — отдельный слой, не трогает hit-test основных .seg */
+/* Каскад дочерних превью — WAAPI с теми же --lift-dur/--lift-ease */
 .preview-tile { pointer-events: none; }
 .preview-motion {
   transform-box: view-box;
@@ -1426,14 +1427,18 @@ class FlavorWheel extends HTMLElement {
     };
   }
 
-  animatePreview(tile, dir, delay, duration) {
+  animatePreview(tile, dir, delay = 0, duration = HOVER_LIFT_MS) {
     const motion = tile.querySelector(".preview-motion");
     if (!motion) return null;
+    // От текущего кадра — без рывка с нуля при смене hover.
     motion.getAnimations().forEach((a) => {
-      try { a.cancel(); } catch { /* ignore */ }
+      try {
+        a.commitStyles?.();
+        a.cancel();
+      } catch { /* ignore */ }
     });
-    let fromT = getComputedStyle(motion).transform;
-    let fromF = getComputedStyle(motion).filter;
+    let fromT = motion.style.transform || getComputedStyle(motion).transform;
+    let fromF = motion.style.filter || getComputedStyle(motion).filter;
     if (!fromT || fromT === "none") fromT = "translate(0px, 0px) scale(1)";
     if (!fromF || fromF === "none") fromF = "drop-shadow(0px 0px 0px rgba(0,0,0,0))";
     const to = this.previewPose(tile, dir === "up");
@@ -1443,9 +1448,8 @@ class FlavorWheel extends HTMLElement {
         duration,
         delay,
         fill: "forwards",
-        easing: dir === "up"
-          ? "cubic-bezier(.22,.82,.28,1)"
-          : "cubic-bezier(.33,.12,.25,1)",
+        // Тот же easing, что --lift-ease у основного блока (симметрично вверх/вниз).
+        easing: LIFT_EASE,
       },
     );
     if (dir === "down") {
@@ -1453,7 +1457,7 @@ class FlavorWheel extends HTMLElement {
         if (this.cascadeParentId != null && String(tile.dataset.parentId) === String(this.cascadeParentId)) {
           return;
         }
-        try { anim.cancel(); } catch { /* ignore */ }
+        try { anim.commitStyles?.(); anim.cancel(); } catch { /* ignore */ }
         motion.style.transform = "";
         motion.style.filter = "";
       }).catch(() => {});
@@ -1476,17 +1480,17 @@ class FlavorWheel extends HTMLElement {
 
   syncCascade() {
     if (this.reduced || this.viewLevel > 1) {
-      this.collapseCascade({ fast: true });
+      this.collapseCascade({ hard: this.reduced });
       return;
     }
     const source = this.cascadeSource();
     if (!source) {
-      this.collapseCascade({ fast: false });
+      this.collapseCascade();
       return;
     }
     const kind = source.dataset.kind;
     if (kind !== "sector" && kind !== "subsector") {
-      this.collapseCascade({ fast: true });
+      this.collapseCascade();
       return;
     }
     this.expandCascade(source.dataset.id);
@@ -1502,21 +1506,24 @@ class FlavorWheel extends HTMLElement {
       .filter((t) => String(t.dataset.parentId) === id)
       .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI));
     const others = all.filter((t) => String(t.dataset.parentId) !== id);
+    // Чужие превью опускаются тем же темпом; свои — поднимаются синхронно с родителем.
     others.forEach((tile, i) => {
-      this.animatePreview(tile, "down", i * CASCADE_FAST_DELAY, CASCADE_FAST_MS);
+      this.animatePreview(tile, "down", Math.min(i, 2) * CASCADE_STAGGER_MS, HOVER_LIFT_MS);
     });
     kids.forEach((tile, i) => {
-      this.animatePreview(tile, "up", i * CASCADE_DELAY, CASCADE_UP_MS);
+      this.animatePreview(tile, "up", i * CASCADE_STAGGER_MS, HOVER_LIFT_MS);
     });
   }
 
-  collapseCascade({ fast = false } = {}) {
+  collapseCascade({ hard = false } = {}) {
     if (this.cascadeMode === "idle" && this.cascadeParentId == null) return;
     const parentId = this.cascadeParentId;
     this.cascadeParentId = null;
     this.cascadeMode = parentId == null ? "idle" : "down";
-    const delay = fast ? CASCADE_FAST_DELAY : CASCADE_DOWN_DELAY;
-    const dur = fast ? CASCADE_FAST_MS : CASCADE_DOWN_MS;
+    if (hard) {
+      this.resetCascade(true);
+      return;
+    }
     let tiles;
     if (parentId == null) {
       tiles = [...this.shadowRoot.querySelectorAll(".preview-tile")];
@@ -1528,16 +1535,16 @@ class FlavorWheel extends HTMLElement {
     tiles
       .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI))
       .forEach((tile, i) => {
-        this.animatePreview(tile, "down", i * delay, dur);
+        this.animatePreview(tile, "down", i * CASCADE_STAGGER_MS, HOVER_LIFT_MS);
       });
-    // stray elevated tiles from interrupted switches
+    // stray elevated tiles from interrupted switches — тоже плавно, от текущего состояния
     this.shadowRoot.querySelectorAll(".preview-motion").forEach((motion) => {
       const tile = motion.closest(".preview-tile");
       if (!tile) return;
       if (parentId != null && String(tile.dataset.parentId) === String(parentId)) return;
       if (!motion.getAnimations().length) {
         const t = getComputedStyle(motion).transform;
-        if (t && t !== "none") this.animatePreview(tile, "down", 0, CASCADE_FAST_MS);
+        if (t && t !== "none") this.animatePreview(tile, "down", 0, HOVER_LIFT_MS);
       }
     });
     if (!tiles.length) this.cascadeMode = "idle";
