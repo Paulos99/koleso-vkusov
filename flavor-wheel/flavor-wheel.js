@@ -76,10 +76,12 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion6b";
+const DATA_CACHE_BUST = "motion6c";
 /** Hover-левитация плитки (scale/тень/fill): было ~180–220 ms → ~×5. */
 const HOVER_LIFT_MS = 1200;
 const PRESS_LIFT_MS = 140;
+const EASE_LIFT_UP = "cubic-bezier(0.22, 0.2, 0.36, 1)";
+const EASE_LIFT_DOWN = "cubic-bezier(0.45, 0.05, 0.55, 0.95)";
 const TILE_LIT_REST = 0.08;
 const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
@@ -312,19 +314,19 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform-origin: 400px 400px;
   transform: scale(1);
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
-  /* Опускание: мягкий симметричный settle на всю длительность */
+  /* Опускание: мягкий settle — синхронно с fill */
   transition:
-    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.45, 0.05, 0.55, 0.95),
-    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    transform ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN},
+    filter ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN};
   will-change: transform, filter;
 }
 .seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-levitate {
   transform: scale(1.03);
   filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
-  /* Подъём: мягкий ease-in-out (не front-loaded), ~×5 к прежним ~180 ms */
+  /* Подъём — синхронно с fill */
   transition:
-    transform ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 0.2, 0.36, 1),
-    filter ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 0.2, 0.36, 1);
+    transform ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP},
+    filter ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP};
 }
 .seg.is-press .tile-levitate {
   transform: scale(1.055);
@@ -333,13 +335,13 @@ svg.wheel.is-dragging { cursor: grabbing; }
     transform ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1),
     filter ${PRESS_LIFT_MS}ms cubic-bezier(.22,.8,.3,1);
 }
-/* Selected: левитация отдаёт подъём WAAPI, короткий плавный handoff */
+/* Selected: hover-левитация сбрасывается; WAAPI-пульс (п.3) не трогаем */
 .seg[data-selected="1"] .tile-levitate {
   transform: scale(1);
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
   transition:
-    transform 450ms cubic-bezier(0.33, 0, 0.2, 1),
-    filter 450ms cubic-bezier(0.33, 0, 0.2, 1);
+    transform ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN},
+    filter ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN};
 }
 /* Локальный параллакс заливки — отдельный слой внутри подъёма; hit-test остаётся на path */
 .tile-parallax {
@@ -348,15 +350,19 @@ svg.wheel.is-dragging { cursor: grabbing; }
   transform: translate(0px, 0px);
   will-change: transform;
 }
+/* Осветление: те же duration/easing, что у подъёма (вход/выход hover и selected) */
 .seg .tile-fill {
-  transition: fill ${HOVER_LIFT_MS}ms cubic-bezier(0.22, 0.2, 0.36, 1);
+  transition: fill ${HOVER_LIFT_MS}ms ${EASE_LIFT_DOWN};
   transform-box: fill-box;
+}
+.seg.is-hot:not([data-selected="1"]):not(.is-press) .tile-fill {
+  transition: fill ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP};
 }
 .seg.is-press .tile-fill {
   transition: fill ${PRESS_LIFT_MS}ms ease;
 }
 .seg[data-selected="1"] .tile-fill {
-  transition: fill 450ms cubic-bezier(0.33, 0, 0.2, 1);
+  transition: fill ${HOVER_LIFT_MS}ms ${EASE_LIFT_UP};
 }
 /* Каскад дочерних превью — отдельный слой, не трогает hit-test основных .seg */
 .preview-tile { pointer-events: none; }
