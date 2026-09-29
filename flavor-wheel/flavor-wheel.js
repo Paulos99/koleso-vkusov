@@ -342,7 +342,8 @@ function cssText() {
 :host([data-layout="narrow"]) .trail-crumb {
   padding: 8px 10px;
   font-size: 12px;
-  max-width: 38%;
+  flex: 1 1 0;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
