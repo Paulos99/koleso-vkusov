@@ -1,6 +1,6 @@
 import {
   CX, CY, wheelGeometry, petalPath, fitLabel, labelPlacement,
-  isLight, inertiaTarget,
+  isLight, inertiaTarget, glow, polar,
 } from "./geometry.js";
 
 const INFO_EMPTY = "Выберите сектор, подкатегорию или конкретную ноту на колесе — здесь появится описание.";
@@ -78,17 +78,57 @@ const MAIN_GAP = 12;
 const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 6;
 const PREVIEW_RADIUS = 12;
-/** Лёгкий общий перелив для плиток (viewBox 800×800). */
-const TILE_LIGHT = { x1: 270, y1: 240, x2: 530, y2: 560 };
+const TILE_FACE_OP = 0.8;
+const TILE_PREVIEW_OP = 0.76;
+/** Свет сверху-слева (viewBox 800×800). */
+const SUN = { x1: 230, y1: 200, x2: 570, y2: 600 };
 
-function tileGradientDef(id, hex) {
-  const base = tuneHex(hex, { sat: 1.12, light: 1.06 });
-  const light = tuneHex(hex, { sat: 1.08, light: 1.1 });
-  const { x1, y1, x2, y2 } = TILE_LIGHT;
-  return `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">` +
-    `<stop offset="0%" stop-color="${light}"></stop>` +
-    `<stop offset="100%" stop-color="${base}"></stop>` +
-    `</linearGradient>`;
+function acrylicTileFx(prefix, hex, rIn, rOut, a0, a1, { compact = false } = {}) {
+  const gl = glow(rIn, rOut, a0, a1);
+  const base = hex;
+  const face = tuneHex(hex, { sat: 1.08, light: 1.14 });
+  const edge = tuneHex(hex, { sat: 1.16, light: 0.72 });
+  const fillId = `${prefix}-fill`;
+  const rimId = `${prefix}-rim`;
+  const filterId = `${prefix}-fx`;
+  const filterHotId = `${prefix}-fx-hot`;
+  const dx = compact ? 2 : 4;
+  const dy = compact ? 3 : 6;
+  const dev = compact ? 2.5 : 4.5;
+  const defs =
+    `<radialGradient id="${fillId}" cx="${gl.cx}" cy="${gl.cy}" r="${Math.max(24, gl.r * 0.92)}" gradientUnits="userSpaceOnUse">` +
+    `<stop offset="0%" stop-color="${face}" stop-opacity="0.52"></stop>` +
+    `<stop offset="42%" stop-color="${base}" stop-opacity="0.78"></stop>` +
+    `<stop offset="100%" stop-color="${edge}" stop-opacity="0.95"></stop>` +
+    `</radialGradient>` +
+    `<linearGradient id="${rimId}" gradientUnits="userSpaceOnUse" x1="${SUN.x1}" y1="${SUN.y1}" x2="${SUN.x2}" y2="${SUN.y2}">` +
+    `<stop offset="0%" stop-color="${mixHex(base, 0.62)}" stop-opacity="0.9"></stop>` +
+    `<stop offset="48%" stop-color="${base}" stop-opacity="0.35"></stop>` +
+    `<stop offset="100%" stop-color="${edge}" stop-opacity="0.95"></stop>` +
+    `</linearGradient>` +
+    acrylicShadowFilter(filterId, base, dx, dy, dev, 0) +
+    acrylicShadowFilter(filterHotId, base, dx + 1, dy + 1, dev + 0.8, 0.1);
+  return { defs, fillId, rimId, filterId, filterHotId };
+}
+
+function acrylicShadowFilter(id, hex, dx, dy, dev, boost) {
+  return `<filter id="${id}" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">` +
+    `<feDropShadow dx="${dx}" dy="${dy}" stdDeviation="${dev}" flood-color="${hex}" flood-opacity="${(0.26 + boost).toFixed(3)}"></feDropShadow>` +
+    `<feDropShadow dx="1" dy="1.5" stdDeviation="0.8" flood-color="#000000" flood-opacity="${(0.1 + boost * 0.45).toFixed(3)}"></feDropShadow>` +
+    `</filter>`;
+}
+
+function acrylicGlints(rIn, rOut, a0, a1, compact) {
+  if (compact) return "";
+  const span = a1 - a0;
+  const a1g = a0 + span * 0.22;
+  const a2g = a0 + span * 0.36;
+  const p1 = polar(CX, CY, rOut - 10, a1g);
+  const p2 = polar(CX, CY, rOut - 14, a2g);
+  const rot1 = a1g - 90;
+  const rot2 = a2g - 88;
+  return `<ellipse class="glass-glint" cx="${p1.x}" cy="${p1.y}" rx="3.4" ry="1.2" fill="#ffffff" fill-opacity="0.62" transform="rotate(${rot1} ${p1.x} ${p1.y})"></ellipse>` +
+    `<ellipse class="glass-glint" cx="${p2.x}" cy="${p2.y}" rx="2.2" ry="0.9" fill="#ffffff" fill-opacity="0.48" transform="rotate(${rot2} ${p2.x} ${p2.y})"></ellipse>`;
 }
 
 function cssText() {
@@ -190,6 +230,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
 }
 .seg.is-hot { transform: scale(1.03); }
 .seg .glass-fill { transition: fill-opacity .2s ease; }
+.seg .glass-glint { pointer-events: none; }
 .seg text {
   pointer-events: none;
   fill: #000000;
@@ -311,6 +352,7 @@ class FlavorWheel extends HTMLElement {
     this.inertiaRaf = 0;
     this.urlTimer = 0;
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.fxCompact = false;
   }
 
   get syncUrl() {
@@ -437,8 +479,13 @@ class FlavorWheel extends HTMLElement {
     const applyHost = () => {
       const w = Math.round(this.getBoundingClientRect().width || this.clientWidth || 0);
       this.dataset.layout = w >= 1280 ? "wide" : "narrow";
-      if (w <= 425) this.setAttribute("data-compact", "");
+      const compact = w <= 425;
+      if (compact) this.setAttribute("data-compact", "");
       else this.removeAttribute("data-compact");
+      if (compact !== this.fxCompact) {
+        this.fxCompact = compact;
+        if (this.tree.length) this.renderWheel();
+      }
     };
     this.hostRo = new ResizeObserver(applyHost);
     this.hostRo.observe(this);
@@ -666,12 +713,16 @@ class FlavorWheel extends HTMLElement {
     const previewDefs = [];
     const previews = model.preview.map((p, i) => {
       const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PREVIEW_GAP, PREVIEW_RADIUS);
-      const gid = `preview-tile-${level}-${i}`;
-      previewDefs.push(tileGradientDef(gid, p.hex));
-      return `<path d="${d}" fill="url(#${gid})" fill-opacity="1" stroke="rgba(255,255,255,.55)" stroke-width="1.1" stroke-linejoin="round"></path>`;
+      const prefix = `preview-${level}-${i}`;
+      const fx = acrylicTileFx(prefix, p.hex, g.middleR + 12, g.outerR, p.a0, p.a1, { compact: this.fxCompact });
+      previewDefs.push(fx.defs);
+      return `<g pointer-events="none" filter="url(#${fx.filterId})">` +
+        `<path d="${d}" fill="url(#${fx.fillId})" fill-opacity="${TILE_PREVIEW_OP}" stroke="url(#${fx.rimId})" stroke-width="1.1" stroke-linejoin="round"></path>` +
+        `${acrylicGlints(g.middleR + 12, g.outerR, p.a0, p.a1, this.fxCompact)}` +
+        `</g>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
-    this.rotor.innerHTML = `<defs>${previewDefs.join("")}</defs><g pointer-events="none" filter="url(#wheel-preview-shadow)">${previews}</g>${segs}`;
+    this.rotor.innerHTML = `<defs>${previewDefs.join("")}</defs><g pointer-events="none">${previews}</g>${segs}`;
     this.rotor.setAttribute("transform", `rotate(${this.rotation} ${CX} ${CY})`);
     this.svg.setAttribute("viewBox", g.viewBox);
     this.hot = null;
@@ -729,16 +780,18 @@ class FlavorWheel extends HTMLElement {
     const d = petalPath(CX, CY, s.rIn, s.rOut, s.a0, s.a1, MAIN_GAP, MAIN_RADIUS);
     const fitted = fitLabel(s.node.name, s.rIn, s.rOut, s.a0, s.a1, g.labelMaxFont(level));
     const place = labelPlacement(s.rIn, s.rOut, s.a0, s.a1, fitted.fontSize, fitted.lines.length);
-    const gid = `petal-tile-${level}-${s.node.id}`;
-    const baseOp = 1;
+    const prefix = `petal-${level}-${s.node.id}`;
+    const fx = acrylicTileFx(prefix, s.node.hex, s.rIn, s.rOut, s.a0, s.a1, { compact: this.fxCompact });
+    const baseOp = TILE_FACE_OP;
     const tspans = fitted.lines.map((line, i) =>
       `<tspan x="${place.x}" dy="${i === 0 ? place.firstDy : place.lineHeight}">${esc(line)}</tspan>`
     ).join("");
     const mid = (s.a0 + s.a1) / 2;
-    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}">` +
-      `<defs>${tileGradientDef(gid, s.node.hex)}</defs>` +
-      `<g class="glass-body" filter="url(#wheel-petal-shadow-default)">` +
-      `<path class="glass-fill" d="${d}" fill="url(#${gid})" fill-opacity="${baseOp}" stroke="rgba(255,255,255,.55)" stroke-width="1.25" stroke-linejoin="round"></path>` +
+    return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" data-base-op="${baseOp}" data-filter-default="${fx.filterId}" data-filter-hot="${fx.filterHotId}">` +
+      `<defs>${fx.defs}</defs>` +
+      `<g class="glass-body" filter="url(#${fx.filterId})">` +
+      `<path class="glass-fill" d="${d}" fill="url(#${fx.fillId})" fill-opacity="${baseOp}" stroke="url(#${fx.rimId})" stroke-width="1.3" stroke-linejoin="round"></path>` +
+      `${acrylicGlints(s.rIn, s.rOut, s.a0, s.a1, this.fxCompact)}` +
       `</g>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `</g>`;
@@ -770,11 +823,11 @@ class FlavorWheel extends HTMLElement {
     const selected = seg.dataset.selected === "1";
     const hot = seg === this.hot || seg.matches(":focus-visible");
     seg.classList.toggle("is-hot", hot || selected);
-    const name = hot ? "hover" : selected ? "selected" : "default";
-    seg.querySelector(".glass-body")?.setAttribute("filter", `url(#wheel-petal-shadow-${name})`);
-    const base = Number(seg.dataset.baseOp || 1);
+    const filterId = (hot || selected) ? seg.dataset.filterHot : seg.dataset.filterDefault;
+    if (filterId) seg.querySelector(".glass-body")?.setAttribute("filter", `url(#${filterId})`);
+    const base = Number(seg.dataset.baseOp || TILE_FACE_OP);
     const fill = seg.querySelector(".glass-fill");
-    if (fill) fill.setAttribute("fill-opacity", String(Math.min(1, base + (hot || selected ? 0.04 : 0))));
+    if (fill) fill.setAttribute("fill-opacity", String(Math.min(0.92, base + (hot || selected ? 0.05 : 0))));
   }
 
   updateSelected() {
