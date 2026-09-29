@@ -38,19 +38,21 @@ function mixHex(hex, amount = 0.78) {
   return toHex({ r: mix(r), g: mix(g), b: mix(b) });
 }
 
-const MAIN_GAP = 12;
+/* Зазор чуть увеличен (+stroke), чтобы после снятия белой обводки
+   видимая ширина щели между цветными заливками осталась как раньше. */
+const MAIN_GAP = 13.25;
 const MAIN_RADIUS = 24;
-const PREVIEW_GAP = 6;
+const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion1";
+const DATA_CACHE_BUST = "motion2";
 const GRAIN_TILE = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">' +
   '<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>' +
   '<rect width="100%" height="100%" filter="url(#n)" opacity=".55"/></svg>'
 )}`;
-const TILT_MAX_GYRO = 7;
-const TILT_MAX_MOUSE = 4;
+const TILT_MAX_GYRO = 2;
+const TILT_MAX_MOUSE = 1.4;
 const TILT_LERP = 0.12;
 
 function cssText() {
@@ -848,7 +850,7 @@ class FlavorWheel extends HTMLElement {
     this.segmentCount = Math.max(1, model.main.length);
     const previews = model.preview.map((p) => {
       const d = petalPath(CX, CY, g.middleR + 12, g.outerR, p.a0, p.a1, PREVIEW_GAP, PREVIEW_RADIUS);
-      return `<path d="${d}" fill="${p.hex}" fill-opacity="1" stroke="rgba(255,255,255,.55)" stroke-width="1.1" stroke-linejoin="round"></path>`;
+      return `<path d="${d}" fill="${p.hex}" fill-opacity="1" stroke="none" stroke-width="0"></path>`;
     }).join("");
     const segs = model.main.map((s) => this.segmentHtml(s, level, g)).join("");
     this.rotor.innerHTML =
@@ -916,7 +918,7 @@ class FlavorWheel extends HTMLElement {
     const mid = (s.a0 + s.a1) / 2;
     return `<g class="seg" role="button" tabindex="0" aria-label="${esc(s.node.name)}" aria-pressed="${s.selected ? "true" : "false"}" data-testid="wheel-${s.kind}-${s.node.id}" data-kind="${s.kind}" data-id="${s.node.id}" data-mid="${mid}" data-selected="${s.selected ? "1" : "0"}" style="--seg-hex:${s.node.hex}">` +
       `<g class="tile-body" filter="url(#wheel-petal-shadow-default)">` +
-      `<path class="tile-fill" d="${d}" fill="${s.node.hex}" fill-opacity="1" stroke="rgba(255,255,255,.55)" stroke-width="1.25" stroke-linejoin="round"></path>` +
+      `<path class="tile-fill" d="${d}" fill="${s.node.hex}" fill-opacity="1" stroke="none" stroke-width="0"></path>` +
       `</g>` +
       `<text x="${place.x}" y="${place.y}" text-anchor="middle" transform="rotate(${place.rotate} ${place.x} ${place.y})" font-family="Mulish, sans-serif" font-size="${fitted.fontSize}" font-weight="500" letter-spacing="${place.letterSpacing}" fill="#000000">${tspans}</text>` +
       `<path class="seg-focus-ring" d="${d}" aria-hidden="true"></path>` +
@@ -1201,9 +1203,9 @@ class FlavorWheel extends HTMLElement {
     const ry = this.tiltCurrent.y;
     this.wheelTilt.style.setProperty("--tilt-rx", `${rx.toFixed(3)}deg`);
     this.wheelTilt.style.setProperty("--tilt-ry", `${ry.toFixed(3)}deg`);
-    // Тень слегка против наклона.
-    this.wheelTilt.style.setProperty("--tilt-sx", `${(-ry * 1.1).toFixed(2)}px`);
-    this.wheelTilt.style.setProperty("--tilt-sy", `${(18 + rx * 0.9).toFixed(2)}px`);
+    // Тень слегка против наклона (коэфф. пропорциональны малой амплитуде ~2°).
+    this.wheelTilt.style.setProperty("--tilt-sx", `${(-ry * 0.35).toFixed(2)}px`);
+    this.wheelTilt.style.setProperty("--tilt-sy", `${(18 + rx * 0.28).toFixed(2)}px`);
   }
 
   ensureTiltLoop() {
