@@ -75,7 +75,13 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion8";
+const DATA_CACHE_BUST = "motion9";
+/** Смена info-панели: контент + высота. */
+const PANEL_HEIGHT_MS = 560;
+const PANEL_OUT_MS = 280;
+const PANEL_IN_MS = 340;
+const PANEL_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const PANEL_SHIFT_PX = 6;
 /** Hover-левитация плитки (scale/тень/fill): было ~180–220 ms → ~×5. */
 const HOVER_LIFT_MS = 1200;
 const PRESS_LIFT_MS = 140;
@@ -190,6 +196,15 @@ function cssText() {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+.panel-viewport {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+.panel-layer {
+  width: 100%;
+  will-change: opacity, transform, filter;
 }
 .trail {
   position: absolute; top: 0; left: 0; right: 0;
@@ -446,7 +461,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
   margin: 0; font-size: 16px; font-weight: 500; line-height: 1.5; letter-spacing: -0.6px;
   color: #000000; opacity: .88;
 }
-.sheet-body { padding: 8px 24px 8px; color: #000000; }
+.sheet-body { padding: 8px 24px 24px; color: #000000; }
 .sheet-section { padding: 16px 0; border-top: 1px solid rgba(0,0,0,.1); }
 .sheet-section:first-child { border-top: 0; }
 .sheet-section h3 {
@@ -469,22 +484,9 @@ svg.wheel.is-dragging { cursor: grabbing; }
 }
 button.chip:hover { filter: brightness(1.08); transform: scale(1.03); }
 span.chip { cursor: default; }
-.sheet-foot {
-  padding: 8px 24px 24px; display: flex; justify-content: stretch;
-}
-.show-cta {
-  width: 100%; border: 0; border-radius: 999px; padding: 16px 20px;
-  font: 700 16px/1 var(--fw-font-family); letter-spacing: -0.8px;
-  color: #000000; cursor: pointer;
-  background: #ecece8;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
-  transition: transform .2s ease, filter .2s ease, opacity .2s ease, background .2s ease;
-}
-.show-cta:hover:not(:disabled) { background: #e2e2dc; transform: translateY(-1px); }
-.show-cta:disabled { opacity: .4; cursor: not-allowed; }
 .load-msg { padding: 24px; text-align: center; color: #000000; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
-  .seg, .tile-fill, .tile-levitate, .center-hit, .chip, .trail-crumb, .show-cta { transition: none !important; }
+  .seg, .tile-fill, .tile-levitate, .center-hit, .chip, .trail-crumb, .panel-layer, .panel-viewport { transition: none !important; }
   .seg.is-hot .tile-levitate, .seg.is-press .tile-levitate,
   .center-hit.is-back:hover { transform: none !important; filter: none !important; }
   .tile-parallax { transform: none !important; will-change: auto; }
@@ -534,6 +536,7 @@ class FlavorWheel extends HTMLElement {
     this.inertiaRaf = 0;
     this.inertiaV = 0;
     this.inertiaLastT = 0;
+    this.panelGen = 0;
     this.urlTimer = 0;
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.pressedSeg = null;
@@ -918,12 +921,6 @@ class FlavorWheel extends HTMLElement {
     this.afterNav(true);
   }
 
-  showLots() {
-    if (!this.selection.sectorId) return;
-    this.dispatchEvent(new CustomEvent("flavor-show", { bubbles: true, composed: true, detail: this.snapshot() }));
-    this.panelEl?.scrollIntoView({ behavior: this.reduced ? "auto" : "smooth", block: "nearest" });
-  }
-
   onSegment(seg) {
     if (this.suppressClick) return;
     const id = Number(seg.dataset.id);
@@ -990,7 +987,6 @@ class FlavorWheel extends HTMLElement {
       }
       return;
     }
-    if (e.target.closest?.("[data-testid=wheel-controls-show]")) this.showLots();
   }
 
   renderWheel() {
@@ -1398,10 +1394,9 @@ class FlavorWheel extends HTMLElement {
     }
   }
 
-  renderPanel() {
+  buildPanelHtml() {
     if (this.viewLevel === 0 || !this.sector()) {
-      this.panelEl.innerHTML = `<div class="sheet sheet-empty" data-testid="wheel-info-description"><h2>Информация</h2><p>${esc(INFO_EMPTY)}</p></div>`;
-      return;
+      return `<div class="sheet sheet-empty" data-testid="wheel-info-description"><h2>Информация</h2><p>${esc(INFO_EMPTY)}</p></div>`;
     }
     const sector = this.sector();
     const sub = this.subsector();
@@ -1413,7 +1408,7 @@ class FlavorWheel extends HTMLElement {
     const how = note?.howInCoffee || FALLBACK_INFO;
     const result = note?.result || FALLBACK_INFO;
     const chips = this.chipsHtml(sector, sub, desc);
-    this.panelEl.innerHTML = `
+    return `
       <article class="sheet">
         <header class="sheet-head" data-testid="wheel-info-description" style="--sheet-accent:${hex};background:${mixHex(hex, 0.86)};color:#000000">
           <h2>${esc(node.name)}</h2>
@@ -1430,10 +1425,101 @@ class FlavorWheel extends HTMLElement {
           </section>
           ${chips}
         </div>
-        <div class="sheet-foot">
-          <button type="button" class="show-cta" data-testid="wheel-controls-show"${this.selection.sectorId ? "" : " disabled"}>Показать</button>
-        </div>
       </article>`;
+  }
+
+  ensurePanelShell() {
+    if (!this.panelEl) return null;
+    let viewport = this.panelEl.querySelector(":scope > .panel-viewport");
+    if (!viewport) {
+      this.panelEl.innerHTML = `<div class="panel-viewport"><div class="panel-layer"></div></div>`;
+      viewport = this.panelEl.querySelector(".panel-viewport");
+    }
+    let layer = viewport.querySelector(":scope > .panel-layer");
+    if (!layer) {
+      viewport.innerHTML = `<div class="panel-layer"></div>`;
+      layer = viewport.querySelector(".panel-layer");
+    }
+    return { viewport, layer };
+  }
+
+  renderPanel() {
+    const html = this.buildPanelHtml();
+    const shell = this.ensurePanelShell();
+    if (!shell) return;
+    const { viewport, layer } = shell;
+    const gen = ++this.panelGen;
+
+    const settle = () => {
+      if (gen !== this.panelGen) return;
+      viewport.style.height = "auto";
+      layer.style.opacity = "";
+      layer.style.transform = "";
+      layer.style.filter = "";
+    };
+
+    const cancelAnims = (el) => {
+      el?.getAnimations?.().forEach((a) => {
+        try { a.cancel(); } catch { /* ignore */ }
+      });
+    };
+
+    // Первый кадр или reduced-motion — мгновенно.
+    if (this.reduced || !layer.childElementCount) {
+      cancelAnims(viewport);
+      cancelAnims(layer);
+      layer.innerHTML = html;
+      settle();
+      return;
+    }
+
+    const fromH = viewport.getBoundingClientRect().height || layer.getBoundingClientRect().height;
+    const probe = document.createElement("div");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;left:0;top:0;width:100%;";
+    probe.innerHTML = html;
+    viewport.appendChild(probe);
+    const toH = probe.getBoundingClientRect().height;
+    probe.remove();
+    if (gen !== this.panelGen) return;
+
+    cancelAnims(viewport);
+    cancelAnims(layer);
+
+    viewport.style.height = `${fromH}px`;
+    const heightAnim = viewport.animate(
+      [{ height: `${fromH}px` }, { height: `${Math.max(1, toH)}px` }],
+      { duration: PANEL_HEIGHT_MS, easing: PANEL_EASE, fill: "forwards" },
+    );
+
+    const out = layer.animate(
+      [
+        { opacity: 1, transform: "translateY(0px)", filter: "blur(0px)" },
+        { opacity: 0, transform: `translateY(-${PANEL_SHIFT_PX}px)`, filter: "blur(2px)" },
+      ],
+      { duration: PANEL_OUT_MS, easing: PANEL_EASE, fill: "forwards" },
+    );
+
+    out.finished.then(() => {
+      if (gen !== this.panelGen) return;
+      layer.innerHTML = html;
+      layer.animate(
+        [
+          { opacity: 0, transform: `translateY(${PANEL_SHIFT_PX}px)`, filter: "blur(2px)" },
+          { opacity: 1, transform: "translateY(0px)", filter: "blur(0px)" },
+        ],
+        { duration: PANEL_IN_MS, easing: PANEL_EASE, fill: "forwards" },
+      ).finished.then(settle).catch(settle);
+    }).catch(() => {
+      if (gen !== this.panelGen) return;
+      layer.innerHTML = html;
+      settle();
+    });
+
+    heightAnim.finished.then(() => {
+      if (gen !== this.panelGen) return;
+      // height остаётся forwards до settle после in-анимации
+    }).catch(() => {});
   }
 
   chipsHtml(sector, sub, desc) {
