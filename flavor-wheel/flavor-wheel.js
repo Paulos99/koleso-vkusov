@@ -75,7 +75,7 @@ const MAIN_RADIUS = 24;
 const PREVIEW_GAP = 7.1;
 const PREVIEW_RADIUS = 12;
 /** Cache-bust для flavor-data.json (менять при деплое данных). */
-const DATA_CACHE_BUST = "motion13";
+const DATA_CACHE_BUST = "motion14";
 
 /** Нормализованный непрозрачный hex из JSON — без mix/lighten. */
 function solidHex(hex) {
@@ -88,10 +88,11 @@ const PANEL_IN_MS = 340;
 const PANEL_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 const PANEL_SHIFT_PX = 6;
 /**
- * Hover-левитация + лесенка превью: общие duration/easing (п.6 / п.11).
- * CSS: --lift-dur / --lift-ease; press остаётся коротким.
+ * Hover основного блока: --lift-dur ~1.2 s (п.6).
+ * Лесенка превью: --cascade-dur ~0.8 s = ×1.5 быстрее (п.12); easing общий --lift-ease.
  */
 const HOVER_LIFT_MS = 1200;
+const CASCADE_DUR_MS = 800;
 const PRESS_LIFT_MS = 140;
 const LIFT_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 /** @deprecated aliases — тот же easing вверх/вниз (симметрично). */
@@ -110,7 +111,7 @@ const TILE_LIT_HOT = 0.15;
 const PARA_MAX_WIDE = 2.5;
 const PARA_MAX_NARROW = 1.75;
 const PARA_LERP = 0.18;
-/** Каскад «лесенкой»: тот же темп, что hover; ступень ≤30 ms, суммарно ≤60 ms. */
+/** Каскад «лесенкой»: ступень ≤30 ms, суммарно ≤60 ms (без изменений п.11). */
 const CASCADE_STAGGER_MS = 20;
 const CASCADE_STAGGER_MAX_MS = 60;
 const CASCADE_SCALE = 1.05;
@@ -147,8 +148,9 @@ function cssText() {
   --fw-max-width: 1280px;
   --fw-bg: transparent;
   --fw-ink: #000000;
-  /* Общий темп подъёма: основной блок и лесенка превью (п.6 / п.11). */
+  /* Основной hover (п.6): ~1.2 s; лесенка (п.12): ~0.8 s; easing общий. */
   --lift-dur: ${HOVER_LIFT_MS}ms;
+  --cascade-dur: ${CASCADE_DUR_MS}ms;
   --lift-ease: ${LIFT_EASE};
   /* Стабильная высота экрана (панель/layout); на размер колеса не влияет. */
   --fw-vh: 1vh;
@@ -494,7 +496,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
   filter: drop-shadow(0px 0px 0px rgba(0,0,0,0));
   will-change: transform, filter;
 }
-/* Hover-левитация: тот же --lift-dur/--lift-ease, что у лесенки; press — короткий */
+/* Hover-левитация основного блока: --lift-dur/--lift-ease; press — короткий */
 .tile-levitate {
   transform-box: view-box;
   transform-origin: 400px 400px;
@@ -548,7 +550,7 @@ svg.wheel.is-dragging { cursor: grabbing; }
 .seg[data-selected="1"] .tile-fill {
   transition: fill var(--lift-dur) var(--lift-ease);
 }
-/* Каскад дочерних превью — WAAPI с теми же --lift-dur/--lift-ease */
+/* Каскад дочерних превью — WAAPI: --cascade-dur + --lift-ease (тень/подъём) */
 .preview-tile { pointer-events: none; }
 .preview-motion {
   transform-box: view-box;
@@ -1428,7 +1430,7 @@ class FlavorWheel extends HTMLElement {
     };
   }
 
-  animatePreview(tile, dir, delay = 0, duration = HOVER_LIFT_MS) {
+  animatePreview(tile, dir, delay = 0, duration = CASCADE_DUR_MS) {
     const motion = tile.querySelector(".preview-motion");
     if (!motion) return null;
     // От текущего кадра — без рывка с нуля при смене hover.
@@ -1449,7 +1451,7 @@ class FlavorWheel extends HTMLElement {
         duration,
         delay,
         fill: "forwards",
-        // Тот же easing, что --lift-ease у основного блока (симметрично вверх/вниз).
+        // Easing как у основного hover (--lift-ease); длительность — --cascade-dur.
         easing: LIFT_EASE,
       },
     );
@@ -1508,12 +1510,12 @@ class FlavorWheel extends HTMLElement {
       .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI));
     const others = all.filter((t) => String(t.dataset.parentId) !== id);
     const step = (i) => Math.min(i * CASCADE_STAGGER_MS, CASCADE_STAGGER_MAX_MS);
-    // Чужие превью опускаются тем же темпом; свои — поднимаются синхронно с родителем.
+    // Чужие превью опускаются тем же темпом; свои — поднимаются синхронно со стартом родителя.
     others.forEach((tile, i) => {
-      this.animatePreview(tile, "down", step(i), HOVER_LIFT_MS);
+      this.animatePreview(tile, "down", step(i), CASCADE_DUR_MS);
     });
     kids.forEach((tile, i) => {
-      this.animatePreview(tile, "up", step(i), HOVER_LIFT_MS);
+      this.animatePreview(tile, "up", step(i), CASCADE_DUR_MS);
     });
   }
 
@@ -1538,7 +1540,7 @@ class FlavorWheel extends HTMLElement {
     tiles
       .sort((a, b) => Number(a.dataset.previewI) - Number(b.dataset.previewI))
       .forEach((tile, i) => {
-        this.animatePreview(tile, "down", step(i), HOVER_LIFT_MS);
+        this.animatePreview(tile, "down", step(i), CASCADE_DUR_MS);
       });
     // stray elevated tiles from interrupted switches — тоже плавно, от текущего состояния
     this.shadowRoot.querySelectorAll(".preview-motion").forEach((motion) => {
@@ -1547,7 +1549,7 @@ class FlavorWheel extends HTMLElement {
       if (parentId != null && String(tile.dataset.parentId) === String(parentId)) return;
       if (!motion.getAnimations().length) {
         const t = getComputedStyle(motion).transform;
-        if (t && t !== "none") this.animatePreview(tile, "down", 0, HOVER_LIFT_MS);
+        if (t && t !== "none") this.animatePreview(tile, "down", 0, CASCADE_DUR_MS);
       }
     });
     if (!tiles.length) this.cascadeMode = "idle";
